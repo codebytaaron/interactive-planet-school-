@@ -739,9 +739,11 @@ canvas.addEventListener('pointermove',e=>{const n=performance.now();if(n-lastH<8
  const p=rc.ray.intersectSphere(sph,new THREE.Vector3());if(!p){ro.textContent='';return;}const [a,b]=v2ll(p);ro.textContent=fmt(a,b)+'  ·  '+elev(hAt(a,b));});
 
 const clock=new THREE.Clock();
-sun.position.copy(sunDir).multiplyScalar(10);star.position.copy(sunDir).multiplyScalar(110);
+const _up=new THREE.Vector3(0,1,0),_cd=new THREE.Vector3(),_rt=new THREE.Vector3();
 function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,clock.getDelta()),t=clock.elapsedTime;
  stepFly(now);if(!flying)controls.update();
+ _cd.copy(camera.position).normalize();_rt.crossVectors(_up,_cd).normalize();sunDir.copy(_cd).addScaledVector(_rt,-.75).addScaledVector(_up,.35).normalize();
+ sun.position.copy(sunDir).multiplyScalar(10);star.position.copy(sunDir).multiplyScalar(110);
  if(clouds)clouds.rotation.y+=dt*.004;
  for(const m of moons){const a=m.ph+t*m.speed;m.m.position.set(Math.cos(a)*m.dist,Math.sin(a)*m.dist*m.incl,-Math.sin(a)*m.dist);}
  for(const f of flows){if(!layerObjs[f.key].visible)continue;const arr=f.geo.attributes.position.array;for(let i=0;i<f.n;i++){const p=f.curve.getPoint((t*.035+i/f.n)%1);arr[i*3]=p.x;arr[i*3+1]=p.y;arr[i*3+2]=p.z;}f.geo.attributes.position.needsUpdate=true;}
