@@ -522,7 +522,7 @@ function textures(){
  const c=document.createElement('canvas');c.width=CW;c.height=CH;const g=c.getContext('2d');const img=g.createImageData(CW,CH),d=img.data;
  const bc=document.createElement('canvas');bc.width=CW;bc.height=CH;const bg=bc.getContext('2d');const bimg=bg.createImageData(CW,CH),bd=bimg.data;
  const mix=(a,b,t)=>{t=Math.max(0,Math.min(1,t));return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];};
- const C={deep:[4,14,34],mid:[8,30,64],shal:[22,78,104],coast:[46,120,128],beach:[132,120,96],forest:[44,30,28],forest2:[64,46,36],grass:[96,82,54],dry:[136,114,78],desert:[190,158,110],rock:[92,84,78],rock2:[60,54,50],snow:[236,240,246],tundra:[128,118,108],ash:[98,44,32],ice:[210,224,236]};
+ const C={deep:[4,14,34],mid:[8,30,64],shal:[20,84,112],coast:[52,146,150],beach:[132,120,96],forest:[44,30,28],forest2:[64,46,36],grass:[96,82,54],dry:[136,114,78],desert:[190,158,110],rock:[92,84,78],rock2:[60,54,50],snow:[236,240,246],tundra:[128,118,108],ash:[98,44,32],ice:[210,224,236]};
  for(let y=0;y<CH;y++){const v=(y+.5)/CH;const lat=90-v*180;const alat=Math.abs(lat);
   for(let x=0;x<CW;x++){const u=(x+.5)/CW;const o=(y*CW+x)*4;
    const fine=(vnoise(x*.0225,y*.0225,1.3)-.5)*.07+(vnoise(x*.08,y*.08,2.7)-.5)*.03+(vnoise(x*.35,y*.35,4.4)-.5)*.018;
@@ -604,7 +604,7 @@ const STEPS={
 const canvas=document.getElementById('scene');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=THREE.SRGBColorSpace;
-renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
 const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(38,1,.01,400);
 const controls=new OrbitControls(camera,canvas);
@@ -619,9 +619,17 @@ camera.position.copy(ll2v(20,-40,fitDist()*2.6));layout();addEventListener('resi
 const sunDir=new THREE.Vector3(-.35,.3,1).normalize();
 const sun=new THREE.DirectionalLight(0xfff0dc,3);scene.add(sun);
 const amb=new THREE.AmbientLight(0x8090b0,.18);scene.add(amb);
-{const n=2500,pos=new Float32Array(n*3);for(let i=0;i<n;i++){const v=new THREE.Vector3().randomDirection().multiplyScalar(150);pos.set([v.x,v.y,v.z],i*3);}
+{const mk=(n,size,op,band)=>{const pos=new Float32Array(n*3),col=new Float32Array(n*3);const tilt=new THREE.Quaternion().setFromEuler(new THREE.Euler(.9,.3,.4));
+ for(let k=0;k<n;k++){let v=new THREE.Vector3().randomDirection();if(band&&Math.random()<.7){v.y*=.12+Math.random()*.15;v.normalize();v.applyQuaternion(tilt);}v.multiplyScalar(150);pos.set([v.x,v.y,v.z],k*3);
+  const r=Math.random();const c=r<.15?[.7,.8,1]:r<.3?[1,.9,.75]:[1,1,1];const b=.55+Math.random()*.45;col.set([c[0]*b,c[1]*b,c[2]*b],k*3);}
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setAttribute('color',new THREE.BufferAttribute(col,3));
+ scene.add(new THREE.Points(g,new THREE.PointsMaterial({size,vertexColors:true,transparent:true,opacity:op,depthWrite:false,sizeAttenuation:true})));};
+ mk(9000,.22,.55,true);mk(1400,.42,.85,false);mk(120,.8,.95,false);}
  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));scene.add(new THREE.Points(g,new THREE.PointsMaterial({color:0xffffff,size:.35,transparent:true,opacity:.7})));}
 function glow(a,b){const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d');const r=g.createRadialGradient(64,64,0,64,64,64);r.addColorStop(0,a);r.addColorStop(.15,a);r.addColorStop(.4,b);r.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=r;g.fillRect(0,0,128,128);return new THREE.CanvasTexture(c);}
+{const c=document.createElement('canvas');c.width=1024;c.height=512;const g=c.getContext('2d');const im=g.createImageData(1024,512);
+ for(let y=0;y<512;y++)for(let x=0;x<1024;x++){const lat=90-y/512*180,lon=x/1024*360;const band=Math.exp(-Math.pow(lat/(9+6*vnoise(x*.01,y*.01,2)),2));const n=.5+.5*fbm(x*.012,y*.024,1.7,4);const a=band*n*n*70;const o=(y*1024+x)*4;im.data[o]=170;im.data[o+1]=180;im.data[o+2]=215;im.data[o+3]=a;}
+ g.putImageData(im,0,0);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const mw=new THREE.Mesh(new THREE.SphereGeometry(160,64,32),new THREE.MeshBasicMaterial({map:t,side:THREE.BackSide,transparent:true,depthWrite:false}));mw.rotation.set(.9,.3,.4);scene.add(mw);}
 const star=new THREE.Sprite(new THREE.SpriteMaterial({map:glow('rgba(255,244,228,1)','rgba(255,150,60,.25)'),depthWrite:false}));star.scale.setScalar(14);star.visible=false;scene.add(star);
 const dotTex=glow('rgba(255,255,255,1)','rgba(255,255,255,.3)');
 
@@ -640,7 +648,7 @@ function build(){
  const cs=new THREE.Mesh(new THREE.SphereGeometry(1.003,160,80),new THREE.MeshBasicMaterial({alphaMap:ct,color:0x000000,transparent:true,opacity:.28,depthWrite:false}));cs.rotation.y=-.012;cs.rotation.x=.006;world.add(cs);clouds.userData.shadow=cs;
  const vs='varying vec3 vw;varying vec3 wn;void main(){vec4 w=modelMatrix*vec4(position,1.);wn=normalize(mat3(modelMatrix)*normal);vw=normalize(cameraPosition-w.xyz);gl_Position=projectionMatrix*viewMatrix*w;}';
  world.add(new THREE.Mesh(new THREE.SphereGeometry(1.018,96,48),new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,uniforms:{sun:{value:sunDir}},vertexShader:vs,
-  fragmentShader:'uniform vec3 sun;varying vec3 vw;varying vec3 wn;void main(){float f=pow(1.-max(dot(wn,vw),0.),3.5);float l=smoothstep(-.25,.5,dot(wn,sun));gl_FragColor=vec4(vec3(.35,.6,1.)*f*l*1.3,1.);}'})));
+  fragmentShader:'uniform vec3 sun;varying vec3 vw;varying vec3 wn;void main(){float f=pow(1.-max(dot(wn,vw),0.),3.5);float l=smoothstep(-.25,.5,dot(wn,sun));float dl=dot(wn,sun);vec3 c=mix(vec3(1.,.5,.25),vec3(.35,.6,1.),smoothstep(-.05,.35,dl));gl_FragColor=vec4(c*f*l*1.4,1.);}'})));
  world.add(new THREE.Mesh(new THREE.SphereGeometry(1.06,96,48),new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.BackSide,uniforms:{sun:{value:sunDir}},vertexShader:vs,
   fragmentShader:'uniform vec3 sun;varying vec3 vw;varying vec3 wn;void main(){float d=dot(-wn,vw);float f=pow(clamp(1.-d*3.2,0.,1.),2.5)*smoothstep(0.,.08,d);float l=smoothstep(-.4,.5,dot(-wn,sun));gl_FragColor=vec4(vec3(.3,.55,1.)*f*.7*(.15+l),1.);}'})));
 
