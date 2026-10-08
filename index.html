@@ -693,7 +693,7 @@ function hAt(lat,lon){return sample(HG,(lon+180)/360,(90-lat)/180);}
 function elev(h){return h>=0?`Elevation ${Math.round(h*4500).toLocaleString()} m`:`Depth ${Math.round(-h*6800).toLocaleString()} m`;}
 function select(id,keepLayer){const f=F.find(x=>x.id===id);if(!f)return;selected=id;
  if(!keepLayer&&!f.L.includes(layer))setLayer(f.L[0]);
- flyTo(ll2v(f.lat,f.lon),['auren','mervath','ocean','basin'].includes(id)?3:2.25);
+ flyTo(ll2v(f.lat,f.lon),['auren','mervath','ocean','basin'].includes(id)?3.2:2.7);
  const lc=LCOL[f.L.includes(layer)?layer:f.L[0]];
  document.getElementById('infoK').textContent=f.k;document.getElementById('infoK').style.color=lc;
  document.getElementById('infoT').textContent=f.name;document.getElementById('infoP').textContent=f.t;
