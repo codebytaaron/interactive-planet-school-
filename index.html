@@ -143,6 +143,44 @@ svg.dg{width:100%;height:auto;display:block;margin:8px 0 12px}
   #info.show~#tourBtn{display:none}
 }
 
+
+/* ---- document-style reading panel ---- */
+#panel{background:#fbfaf7;border-left:1px solid #e3e0d8;color:#1f2328}
+#tabs{background:#fbfaf7;border-bottom:1px solid #e3e0d8;padding:6px 18px 0}
+#tabs button{color:#6b6f76;font-size:13px}
+#tabs button.on{color:#111;border-bottom-color:#1a73e8}
+#content{padding:28px 36px 80px;scrollbar-color:#cfcabf transparent}
+.pane{max-width:520px}
+.pane .kicker{color:#1a73e8;font-size:11px}
+.pane h2{font-family:Georgia,"Times New Roman",serif;font-size:28px;font-weight:700;color:#111;margin:6px 0 18px;padding-bottom:14px;border-bottom:1px solid #e3e0d8}
+.pane h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#6b6f76;margin:28px 0 8px;font-weight:600}
+.pane p,.pane li{font-size:15px;line-height:1.7;color:#2b2f36}
+.pane b{color:#111}
+.lnk{color:#1a73e8;border-bottom:1px solid rgba(26,115,232,.3)}
+.lnk:hover{color:#0b57d0;border-bottom-color:#0b57d0}
+.stats{display:flex;flex-wrap:wrap;gap:18px 28px;background:none;border:0;border-radius:0;margin:4px 0 6px}
+.stats div{background:none;padding:0}
+.stats b{font-family:Georgia,serif;font-size:22px;color:#111;font-weight:700}
+.stats span{color:#6b6f76;font-size:12px}
+.bnd{border:0;padding:0;margin:0 0 12px}
+.bnd .t{display:inline-block;font-size:11px;letter-spacing:.06em;margin-bottom:2px;color:var(--c);filter:brightness(.75) saturate(1.4)}
+.bnd p{margin:0}
+table{font-size:14px;margin:4px 0 8px}
+th{color:#6b6f76;border-bottom:1px solid #d9d5cc}
+td{border-bottom:1px solid #ece9e2;color:#2b2f36;padding:9px 12px 9px 0}
+td:first-child{color:#111;font-weight:600}
+.ing{border:0;border-bottom:1px solid #ece9e2;border-radius:0;padding:14px 0;margin:0}
+.ing h4{font-family:Georgia,serif;font-size:17px!important;color:#111!important;margin:0 0 6px!important}
+.ing dl{grid-template-columns:84px 1fr;font-size:14.5px;gap:4px 12px}
+.ing dt{color:#6b6f76;font-size:12px;text-transform:uppercase;letter-spacing:.05em;padding-top:3px}
+.ing dd{color:#2b2f36}
+svg.dg{background:#141a24;border-radius:10px;padding:8px}
+.pbtn{background:#fff;border:1px solid #d9d5cc;color:#111;border-radius:999px;padding:9px 16px}
+.pbtn:hover{border-color:#1a73e8;color:#1a73e8}
+.pane ul,.pane ol{padding-left:20px}
+.pane li::marker{color:#9aa0a6}
+@media (max-width:900px){#content{padding:20px 20px 60px}.pane h2{font-size:23px}#tabs{padding:4px 8px 0}}
+
 @media print{
   html,body{overflow:visible;height:auto;background:#fff}
   #scene,#markers,#hud,#info,#readout,#tourBtn,#tabs,#loader,.noprint{display:none!important}
