@@ -176,200 +176,148 @@ svg.dg{width:100%;height:auto;display:block;margin:8px 0 12px}
   </div>
 </div>
 
-<button id="tourBtn">▶ Take the tour</button>
+<button id="tourBtn">▶ Tour</button>
 
 <aside id="panel">
   <nav id="tabs"></nav>
   <div id="content">
 
 <section class="pane on" data-tab="Overview">
-<div class="kicker">Designing a Life-Sustaining Planet</div>
-<h2>Meet Veyra</h2>
-<p>Veyra is our made-up planet that can support life. It orbits an orange star called <b>Ostra</b>. It has oceans, two continents, active plate tectonics and an atmosphere that keeps it warm and protected. Our goal was to design a planet where the geosphere, hydrosphere, atmosphere and biosphere all work together.</p>
+<div class="kicker">Life-Sustaining Planet</div>
+<h2>Veyra</h2>
+<p>A rocky ocean planet orbiting the orange star <b>Ostra</b>. Its geosphere, hydrosphere, atmosphere and biosphere work together to support life.</p>
 <div class="stats">
 <div><b>1.12×</b><span>Earth's mass</span></div>
-<div><b>16 °C</b><span>average temp</span></div>
-<div><b>74%</b><span>covered by ocean</span></div>
-<div><b>26 hrs</b><span>one day</span></div>
-<div><b>236 days</b><span>one year</span></div>
-<div><b>2</b><span>moons (Ryn, Pell)</span></div>
+<div><b>16 °C</b><span>avg temp</span></div>
+<div><b>74%</b><span>ocean</span></div>
+<div><b>26 hrs</b><span>day</span></div>
+<div><b>236 days</b><span>year</span></div>
+<div><b>2</b><span>moons</span></div>
 </div>
-<h3>How to explore the model</h3>
+<h3>Not Earth</h3>
 <ul>
-<li>Drag to spin the planet and scroll (or pinch) to zoom.</li>
-<li>Pick a <b>map layer</b> on the left to see one set of features at a time: plate boundaries, landforms, erosion, life zones, the water cycle or the carbon cycle.</li>
-<li>Click any dot, or any <span class="lnk" data-f="crown">blue link</span> in the writing, to fly there and read about it.</li>
+<li>Dimmer orange star, so Veyra orbits closer (0.62 AU).</li>
+<li>Thicker air (1.3× Earth's pressure) traps enough heat.</li>
+<li>Two moons make bigger tides and stronger waves.</li>
+<li>Plants are dark red to absorb Ostra's red-orange light.</li>
 </ul>
-<h3>How Veyra is different from Earth</h3>
-<ul>
-<li><b>An orange star.</b> Ostra is smaller and dimmer than the Sun, so Veyra orbits closer to it (0.62 AU) to stay warm enough for liquid water.</li>
-<li><b>Thicker air.</b> Air pressure is 1.3 times Earth's, and the extra greenhouse effect makes up for the dimmer star.</li>
-<li><b>Two moons.</b> Ryn and Pell create bigger, more complicated tides, which means stronger waves and more ocean mixing.</li>
-<li><b>Dark red-purple plants.</b> Ostra gives off mostly red and orange light, so Veyra's plants evolved darker pigments to absorb more of it. From space, the forests look dark reddish-brown instead of green.</li>
-</ul>
-<button class="pbtn noprint" id="printBtn">Print the written description</button>
+<p style="color:var(--muted);font-size:13px">Pick a map layer on the left. Click any dot or <span class="lnk" data-f="crown">blue link</span> to fly there.</p>
+<button class="pbtn noprint" id="printBtn">Print written description</button>
 </section>
 
 <section class="pane" data-tab="1 · Geology">
 <div class="kicker">Section 1</div>
-<h2>Planet Overview and Geological Features</h2>
+<h2>Planet Overview &amp; Geology</h2>
 
-<h3>What is Veyra like?</h3>
-<p>Veyra is a rocky planet a little bigger than Earth, with gravity 1.05 times as strong. It orbits Ostra in the star's habitable zone, where the temperature allows liquid water. Most of the surface is one big ocean, the <span class="lnk" data-f="ocean">Vael Ocean</span>. There are two continents, <span class="lnk" data-f="auren">Auren</span> and <span class="lnk" data-f="mervath">Mervath</span>, plus an icy land mass at the north pole and a few island chains. The climate is mild, about 16 °C on average, with rainforests, grasslands, deserts, wetlands and ice caps.</p>
+<h3>The planet</h3>
+<p>Veyra is a little bigger than Earth. One ocean, the <span class="lnk" data-f="ocean">Vael Ocean</span>, covers most of it. It has two continents, <span class="lnk" data-f="auren">Auren</span> and <span class="lnk" data-f="mervath">Mervath</span>, plus polar ice and island chains. The climate is mild, with rainforests, deserts, wetlands and ice caps.</p>
 
-<h3>Does Veyra have active plate tectonics?</h3>
-<p>Yes. Because Veyra is bigger than Earth, its interior has stayed hot. Heat from its formation and from radioactive elements decaying causes <b>convection currents</b> in the mantle: hot rock rises, cools and sinks again in a slow loop. Those currents move the crust, which is broken into <b>seven plates</b> (Auren, Kesh, Sundra, Mervath, Vael, Cinder and Boreal). The plates move 2 to 9 cm per year. Choose the <b>Plate boundaries</b> layer to see all of them.</p>
+<h3>Active plate tectonics</h3>
+<p>Veyra's hot interior drives <b>mantle convection</b>, which moves <b>7 plates</b> about 2–9 cm per year.</p>
 
-<h3>How do the plates interact?</h3>
-<div class="bnd" style="--c:var(--div)"><div class="t">Divergent · mid-ocean ridge</div><p><span class="lnk" data-f="seam">Seam Ridge</span>: two ocean plates pull apart. Magma rises into the gap and cools into new seafloor, building an underwater mountain range. Hot water vents form along it.</p></div>
-<div class="bnd" style="--c:var(--div)"><div class="t">Divergent · continental rift</div><p><span class="lnk" data-f="hollow">Hollow Rift</span>: Mervath is slowly splitting in two. The land in the middle dropped down and formed a long valley with deep lakes. Someday the ocean will flood in.</p></div>
-<div class="bnd" style="--c:var(--conv)"><div class="t">Convergent · ocean–continent</div><p><span class="lnk" data-f="trench">Ember Trench</span>: the dense ocean plate (Sundra) sinks under the lighter continent (Mervath). This is called subduction. The sinking plate releases water that melts the mantle above it, and the magma rises to form volcanoes like <span class="lnk" data-f="kaelor">Mount Kaelor</span>.</p></div>
-<div class="bnd" style="--c:var(--conv)"><div class="t">Convergent · ocean–ocean</div><p><span class="lnk" data-f="cinder">Cinder Isles</span>: one ocean plate sinks under another, creating a curved chain of volcanic islands next to a deep trench.</p></div>
-<div class="bnd" style="--c:var(--conv)"><div class="t">Convergent · continent–continent</div><p><span class="lnk" data-f="crown">Crown Range</span>: two continents crashed into each other. Neither one sinks, so the crust folds and pushes up into Veyra's tallest mountains (8.4 km). They are still rising and cause earthquakes.</p></div>
-<div class="bnd" style="--c:var(--trans)"><div class="t">Transform</div><p><span class="lnk" data-f="shear">Shearline Fault</span>: two plates slide past each other sideways. No crust is made or destroyed, but the plates get stuck and then slip, causing earthquakes.</p></div>
-<div class="bnd" style="--c:var(--hot)"><div class="t">Hotspot</div><p><span class="lnk" data-f="lantern">Lantern Isles</span>: a plume of hot mantle stays in one place while the plate moves over it, making a line of volcanic islands. The active island is at one end, and the older islands are more eroded.</p></div>
+<h3>Plate interactions</h3>
+<div class="bnd" style="--c:var(--div)"><div class="t">Divergent</div><p><span class="lnk" data-f="seam">Seam Ridge</span>: plates pull apart, and magma makes new seafloor.<br><span class="lnk" data-f="hollow">Hollow Rift</span>: a continent splitting into a rift valley with lakes.</p></div>
+<div class="bnd" style="--c:var(--conv)"><div class="t">Convergent</div><p><span class="lnk" data-f="trench">Ember Trench</span>: an ocean plate sinks under a continent, feeding volcanoes like <span class="lnk" data-f="kaelor">Mount Kaelor</span>.<br><span class="lnk" data-f="cinder">Cinder Isles</span>: ocean meets ocean, forming a volcanic island arc.<br><span class="lnk" data-f="crown">Crown Range</span>: two continents collide and fold into 8.4 km mountains.</p></div>
+<div class="bnd" style="--c:var(--trans)"><div class="t">Transform</div><p><span class="lnk" data-f="shear">Shearline Fault</span>: plates slide past each other, causing earthquakes.</p></div>
+<div class="bnd" style="--c:var(--hot)"><div class="t">Hotspot</div><p><span class="lnk" data-f="lantern">Lantern Isles</span>: the plate moves over a fixed plume, leaving a chain of islands.</p></div>
 
-<h3>How does tectonics help life on Veyra?</h3>
+<h3>How tectonics supports life</h3>
 <ul>
-<li><b>It controls the climate.</b> Subduction carries carbon from the seafloor down into the mantle, and volcanoes release it back into the air as CO₂. This keeps the amount of greenhouse gas balanced over millions of years, so Veyra doesn't freeze or overheat.</li>
-<li><b>It recycles materials.</b> Old crust is destroyed at trenches and new crust forms at ridges. Mountains keep pushing up fresh rock that weathers into nutrients like phosphorus.</li>
-<li><b>It creates habitats.</b> Mountains, rift lakes, volcanic soil, islands and deep-sea vents all give life different places to live.</li>
-<li><b>It protects the planet.</b> The same hot, moving interior keeps Veyra's liquid iron core flowing, which creates a magnetic field that blocks harmful radiation from Ostra.</li>
+<li><b>Climate:</b> subduction buries carbon, and volcanoes release CO₂. This keeps temperatures balanced.</li>
+<li><b>Recycling:</b> crust is destroyed at trenches and remade at ridges, and rising mountains expose fresh, nutrient-rich rock.</li>
+<li><b>Habitats:</b> mountains, rift lakes, volcanic soil, islands and vents.</li>
+<li><b>Protection:</b> the moving liquid core creates a magnetic field.</li>
 </ul>
 
-<h3>What landforms are on Veyra?</h3>
+<h3>Landforms</h3>
 <table>
-<tr><th>Landform</th><th>Example</th><th>How it formed</th></tr>
-<tr><td>Mountains</td><td><span class="lnk" data-f="crown">Crown Range</span></td><td>Continent–continent collision</td></tr>
-<tr><td>Volcanoes</td><td><span class="lnk" data-f="kaelor">Mount Kaelor</span>, <span class="lnk" data-f="lantern">Lantern Isles</span></td><td>Subduction and a hotspot</td></tr>
-<tr><td>Ocean basin</td><td><span class="lnk" data-f="basin">Great Vael Basin</span></td><td>Old seafloor spread out from ridges</td></tr>
-<tr><td>Ocean trench</td><td><span class="lnk" data-f="trench">Ember Trench</span></td><td>Subduction</td></tr>
-<tr><td>Rift valley</td><td><span class="lnk" data-f="hollow">Hollow Rift</span></td><td>Continent pulling apart</td></tr>
-<tr><td>Island arc</td><td><span class="lnk" data-f="cinder">Cinder Isles</span></td><td>Ocean–ocean subduction</td></tr>
-<tr><td>Canyon</td><td><span class="lnk" data-f="canyon">Glasswind Canyon</span></td><td>Flash floods and wind</td></tr>
-<tr><td>Sea cliffs</td><td><span class="lnk" data-f="teeth">Teeth of Ryn</span></td><td>Wave erosion</td></tr>
-<tr><td>Delta</td><td><span class="lnk" data-f="delta">Silvermouth Delta</span></td><td>River deposition</td></tr>
+<tr><th>Landform</th><th>Example</th></tr>
+<tr><td>Mountains</td><td><span class="lnk" data-f="crown">Crown Range</span></td></tr>
+<tr><td>Volcanoes</td><td><span class="lnk" data-f="kaelor">Mount Kaelor</span>, <span class="lnk" data-f="lantern">Lantern Isles</span></td></tr>
+<tr><td>Ocean basin</td><td><span class="lnk" data-f="basin">Great Vael Basin</span></td></tr>
+<tr><td>Trench</td><td><span class="lnk" data-f="trench">Ember Trench</span></td></tr>
+<tr><td>Rift valley</td><td><span class="lnk" data-f="hollow">Hollow Rift</span></td></tr>
+<tr><td>Island arc</td><td><span class="lnk" data-f="cinder">Cinder Isles</span></td></tr>
 </table>
 </section>
 
 <section class="pane" data-tab="2 · Water &amp; Air">
 <div class="kicker">Section 2</div>
-<h2>Atmosphere, Water and Weathering</h2>
+<h2>Atmosphere, Water &amp; Weathering</h2>
 
-<h3>The atmosphere</h3>
-<p>Veyra's air is about 75% nitrogen, 22% oxygen, 1% argon, plus water vapor and a small amount of carbon dioxide (0.06%). The air pressure is 1.3 times Earth's. The thicker air and slightly higher CO₂ trap more heat, which is needed because Ostra is dimmer than our Sun. An <b>ozone layer</b> blocks harmful UV light. The <b>magnetic field</b> protects the atmosphere from being blown away by stellar wind, which is what happened to Mars.</p>
+<h3>Atmosphere</h3>
+<p>75% nitrogen, 22% oxygen, plus argon, water vapor and CO₂. The thick air and greenhouse gases keep Veyra warm. The ozone layer blocks UV light, and the magnetic field stops the air from being stripped away.</p>
 
 <h3>Energy source</h3>
-<p>Veyra's main energy source is its star, <b>Ostra</b>. Its light powers photosynthesis, heats the ocean so water evaporates, and heats the equator more than the poles, which creates wind and ocean currents. Orange stars like Ostra stay stable for tens of billions of years, so life has plenty of time to develop. Veyra also has <b>heat from inside the planet</b>, which powers deep-sea vents, and <b>tidal energy</b> from its two moons, which stirs up the ocean.</p>
+<p>The star <b>Ostra</b> powers photosynthesis, evaporation and wind. Heat from inside the planet powers deep-sea vents.</p>
 
-<h3>Where is the water?</h3>
-<ul>
-<li><b>Ocean (about 96%):</b> the salty <span class="lnk" data-f="ocean">Vael Ocean</span>, about 3.9 km deep on average.</li>
-<li><b>Ice (about 2%):</b> the <span class="lnk" data-f="boreal">Boreal Ice Cap</span> and the <span class="lnk" data-f="austral">Austral sea ice</span>.</li>
-<li><b>Fresh water on land:</b> rivers like the <span class="lnk" data-f="river">Silvermouth</span>, the <span class="lnk" data-f="hollow">Hollow Rift lakes</span> and groundwater underground.</li>
-<li><b>In the air:</b> water vapor and clouds.</li>
-</ul>
+<h3>Where the water is</h3>
+<table>
+<tr><td>Ocean</td><td>~96%, the <span class="lnk" data-f="ocean">Vael Ocean</span></td></tr>
+<tr><td>Ice</td><td>~2%, <span class="lnk" data-f="boreal">Boreal Ice Cap</span>, <span class="lnk" data-f="austral">Austral sea ice</span></td></tr>
+<tr><td>Land</td><td><span class="lnk" data-f="river">Silvermouth River</span>, <span class="lnk" data-f="hollow">rift lakes</span>, groundwater</td></tr>
+<tr><td>Air</td><td>Water vapor and clouds</td></tr>
+</table>
 
-<h3>How does the water cycle work?</h3>
-<p>Choose the <b>Water cycle</b> layer to see these steps on the map.</p>
+<h3>Water cycle</h3>
 <ol>
-<li><b>Evaporation:</b> Ostra heats the ocean and water turns into vapor. The salt is left behind, so the vapor is fresh water.</li>
-<li><b>Condensation:</b> wind carries the moist air east. When it hits the <span class="lnk" data-f="crown">Crown Range</span> it is pushed up, cools down and forms clouds.</li>
-<li><b>Precipitation:</b> heavy rain falls on the <span class="lnk" data-f="verdant">Verdant Slopes</span>, over 3,000 mm per year.</li>
-<li><b>Runoff and groundwater:</b> rainwater flows into the <span class="lnk" data-f="river">Silvermouth River</span> or soaks into the ground. Plants also release water back into the air (transpiration).</li>
-<li><b>Back to the ocean:</b> the river empties at the <span class="lnk" data-f="delta">delta</span> and the cycle starts again.</li>
+<li><b>Evaporation:</b> Ostra heats the ocean.</li>
+<li><b>Condensation:</b> moist air rises over the <span class="lnk" data-f="crown">Crown Range</span> and forms clouds.</li>
+<li><b>Precipitation:</b> heavy rain falls on the <span class="lnk" data-f="verdant">Verdant Slopes</span>.</li>
+<li><b>Runoff:</b> water flows down the <span class="lnk" data-f="river">Silvermouth</span> or soaks into the ground.</li>
+<li><b>Return:</b> the river reaches the sea at the <span class="lnk" data-f="delta">delta</span>.</li>
 </ol>
-<p>On the other side of the mountains, the air has already lost its water, so it sinks and dries out. This <b>rain shadow</b> is why the <span class="lnk" data-f="dunes">Ashen Dunes</span> desert is right next to a rainforest.</p>
+<p>Dry air sinking on the other side of the mountains creates the <span class="lnk" data-f="dunes">Ashen Dunes</span> desert (a rain shadow).</p>
 
-<h3>How do water's properties allow life to exist?</h3>
+<h3>Water's properties and life</h3>
 <ul>
-<li><b>It dissolves almost anything.</b> Water carries nutrients through rivers, soil and the inside of cells.</li>
-<li><b>It holds a lot of heat.</b> The ocean warms up and cools down slowly, so temperatures on Veyra stay steady between day and night and between seasons.</li>
-<li><b>Ice floats.</b> Lakes and polar seas freeze on top, not from the bottom, so animals can survive underneath in winter.</li>
-<li><b>It sticks to itself and other things.</b> This lets water climb up through plant stems to reach the leaves.</li>
-<li><b>It stays liquid over a wide range.</b> With Veyra's thicker air, water doesn't boil until about 107 °C.</li>
+<li><b>Dissolves nutrients</b> and carries them to living things.</li>
+<li><b>Holds heat</b>, so the ocean keeps temperatures steady.</li>
+<li><b>Ice floats</b>, so life survives under frozen water.</li>
+<li><b>Cohesion</b> lets water move up through plants.</li>
 </ul>
 
 <h3>Weathering</h3>
-<p>Weathering breaks rock into smaller pieces.</p>
 <ul>
-<li><b>Mechanical:</b> in the <span class="lnk" data-f="crown">Crown Range</span> and <span class="lnk" data-f="frost">Frostmere Valleys</span>, water freezes in cracks and expands, splitting the rock (frost wedging). Plant roots also grow into cracks. In the <span class="lnk" data-f="dunes">desert</span>, hot days and cold nights make rock crack and flake.</li>
-<li><b>Chemical:</b> CO₂ mixes with rain to make a weak acid that slowly dissolves rock. Oxygen rusts the iron in volcanic rock, which is why the <span class="lnk" data-f="ash">Kaelor Ashlands</span> have red soil.</li>
+<li><b>Mechanical:</b> frost wedging in the <span class="lnk" data-f="frost">Frostmere Valleys</span>, and roots cracking rock.</li>
+<li><b>Chemical:</b> acid rain dissolves rock, and oxidation turns the <span class="lnk" data-f="ash">Ashlands</span> soil red.</li>
 </ul>
 
 <h3>Erosion</h3>
-<p>Erosion moves the broken rock somewhere else.</p>
 <table>
-<tr><th>Cause</th><th>Where on Veyra</th><th>What it made</th></tr>
-<tr><td>Rivers</td><td><span class="lnk" data-f="river">Silvermouth River</span></td><td>V-shaped valley and a delta</td></tr>
-<tr><td>Wind + floods</td><td><span class="lnk" data-f="canyon">Glasswind Canyon</span></td><td>1.2 km deep canyon</td></tr>
-<tr><td>Glaciers</td><td><span class="lnk" data-f="frost">Frostmere Valleys</span></td><td>U-shaped valleys</td></tr>
-<tr><td>Waves</td><td><span class="lnk" data-f="teeth">Teeth of Ryn</span></td><td>Sea cliffs and sea stacks</td></tr>
+<tr><td>Rivers</td><td><span class="lnk" data-f="river">Silvermouth</span>: V-shaped valley and delta</td></tr>
+<tr><td>Wind</td><td><span class="lnk" data-f="canyon">Glasswind Canyon</span></td></tr>
+<tr><td>Glaciers</td><td><span class="lnk" data-f="frost">Frostmere</span> U-shaped valleys</td></tr>
+<tr><td>Waves</td><td><span class="lnk" data-f="teeth">Teeth of Ryn</span> cliffs</td></tr>
 </table>
 
-<h3>How do weathering and erosion support ecosystems?</h3>
-<p>Rock contains nutrients that living things need, like <b>phosphorus, potassium, calcium and iron</b>. Weathering releases them, and erosion carries them by river to soils, wetlands and the ocean, where they feed plants and plankton. When those organisms die, decomposers return the nutrients to the soil and seafloor. Some sediment eventually gets pulled into the mantle at a trench and comes back up through volcanoes as new rock, so the cycle keeps going.</p>
-<p>Weathering also helps control the climate. When Veyra gets warmer, there is more rain and more weathering, which pulls CO₂ out of the air and cools things down. When it gets cooler, weathering slows down, and volcanic CO₂ builds back up and warms it.</p>
+<h3>Nutrient cycling</h3>
+<p>Weathering frees nutrients like phosphorus and iron from rock. Rivers carry them to soil and the ocean, where they feed plants and plankton. Decomposers return them, and subduction and volcanoes recycle the rock.</p>
 </section>
 
 <section class="pane" data-tab="3 · Life">
 <div class="kicker">Section 3</div>
 <h2>Life Ingredients</h2>
-<p>We included <b>all 8</b> ingredients for life. For each one, here's where it's found on Veyra, why life needs it and how the planet's systems keep it available.</p>
+<p>All 8 ingredients, and how Veyra's systems keep each one available.</p>
 
-<div class="ing"><h4>Liquid water <em>hydrosphere</em></h4><dl>
-<dt>Where</dt><dd>The Vael Ocean, rivers, rift lakes, groundwater and clouds.</dd>
-<dt>Why</dt><dd>Every chemical reaction in a living cell happens in water.</dd>
-<dt>Sustained by</dt><dd>Veyra's distance from Ostra and its greenhouse atmosphere keep it liquid. The water cycle keeps fresh water moving to land. The magnetic field stops it from being stripped into space, and volcanoes add new water vapor.</dd></dl></div>
-
-<div class="ing"><h4>Energy <em>star + interior</em></h4><dl>
-<dt>Where</dt><dd>Sunlight from Ostra, heat from deep-sea vents, and tides.</dd>
-<dt>Why</dt><dd>Living things need energy to grow and move.</dd>
-<dt>Sustained by</dt><dd>Plants and plankton use Ostra's light for photosynthesis, and Ostra will shine steadily for billions of years. At the <span class="lnk" data-f="vents">Seam Vent Gardens</span>, bacteria use chemicals from the vents instead (chemosynthesis), which keeps working as long as the plates keep moving.</dd></dl></div>
-
-<div class="ing"><h4>Carbon <em>all four spheres</em></h4><dl>
-<dt>Where</dt><dd>CO₂ in the air, dissolved in the ocean, in limestone rock and in every living thing.</dd>
-<dt>Why</dt><dd>Carbon is the building block of sugars, proteins and DNA.</dd>
-<dt>Sustained by</dt><dd>The carbon cycle. Plants take CO₂ from the air, and animals breathe it back out. Shells become limestone, which is subducted at the <span class="lnk" data-f="trench">Ember Trench</span> and released again by <span class="lnk" data-f="kaelor">Mount Kaelor</span>.</dd></dl></div>
-
-<div class="ing"><h4>Nitrogen <em>atmosphere</em></h4><dl>
-<dt>Where</dt><dd>75% of the air, plus soil and seawater.</dd>
-<dt>Why</dt><dd>It is needed to make proteins and DNA.</dd>
-<dt>Sustained by</dt><dd>Lightning and bacteria on plant roots turn nitrogen gas into a form plants can use. Decomposers return it to the soil, other bacteria release it back to the air, and volcanoes add more.</dd></dl></div>
-
-<div class="ing"><h4>Oxygen <em>atmosphere</em></h4><dl>
-<dt>Where</dt><dd>22% of the air, dissolved in seawater, and in water and rocks.</dd>
-<dt>Why</dt><dd>Animals use it to get energy from food (respiration), and the ozone layer blocks UV light.</dd>
-<dt>Sustained by</dt><dd>Photosynthesis by forests and ocean plankton keeps refilling it. Waves and tides mix it down into the deep ocean.</dd></dl></div>
-
-<div class="ing"><h4>Hydrogen <em>hydrosphere</em></h4><dl>
-<dt>Where</dt><dd>Mostly in water (H₂O) and in all living things.</dd>
-<dt>Why</dt><dd>It is part of water and almost every biological molecule, and it helps hold DNA together.</dd>
-<dt>Sustained by</dt><dd>It stays locked in water. Veyra's stronger gravity and magnetic field keep it from escaping to space. Vents also release hydrogen that deep-sea bacteria use.</dd></dl></div>
-
-<div class="ing"><h4>Phosphorus <em>geosphere</em></h4><dl>
-<dt>Where</dt><dd>In rock (especially volcanic and mountain rock), soil and river sediment.</dd>
-<dt>Why</dt><dd>Cells need it for DNA and for ATP, which carries energy in cells.</dd>
-<dt>Sustained by</dt><dd>It only gets released when rock weathers. Veyra's growing mountains and fresh volcanic rock keep supplying it, and the <span class="lnk" data-f="river">Silvermouth River</span> carries it to the <span class="lnk" data-f="delta">delta</span> and the ocean.</dd></dl></div>
-
-<div class="ing"><h4>Sulfur <em>geosphere</em></h4><dl>
-<dt>Where</dt><dd>Volcanic gases, hydrothermal vents and seawater.</dd>
-<dt>Why</dt><dd>It helps proteins hold their shape.</dd>
-<dt>Sustained by</dt><dd>Volcanoes release sulfur that rain washes into soil and the sea. At the vents, bacteria use hydrogen sulfide for energy. Subduction carries sulfur back down so it can be released again.</dd></dl></div>
+<div class="ing"><h4>Water</h4><dl><dt>Where</dt><dd>Ocean, rivers, lakes, clouds</dd><dt>Why</dt><dd>Cells need it for every reaction</dd><dt>Sustained</dt><dd>The water cycle and greenhouse warmth keep it liquid. The magnetic field stops it from escaping.</dd></dl></div>
+<div class="ing"><h4>Energy</h4><dl><dt>Where</dt><dd>Ostra's light, deep-sea <span class="lnk" data-f="vents">vents</span></dd><dt>Why</dt><dd>Powers growth and movement</dd><dt>Sustained</dt><dd>Ostra is a stable star, and the planet's interior stays hot.</dd></dl></div>
+<div class="ing"><h4>Carbon</h4><dl><dt>Where</dt><dd>Air, ocean, limestone, living things</dd><dt>Why</dt><dd>The base of all organic molecules</dd><dt>Sustained</dt><dd>The carbon cycle: plants absorb it, and the <span class="lnk" data-f="trench">trench</span> and <span class="lnk" data-f="kaelor">volcano</span> recycle it.</dd></dl></div>
+<div class="ing"><h4>Nitrogen</h4><dl><dt>Where</dt><dd>75% of the air, soil</dd><dt>Why</dt><dd>Needed for proteins and DNA</dd><dt>Sustained</dt><dd>Lightning and bacteria fix it into soil, and decomposers return it.</dd></dl></div>
+<div class="ing"><h4>Oxygen</h4><dl><dt>Where</dt><dd>22% of the air, seawater</dd><dt>Why</dt><dd>Respiration and the ozone shield</dd><dt>Sustained</dt><dd>Photosynthesis by forests and plankton refills it.</dd></dl></div>
+<div class="ing"><h4>Hydrogen</h4><dl><dt>Where</dt><dd>Water and living things</dd><dt>Why</dt><dd>Part of water and nearly every biological molecule</dd><dt>Sustained</dt><dd>Locked in water and held in by gravity.</dd></dl></div>
+<div class="ing"><h4>Phosphorus</h4><dl><dt>Where</dt><dd>Rock, soil, <span class="lnk" data-f="delta">delta</span> mud</dd><dt>Why</dt><dd>Needed for DNA and ATP</dd><dt>Sustained</dt><dd>Released by weathering of rising mountains and carried by rivers.</dd></dl></div>
+<div class="ing"><h4>Sulfur</h4><dl><dt>Where</dt><dd>Volcanic gas, vents</dd><dt>Why</dt><dd>Helps proteins hold their shape</dd><dt>Sustained</dt><dd>Volcanoes release it, and subduction recycles it.</dd></dl></div>
 </section>
 
 <section class="pane" data-tab="Systems">
 <div class="kicker">Integration of Systems</div>
-<h2>How Veyra's Systems Work Together</h2>
-<p>On Veyra, the four spheres depend on each other. Each arrow below is one way a sphere affects another.</p>
+<h2>How the Systems Connect</h2>
 <svg class="dg" viewBox="0 0 380 270" font-family="Inter,sans-serif">
 <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#8b94a7"/></marker></defs>
 <g stroke="#8b94a7" stroke-width="1.5" fill="none" marker-end="url(#a)">
-<path d="M140 52 H238"/><path d="M238 72 H140"/>
-<path d="M82 92 V176"/><path d="M102 176 V92"/>
-<path d="M278 92 V176"/><path d="M298 176 V92"/>
-<path d="M140 208 H238"/><path d="M238 228 H140"/>
-<path d="M136 86 L242 186"/>
+<path d="M140 52 H238"/><path d="M238 72 H140"/><path d="M82 92 V176"/><path d="M102 176 V92"/>
+<path d="M278 92 V176"/><path d="M298 176 V92"/><path d="M140 208 H238"/><path d="M238 228 H140"/><path d="M136 86 L242 186"/>
 </g>
 <g font-size="13" font-weight="600" text-anchor="middle">
 <rect x="22" y="30" width="118" height="62" rx="10" fill="#2b1c1c" stroke="#f28b82"/><text x="81" y="66" fill="#fff">Geosphere</text>
@@ -378,51 +326,28 @@ svg.dg{width:100%;height:auto;display:block;margin:8px 0 12px}
 <rect x="240" y="178" width="118" height="62" rx="10" fill="#17281d" stroke="#81c995"/><text x="299" y="214" fill="#fff">Biosphere</text>
 </g>
 <g font-size="10" fill="#c9cfdb" text-anchor="middle">
-<text x="189" y="46">volcanic gases</text><text x="189" y="86">acid rain</text>
-<text x="54" y="138">erodes</text><text x="132" y="138">magma</text>
-<text x="252" y="138">O₂, H₂O</text><text x="330" y="138">CO₂</text>
-<text x="189" y="202">water for life</text><text x="189" y="244">transpiration</text>
-<text x="208" y="128">nutrients</text>
+<text x="189" y="46">volcanic gases</text><text x="189" y="86">acid rain</text><text x="54" y="138">erodes</text><text x="132" y="138">magma</text>
+<text x="252" y="138">O₂, H₂O</text><text x="330" y="138">CO₂</text><text x="189" y="202">water for life</text><text x="189" y="244">transpiration</text><text x="208" y="128">nutrients</text>
 </g></svg>
-
-<h3>The main connections</h3>
 <ul>
-<li><b>Geosphere → Atmosphere:</b> volcanoes like <span class="lnk" data-f="kaelor">Kaelor</span> release CO₂, water vapor and nitrogen. The <span class="lnk" data-f="crown">Crown Range</span> blocks wind and causes a rain shadow.</li>
-<li><b>Atmosphere → Hydrosphere:</b> wind drives evaporation and ocean currents. CO₂ mixes with rain to make weak acid.</li>
-<li><b>Hydrosphere → Geosphere:</b> rain, rivers, ice and waves weather and erode rock. Water carried down with subducting plates helps melt rock into magma.</li>
-<li><b>Geosphere → Biosphere:</b> weathered rock gives soil its nutrients, volcanic ash makes fertile land, and vents feed deep-sea life.</li>
-<li><b>Biosphere → Atmosphere:</b> plants and plankton make oxygen and take in CO₂. Plants also release water vapor.</li>
-<li><b>Biosphere → Geosphere:</b> roots break up rock, and shells pile up to form limestone.</li>
+<li><b>Geo → Atmo:</b> volcanoes release gases, and mountains create a rain shadow.</li>
+<li><b>Atmo → Hydro:</b> wind drives evaporation, and CO₂ makes rain acidic.</li>
+<li><b>Hydro → Geo:</b> water weathers and erodes rock, and helps melt magma.</li>
+<li><b>Geo → Bio:</b> weathered rock and ash supply nutrients.</li>
+<li><b>Bio → Atmo:</b> plants make O₂ and absorb CO₂.</li>
+<li><b>Bio → Geo:</b> roots crack rock, and shells form limestone.</li>
 </ul>
-
-<h3>Example: following one carbon atom</h3>
-<p>Choose the <b>Carbon cycle</b> layer to see this loop on the planet.</p>
+<h3>Carbon cycle example</h3>
 <ol>
-<li><span class="lnk" data-f="kaelor">Mount Kaelor</span> erupts and releases CO₂ into the air. <i>(geosphere → atmosphere)</i></li>
-<li>The CO₂ dissolves in rain and washes into the ocean. <i>(atmosphere → hydrosphere)</i></li>
-<li>Plankton use it to build shells. <i>(hydrosphere → biosphere)</i></li>
-<li>The shells sink and become limestone on the seafloor. <i>(biosphere → geosphere)</i></li>
-<li>The plate carries the limestone into the <span class="lnk" data-f="trench">Ember Trench</span>, where it melts and feeds the volcano again.</li>
+<li><span class="lnk" data-f="kaelor">Kaelor</span> erupts CO₂.</li>
+<li>Rain carries the CO₂ to the ocean.</li>
+<li>Plankton build shells from it.</li>
+<li>The shells become limestone.</li>
+<li>Subduction at the <span class="lnk" data-f="trench">trench</span> melts the limestone, which feeds the volcano again.</li>
 </ol>
-
-<div class="note"><b>What if Veyra's plates stopped moving?</b> Volcanoes would stop adding CO₂, but weathering would keep removing it. Veyra would slowly cool and freeze. The mountains would also wear down flat, and new nutrients would stop being released. Plate tectonics is what keeps all the systems running.</div>
-</section>
-
-<section class="pane" data-tab="Rubric">
-<div class="kicker">Self-check</div>
-<h2>Rubric Checklist</h2>
-<ul class="check">
-<li><span><b>Creativity &amp; Design:</b> an orange star, two moons, thicker air and dark red plants, while still following real science.</span></li>
-<li><span><b>Scientific Accuracy:</b> plate tectonics, climate regulation, water, weathering, erosion and nutrient cycling are explained using ideas from the unit.</span></li>
-<li><span><b>Visual Model:</b> labeled plate boundaries, landforms, bodies of water, volcanoes, weathering and erosion, and life zones, with arrows and labels showing processes (see the map layers).</span></li>
-<li><span><b>Section 1:</b> planet introduction, tectonic activity, every type of plate interaction, landforms, recycling, climate regulation and links to life.</span></li>
-<li><span><b>Section 2:</b> atmosphere, energy source, location of water, the water cycle, water's properties, weathering, erosion and nutrient cycling.</span></li>
-<li><span><b>Section 3:</b> all 8 ingredients, each with where it is found, why it matters and how it is sustained.</span></li>
-<li><span><b>Integration of Systems:</b> a diagram, six connections between spheres, a full carbon loop and a "what if" example.</span></li>
-<li><span><b>Required on the model:</b> plates and boundaries · mountains, volcanoes, ocean basins · rivers, valleys, cliffs · labeled oceans, fertile land and volcanic regions · water cycle · energy source.</span></li>
-</ul>
 </section>
   </div>
+
 </aside>
 
 <div id="info"><button class="x" id="infoX" aria-label="Close">×</button><div class="k" id="infoK"></div><h3 id="infoT"></h3><p id="infoP"></p><p class="life" id="infoL"></p><div class="c" id="infoC"></div>
@@ -590,12 +515,13 @@ renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.
 const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(38,1,.01,400);
 const controls=new OrbitControls(camera,canvas);
-controls.enableDamping=true;controls.dampingFactor=.08;controls.enablePan=false;controls.minDistance=1.35;controls.maxDistance=7;controls.rotateSpeed=.5;controls.zoomSpeed=.7;
+controls.enableDamping=true;controls.dampingFactor=.08;controls.enablePan=false;controls.minDistance=1.35;controls.maxDistance=14;controls.rotateSpeed=.5;controls.zoomSpeed=.7;
 controls.autoRotate=true;controls.autoRotateSpeed=.25;
 function layout(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);camera.aspect=w/h;
  if(mobile())camera.setViewOffset(w,h,0,h*.2,w,h);else{const pw=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pw'))||440;camera.setViewOffset(w,h,(pw-316)/2,0,w,h);}
  camera.updateProjectionMatrix();}
-camera.position.copy(ll2v(20,-40,mobile()?5.2:3.7));layout();addEventListener('resize',layout);
+function fitDist(){const w=innerWidth,h=innerHeight;const aw=mobile()?w:w-316-440-60,ah=mobile()?h*.5:h-40;return Math.max(2.6,Math.min(11,1.25*h/(Math.tan(19*D2R)*Math.min(aw,ah))));}
+camera.position.copy(ll2v(20,-40,fitDist()*2.6));layout();addEventListener('resize',()=>{layout();if(!selected&&!flying)camera.position.setLength(fitDist());});
 
 const sunDir=new THREE.Vector3(-.35,.3,1).normalize();
 const sun=new THREE.DirectionalLight(0xfff0dc,3);scene.add(sun);
@@ -750,7 +676,7 @@ function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,clock.getDe
  renderer.render(scene,camera);updateMarkers();}
 controls.addEventListener('start',()=>{controls.autoRotate=false;});
 
-setTimeout(()=>{generate();setTimeout(()=>{build();setLayer('none');requestAnimationFrame(loop);document.getElementById('loader').classList.add('hide');},20);},50);
+setTimeout(()=>{generate();setTimeout(()=>{build();setLayer('none');requestAnimationFrame(loop);document.getElementById('loader').classList.add('hide');flyTo(ll2v(20,-40),fitDist(),2600);},20);},50);
 </script>
 </body>
 </html>
