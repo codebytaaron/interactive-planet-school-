@@ -21,9 +21,17 @@ button{font:inherit;color:inherit;cursor:pointer}
 
 #loader{position:fixed;inset:0;z-index:60;background:#000;display:grid;place-items:center;transition:opacity .6s}
 #loader.hide{opacity:0;pointer-events:none}
-#loader div{color:var(--muted);font-size:13px;letter-spacing:.06em}
+.ld{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding:0 24px}
+.orb{width:92px;height:92px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#7fb4ff,#1d4f9a 45%,#071226 75%);box-shadow:0 0 60px rgba(90,150,255,.35),inset -14px -10px 30px rgba(0,0,0,.6);animation:orb 3s ease-in-out infinite}
+@keyframes orb{50%{transform:scale(1.05);box-shadow:0 0 90px rgba(90,150,255,.5),inset -14px -10px 30px rgba(0,0,0,.6)}}
+.ldname{font-size:26px;font-weight:700;letter-spacing:.5em;margin-right:-.5em;color:#fff}
+#loadmsg{color:var(--muted);font-size:13px}
+.ldbar{width:220px;height:3px;background:#1b2230;border-radius:3px;overflow:hidden}
+.ldbar i{display:block;height:100%;width:8%;background:linear-gradient(90deg,#4f8dff,#8ab4f8);transition:width .5s}
+.ldcredit{margin-top:22px;font-size:12px;line-height:1.7;color:#7d869a;letter-spacing:.02em}
+.ldcredit b{color:#dfe6f5;font-weight:600}
 
-#hud{position:fixed;left:16px;top:16px;z-index:20;width:300px;display:flex;flex-direction:column;gap:10px}
+#hud{position:fixed;left:16px;top:16px;z-index:20;width:300px;max-height:calc(100vh - 60px);overflow-y:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:10px}
 .box{background:rgba(13,17,23,.92);border:1px solid var(--line);border-radius:12px}
 .title{padding:12px 14px}
 .title h1{margin:0;font-size:18px;font-weight:700;letter-spacing:.02em}
@@ -107,7 +115,7 @@ svg.dg{width:100%;height:auto;display:block;margin:8px 0 12px}
 .mk.plate span{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:500;color:rgba(255,255,255,.6)}
 .mk.off{display:none}
 
-#info{position:fixed;z-index:25;left:16px;bottom:16px;width:340px;background:rgba(13,17,23,.96);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:none}
+#info{position:fixed;z-index:25;left:calc(332px + (100vw - 332px - var(--pw) - 16px)/2);transform:translateX(-50%);bottom:16px;width:min(400px,calc(100vw - 332px - var(--pw) - 96px));max-height:42vh;overflow-y:auto;background:rgba(13,17,23,.96);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:none}
 #info.show{display:block}
 #info .k{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding-right:20px}
 #info h3{font-size:17px;margin:3px 0 6px}
@@ -115,12 +123,21 @@ svg.dg{width:100%;height:auto;display:block;margin:8px 0 12px}
 #info .life{color:#a8dab5}
 #info .c{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
 #info .x{position:absolute;top:8px;right:10px;background:none;border:0;font-size:18px;color:var(--muted)}
-#info .nav{display:none;gap:6px;margin-top:10px}
+#info .nav{display:none;gap:8px;margin-top:12px;align-items:center}
+#info .prog{display:none;height:3px;background:#1f2633;border-radius:3px;margin:0 0 10px;overflow:hidden}
+#info.tour .prog{display:block}
+#info .prog i{display:block;height:100%;background:var(--accent);transition:width .4s}
+#info #tNext{background:var(--accent);color:#0b1220;border-color:var(--accent);font-weight:600}
 #info.tour .nav{display:flex}
 #info .nav button{background:#1b2434;border:1px solid #3a4a66;border-radius:8px;padding:6px 12px;font-size:12.5px}
-#readout{position:fixed;z-index:15;bottom:16px;right:calc(var(--pw) + 16px);font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums;text-shadow:0 1px 2px #000;pointer-events:none}
+#readout{position:fixed;z-index:15;bottom:18px;left:16px;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums;text-shadow:0 1px 2px #000;pointer-events:none}
 #tourBtn{position:fixed;z-index:20;top:16px;right:calc(var(--pw) + 16px);background:rgba(13,17,23,.92);border:1px solid var(--line);border-radius:10px;padding:9px 14px;font-size:13px}
 #tourBtn:hover{border-color:var(--accent)}
+#zoom{position:fixed;z-index:20;right:calc(var(--pw) + 16px);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;background:rgba(13,17,23,.92);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+#zoom button{width:40px;height:40px;background:none;border:0;font-size:20px;line-height:1;color:var(--text)}
+#zoom button+button{border-top:1px solid var(--line)}
+#zoom button:hover{background:#1b2230}
+#zHome{font-size:16px!important}
 
 @media (max-width:900px){
   :root{--pw:0px}
@@ -139,6 +156,10 @@ svg.dg{width:100%;height:auto;display:block;margin:8px 0 12px}
   body.min #info{bottom:54px}
   #readout{display:none}
   #tourBtn{top:auto;right:8px;bottom:calc(46vh + 8px)}
+  #zoom{top:auto;transform:none;right:8px;bottom:calc(46vh + 56px)}
+  body.min #zoom{bottom:102px}
+  #info{transform:none;max-height:34vh}
+  #info.show~#zoom{display:none}
   body.min #tourBtn{bottom:54px}
   #info.show~#tourBtn{display:none}
 }
@@ -200,7 +221,13 @@ svg.dg{background:#141a24;border-radius:10px;padding:8px}
 <body>
 <canvas id="scene"></canvas>
 <div id="markers"></div>
-<div id="loader"><div id="loadmsg">Loading Veyra…</div></div>
+<div id="loader"><div class="ld">
+<div class="orb"></div>
+<div class="ldname">VEYRA</div>
+<div id="loadmsg">Forming planet…</div>
+<div class="ldbar"><i id="ldfill"></i></div>
+<div class="ldcredit">Archived by <b>Teddy Aaron Ventures LLC</b><br>Platforms used by 20,000+ · MIT Licensed model of planet</div>
+</div></div>
 
 <div id="hud">
   <div class="box title"><h1>Veyra</h1><p>A life-sustaining planet · Teddy &amp; George</p></div>
@@ -214,6 +241,7 @@ svg.dg{background:#141a24;border-radius:10px;padding:8px}
   </div>
 </div>
 
+<div id="zoom"><button id="zIn" aria-label="Zoom in">+</button><button id="zOut" aria-label="Zoom out">−</button><button id="zHome" aria-label="Reset view" title="Reset view">⟲</button></div>
 <button id="tourBtn">▶ Tour</button>
 
 <aside id="panel">
@@ -388,7 +416,7 @@ svg.dg{background:#141a24;border-radius:10px;padding:8px}
 
 </aside>
 
-<div id="info"><button class="x" id="infoX" aria-label="Close">×</button><div class="k" id="infoK"></div><h3 id="infoT"></h3><p id="infoP"></p><p class="life" id="infoL"></p><div class="c" id="infoC"></div>
+<div id="info"><div class="prog"><i id="tProg"></i></div><button class="x" id="infoX" aria-label="Close">×</button><div class="k" id="infoK"></div><h3 id="infoT"></h3><p id="infoP"></p><p class="life" id="infoL"></p><div class="c" id="infoC"></div>
 <div class="nav"><button id="tPrev">Back</button><button id="tNext">Next</button><span id="tCount" style="margin-left:auto;font-size:11px;color:var(--muted);align-self:center"></span></div></div>
 <div id="readout"></div>
 
@@ -472,9 +500,9 @@ function textures(){
   for(let x=0;x<CW;x++){const u=(x+.5)/CW;const o=(y*CW+x)*4;
    const fine=(vnoise(x*.0225,y*.0225,1.3)-.5)*.07+(vnoise(x*.08,y*.08,2.7)-.5)*.03+(vnoise(x*.35,y*.35,4.4)-.5)*.018;
    const h=sample(HG,u,v)+fine;let col;
-   if(h<0){const t=-h;col=t<.04?mix(C.coast,C.shal,t/.04):t<.2?mix(C.shal,C.mid,(t-.04)/.16):mix(C.mid,C.deep,(t-.2)/.4);
+   if(h<0){const t=-h+(vnoise(x*.006,y*.006,3.1)-.5)*.05;col=t<.04?mix(C.coast,C.shal,t/.04):t<.2?mix(C.shal,C.mid,(t-.04)/.16):mix(C.mid,C.deep,(t-.2)/.4);
     if(alat>73+fine*60)col=mix(col,C.ice,(alat-73)/3);}
-   else{const m=sample(MO,u,v)+.08+fine*1.5;const rn=h>.3?(vnoise(x*.045,y*.045,5.1)-.5)*.5+(vnoise(x*.15,y*.15,8.3)-.5)*.3+(vnoise(x*.5,y*.5,9.7)-.5)*.18:0;const hm=h+rn*Math.min(1,(h-.3)*2);const cold=alat/90*1.15+Math.max(0,h-.5)*.25;
+   else{const m=sample(MO,u,v)+.08+fine*1.5+(vnoise(x*.012,y*.012,6.6)-.5)*.32+(vnoise(x*.05,y*.05,7.7)-.5)*.12;const rn=h>.3?(vnoise(x*.045,y*.045,5.1)-.5)*.5+(vnoise(x*.15,y*.15,8.3)-.5)*.3+(vnoise(x*.5,y*.5,9.7)-.5)*.18:0;const hm=h+rn*Math.min(1,(h-.3)*2);const cold=alat/90*1.15+Math.max(0,h-.5)*.25;
     col=m>.6?mix(C.forest2,C.forest,(m-.6)/.3):m>.42?mix(C.grass,C.forest2,(m-.42)/.18):m>.28?mix(C.dry,C.grass,(m-.28)/.14):mix(C.desert,C.dry,(m-.1)/.18);
     const am=sample(AM,u,v);if(am>.1)col=mix(col,C.ash,am*1.3);
     if(h<.012)col=mix(C.beach,col,h/.012);
@@ -495,7 +523,7 @@ function textures(){
  for(let i=0;i<W*H;i++){const r=HG[i]<0?175:250;ri.data[i*4]=ri.data[i*4+1]=ri.data[i*4+2]=r;ri.data[i*4+3]=255;}rg.putImageData(ri,0,0);
  const cc=document.createElement('canvas');cc.width=W;cc.height=H;const cg=cc.getContext('2d');const ci=cg.createImageData(W,H);
  for(let y=0;y<H;y++){const lat=90-(y+.5)/H*180;for(let x=0;x<W;x++){const lon=(x+.5)/W*360-180;const p=ll2v(lat,lon);
-  let v=fbm(p.x*3.4,p.y*6,p.z*3.4,5)+.12*Math.exp(-Math.pow(lat/8,2))+.12*Math.exp(-Math.pow((Math.abs(lat)-55)/10,2))-.15*Math.exp(-Math.pow((Math.abs(lat)-25)/8,2));
+  const wq=fbm(p.x*2.2+5,p.y*2.2,p.z*2.2,3)*.35;let v=fbm(p.x*3.4+wq,p.y*6+wq,p.z*3.4-wq,6)+.12*Math.exp(-Math.pow(lat/8,2))+.12*Math.exp(-Math.pow((Math.abs(lat)-55)/10,2))-.15*Math.exp(-Math.pow((Math.abs(lat)-25)/8,2));
   const i=y*W+x;v+=.3*(MO[i]-.5);if(HG[i]<0)v+=.02;
   const a=Math.max(0,Math.min(1,(v-.08)/.32));const o=i*4;ci.data[o]=ci.data[o+1]=ci.data[o+2]=255;ci.data[o+3]=Math.pow(a,1.4)*220;}}
  cg.putImageData(ci,0,0);
@@ -694,7 +722,7 @@ addEventListener('click',e=>{if(!e.target.closest('#searchWrap'))sRes.style.disp
 
 const TOUR=[['crown','plates'],['trench','plates'],['seam','plates'],['shear','plates'],['hollow','plates'],['lantern','plates'],['verdant','water'],['dunes','water'],['river','erosion'],['delta','life'],['canyon','erosion'],['teeth','erosion'],['vents','life'],['ash','life'],['kaelor','systems']];
 let ti=0;
-function tourGo(i){touring=true;ti=(i+TOUR.length)%TOUR.length;const [id,l]=TOUR[ti];setLayer(l);select(id,true);info.classList.add('tour');document.getElementById('tCount').textContent=`${ti+1} / ${TOUR.length}`;}
+function tourGo(i){touring=true;ti=(i+TOUR.length)%TOUR.length;const [id,l]=TOUR[ti];setLayer(l);select(id,true);info.classList.add('tour');document.getElementById('tCount').textContent=`${ti+1} of ${TOUR.length}`;document.getElementById('tProg').style.width=((ti+1)/TOUR.length*100)+'%';}
 document.getElementById('tourBtn').onclick=()=>tourGo(0);
 document.getElementById('tNext').onclick=()=>tourGo(ti+1);document.getElementById('tPrev').onclick=()=>tourGo(ti-1);
 
@@ -713,8 +741,12 @@ function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,clock.getDe
  for(const f of flows){if(!layerObjs[f.key].visible)continue;const arr=f.geo.attributes.position.array;for(let i=0;i<f.n;i++){const p=f.curve.getPoint((t*.035+i/f.n)%1);arr[i*3]=p.x;arr[i*3+1]=p.y;arr[i*3+2]=p.z;}f.geo.attributes.position.needsUpdate=true;}
  renderer.render(scene,camera);updateMarkers();}
 controls.addEventListener('start',()=>{controls.autoRotate=false;});
+const zoomBy=f=>{const d=Math.min(controls.maxDistance,Math.max(controls.minDistance,camera.position.length()*f));flyTo(camera.position.clone(),d,450);};
+document.getElementById('zIn').onclick=()=>zoomBy(.75);document.getElementById('zOut').onclick=()=>zoomBy(1.33);
+document.getElementById('zHome').onclick=()=>{selected=null;touring=false;info.classList.remove('show','tour');setLayer('none');flyTo(ll2v(20,-40),fitDist(),1400);};
 
-setTimeout(()=>{generate();document.getElementById('loadmsg').textContent='Rendering high-resolution surface…';setTimeout(()=>{build();setLayer('none');requestAnimationFrame(loop);document.getElementById('loader').classList.add('hide');flyTo(ll2v(20,-40),fitDist(),2600);},20);},50);
+const T0=performance.now();const fill=document.getElementById('ldfill');fill.style.width='30%';
+setTimeout(()=>{generate();fill.style.width='65%';document.getElementById('loadmsg').textContent='Rendering high-resolution surface…';setTimeout(()=>{build();fill.style.width='100%';setLayer('none');requestAnimationFrame(loop);setTimeout(()=>{document.getElementById('loader').classList.add('hide');flyTo(ll2v(20,-40),fitDist(),2600);},Math.max(300,2600-(performance.now()-T0)));},20);},400);
 </script>
 </body>
 </html>
