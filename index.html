@@ -158,8 +158,9 @@ svg.dg{width:100%;height:auto;display:block;margin:8px 0 12px}
   #tourBtn{top:auto;right:8px;bottom:calc(46vh + 8px)}
   #zoom{top:auto;transform:none;right:8px;bottom:calc(46vh + 56px)}
   body.min #zoom{bottom:102px}
-  #info{transform:none;max-height:34vh}
-  #info.show~#zoom{display:none}
+  #info{transform:none;max-height:46vh;padding-bottom:0}
+  #info .nav{position:sticky;bottom:0;background:rgba(13,17,23,.98);padding:10px 0 12px;margin-top:4px}
+  body.infoOpen #zoom,body.infoOpen #tourBtn{display:none}
   body.min #tourBtn{bottom:54px}
   #info.show~#tourBtn{display:none}
 }
@@ -693,15 +694,15 @@ function hAt(lat,lon){return sample(HG,(lon+180)/360,(90-lat)/180);}
 function elev(h){return h>=0?`Elevation ${Math.round(h*4500).toLocaleString()} m`:`Depth ${Math.round(-h*6800).toLocaleString()} m`;}
 function select(id,keepLayer){const f=F.find(x=>x.id===id);if(!f)return;selected=id;
  if(!keepLayer&&!f.L.includes(layer))setLayer(f.L[0]);
- flyTo(ll2v(f.lat,f.lon),['auren','mervath','ocean','basin'].includes(id)?3.2:2.7);
+ flyTo(ll2v(f.lat,f.lon),['auren','mervath','ocean','basin'].includes(id)?3.2:2.7)*(mobile()?1.35:1);
  const lc=LCOL[f.L.includes(layer)?layer:f.L[0]];
  document.getElementById('infoK').textContent=f.k;document.getElementById('infoK').style.color=lc;
  document.getElementById('infoT').textContent=f.name;document.getElementById('infoP').textContent=f.t;
  document.getElementById('infoL').textContent='Supports life: '+f.l;
  document.getElementById('infoC').textContent=fmt(f.lat,f.lon)+' · '+elev(hAt(f.lat,f.lon));
- info.classList.add('show');applyOpts();
+ info.classList.add('show');document.body.classList.add('infoOpen');applyOpts();
  if(mobile())document.body.classList.add('min');}
-document.getElementById('infoX').onclick=()=>{selected=null;touring=false;info.classList.remove('show','tour');applyOpts();};
+document.getElementById('infoX').onclick=()=>{selected=null;touring=false;info.classList.remove('show','tour');document.body.classList.remove('infoOpen');applyOpts();};
 document.querySelectorAll('.lnk').forEach(a=>a.onclick=()=>select(a.dataset.f));
 
 const tabsEl=document.getElementById('tabs'),panes=[...document.querySelectorAll('.pane')];
