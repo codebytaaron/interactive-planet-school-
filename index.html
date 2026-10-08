@@ -203,6 +203,27 @@ svg.dg{background:#141a24;border-radius:10px;padding:8px}
 .pane li::marker{color:#9aa0a6}
 @media (max-width:900px){#content{padding:20px 20px 60px}.pane h2{font-size:23px}#tabs{padding:4px 8px 0}}
 
+
+/* ---- onboarding ---- */
+#ob{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px}
+#ob.show{display:flex}
+.obc{width:min(440px,100%);background:#fbfaf7;color:#1f2328;border-radius:16px;padding:26px 26px 20px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.obc .step{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#1a73e8}
+.obc h2{font-family:Georgia,serif;font-size:24px;margin:6px 0 10px;color:#111}
+.obc p{font-size:15px;line-height:1.6;margin:0 0 6px;color:#2b2f36}
+.obc .ico{font-size:30px;margin-bottom:6px}
+.obdots{display:flex;gap:6px;margin:18px 0 16px}
+.obdots i{width:7px;height:7px;border-radius:50%;background:#d9d5cc}
+.obdots i.on{background:#1a73e8;width:20px;border-radius:4px}
+.obbtns{display:flex;gap:8px;align-items:center}
+.obbtns button{border-radius:999px;padding:9px 16px;font-size:14px;border:1px solid #d9d5cc;background:#fff;color:#111}
+.obbtns .pri{background:#1a73e8;border-color:#1a73e8;color:#fff;font-weight:600;margin-left:auto}
+.obbtns .skip{border:0;background:none;color:#6b6f76;padding-left:0}
+.spot{position:relative;z-index:55!important;box-shadow:0 0 0 3px #8ab4f8,0 0 0 9px rgba(138,180,248,.25)!important;border-radius:12px;transition:box-shadow .3s}
+#help{position:fixed;z-index:20;top:16px;right:calc(var(--pw) + 92px);width:38px;height:38px;border-radius:10px;background:rgba(13,17,23,.92);border:1px solid var(--line);font-size:15px;font-weight:700}
+#help:hover{border-color:var(--accent)}
+@media (max-width:900px){#help{top:auto;right:8px;bottom:calc(46vh + 176px)}body.min #help{bottom:222px}body.infoOpen #help{display:none}}
+
 @media print{
   html,body{overflow:visible;height:auto;background:#fff}
   #scene,#markers,#hud,#info,#readout,#tourBtn,#tabs,#loader,.noprint{display:none!important}
@@ -243,6 +264,10 @@ svg.dg{background:#141a24;border-radius:10px;padding:8px}
 </div>
 
 <div id="zoom"><button id="zIn" aria-label="Zoom in">+</button><button id="zOut" aria-label="Zoom out">−</button><button id="zHome" aria-label="Reset view" title="Reset view">⟲</button></div>
+<button id="help" aria-label="How to use">?</button>
+<div id="ob"><div class="obc"><div class="ico" id="obIco"></div><div class="step" id="obStep"></div><h2 id="obT"></h2><p id="obP"></p>
+<div class="obdots" id="obDots"></div>
+<div class="obbtns"><button class="skip" id="obSkip">Skip</button><button id="obBack">Back</button><button class="pri" id="obNext">Next</button></div></div></div>
 <button id="tourBtn">▶ Tour</button>
 
 <aside id="panel">
@@ -746,8 +771,34 @@ const zoomBy=f=>{const d=Math.min(controls.maxDistance,Math.max(controls.minDist
 document.getElementById('zIn').onclick=()=>zoomBy(.75);document.getElementById('zOut').onclick=()=>zoomBy(1.33);
 document.getElementById('zHome').onclick=()=>{selected=null;touring=false;info.classList.remove('show','tour');setLayer('none');flyTo(ll2v(20,-40),fitDist(),1400);};
 
+
+/* ---------- onboarding ---------- */
+const OB=[
+ {i:'🪐',t:'Welcome to Veyra',p:'This is our life-sustaining planet project. The 3D globe is our visual model, and the panel on the right holds our written description.',el:null},
+ {i:'🖐️',t:'Move the planet',p:'Drag to spin the planet. Scroll, pinch or use the + / − buttons to zoom. The ⟲ button resets the view.',el:'#zoom'},
+ {i:'🗺️',t:'Choose a map layer',p:'Each layer shows one part of the rubric: plate boundaries, landforms, weathering and erosion, life zones, the water cycle and the carbon cycle.',el:'#layers'},
+ {i:'📍',t:'Click any place',p:'Click a dot on the globe, or a blue link in the writing, to fly there and read how it works and how it supports life.',el:null},
+ {i:'📄',t:'Read the written sections',p:'Use the tabs on the right for Section 1, Section 2, Section 3 and Systems. You can also print them.',el:'#panel'},
+ {i:'▶',t:'Take the guided tour',p:'Press Start tour to walk through every key feature step by step, or explore on your own. Press ? anytime to see this again.',el:'#tourBtn'},
+];
+let obi=0;const ob=document.getElementById('ob');
+function obShow(i){obi=i;const st=OB[i];document.querySelectorAll('.spot').forEach(e=>e.classList.remove('spot'));
+ if(st.el&&!(mobile()&&st.el==='#panel')){const e=document.querySelector(st.el);if(e&&getComputedStyle(e).display!=='none')e.classList.add('spot');}
+ document.getElementById('obIco').textContent=st.i;document.getElementById('obStep').textContent=`Step ${i+1} of ${OB.length}`;
+ document.getElementById('obT').textContent=st.t;document.getElementById('obP').textContent=st.p;
+ document.getElementById('obDots').innerHTML=OB.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('');
+ document.getElementById('obBack').style.visibility=i?'visible':'hidden';
+ document.getElementById('obNext').textContent=i===OB.length-1?'Start tour':'Next';
+ document.getElementById('obSkip').textContent=i===OB.length-1?'Explore on my own':'Skip';
+ ob.classList.add('show');}
+function obClose(){ob.classList.remove('show');document.querySelectorAll('.spot').forEach(e=>e.classList.remove('spot'));try{localStorage.setItem('veyraOb','1')}catch(e){}}
+document.getElementById('obNext').onclick=()=>{if(obi<OB.length-1)obShow(obi+1);else{obClose();tourGo(0);}};
+document.getElementById('obBack').onclick=()=>obShow(Math.max(0,obi-1));
+document.getElementById('obSkip').onclick=obClose;
+document.getElementById('help').onclick=()=>obShow(0);
+addEventListener('keydown',e=>{if(!ob.classList.contains('show'))return;if(e.key==='Escape')obClose();if(e.key==='ArrowRight')document.getElementById('obNext').click();if(e.key==='ArrowLeft'&&obi)obShow(obi-1);});
 const T0=performance.now();const fill=document.getElementById('ldfill');fill.style.width='30%';
-setTimeout(()=>{generate();fill.style.width='65%';document.getElementById('loadmsg').textContent='Rendering high-resolution surface…';setTimeout(()=>{build();fill.style.width='100%';setLayer('none');requestAnimationFrame(loop);setTimeout(()=>{document.getElementById('loader').classList.add('hide');flyTo(ll2v(20,-40),fitDist(),2600);},Math.max(300,2600-(performance.now()-T0)));},20);},400);
+setTimeout(()=>{generate();fill.style.width='65%';document.getElementById('loadmsg').textContent='Rendering high-resolution surface…';setTimeout(()=>{build();fill.style.width='100%';setLayer('none');requestAnimationFrame(loop);setTimeout(()=>{document.getElementById('loader').classList.add('hide');flyTo(ll2v(20,-40),fitDist(),2600);setTimeout(()=>obShow(0),2700);},Math.max(300,2600-(performance.now()-T0)));},20);},400);
 </script>
 </body>
 </html>
