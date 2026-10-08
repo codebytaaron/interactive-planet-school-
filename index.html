@@ -517,7 +517,10 @@ function textures(){
     if(h<.02)col=mix(C.beach,col,h/.02);
     if(hm>.45)col=mix(col,mix(C.rock,C.rock2,rn+.5),(hm-.45)/.25);
     if(cold>.9)col=mix(col,C.tundra,(cold-.9)/.1);
-    if(cold>1.02||hm>1.5)col=mix(col,C.snow,Math.max((cold-1.02)/.06,(hm-1.5)/.1));}
+    if(cold>1.02||hm>1.5)col=mix(col,C.snow,Math.max((cold-1.02)/.06,(hm-1.45)/.4));}
+   if(h>0){const du=1/W,dv=1/H;let gx=sample(HG,u+du,v)-sample(HG,u-du,v),gy=sample(HG,u,v+dv)-sample(HG,u,v-dv);
+    if(h>.3){const s2=Math.min(1,(h-.3)*2);gx+=(vnoise((x+1)*.09,y*.09,5.1)-vnoise((x-1)*.09,y*.09,5.1))*.5*s2+(vnoise((x+1)*.3,y*.3,8.3)-vnoise((x-1)*.3,y*.3,8.3))*.3*s2;gy+=(vnoise(x*.09,(y+1)*.09,5.1)-vnoise(x*.09,(y-1)*.09,5.1))*.5*s2+(vnoise(x*.3,(y+1)*.3,8.3)-vnoise(x*.3,(y-1)*.3,8.3))*.3*s2;}
+    const sh=Math.max(.45,Math.min(1.6,1+(gx+gy)*5));col=[col[0]*sh,col[1]*sh,col[2]*sh];}
    const k=1+fine*1.2;d[o]=col[0]*k;d[o+1]=col[1]*k;d[o+2]=col[2]*k;d[o+3]=255;
    const bv=h<0?0:Math.min(255,h*150+(h>.3?(vnoise(x*.09,y*.09,5.1)-.5)*120:0));bd[o]=bd[o+1]=bd[o+2]=bv;bd[o+3]=255;}}
  g.putImageData(img,0,0);bg.putImageData(bimg,0,0);
