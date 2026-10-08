@@ -634,7 +634,7 @@ function build(){
  globe=new THREE.Mesh(new THREE.SphereGeometry(1,512,256),new THREE.MeshStandardMaterial({map,displacementMap:disp,displacementScale:DISP,bumpMap:disp,bumpScale:6,roughnessMap:rough,roughness:1,metalness:0}));
  planet.add(globe);
  const ct=new THREE.CanvasTexture(cloudsTex());ct.colorSpace=THREE.SRGBColorSpace;
- clouds=new THREE.Mesh(new THREE.SphereGeometry(1.032,128,64),new THREE.MeshStandardMaterial({map:ct,transparent:true,depthWrite:false,opacity:.62}));planet.add(clouds);
+ clouds=new THREE.Mesh(new THREE.SphereGeometry(1.032,128,64),new THREE.MeshStandardMaterial({map:ct,transparent:true,depthWrite:false,opacity:.5}));planet.add(clouds);
  atmo=new THREE.Mesh(new THREE.SphereGeometry(1.12,96,48),new THREE.ShaderMaterial({side:THREE.BackSide,blending:THREE.AdditiveBlending,transparent:true,depthWrite:false,
   vertexShader:`varying vec3 vN;void main(){vN=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
   fragmentShader:`varying vec3 vN;void main(){float i=pow(max(.68-dot(vN,vec3(0,0,1.)),0.),4.);gl_FragColor=vec4(.45,.68,1.,1.)*i*1.1;}`}));
@@ -732,10 +732,10 @@ function stepFly(now){if(!flying)return;const {a,b,fromD,dist,t0,dur}=flying;let
 const infoEl=document.getElementById('info');
 function fmtLL(lat,lon){return `${Math.abs(lat).toFixed(1)}°${lat>=0?'N':'S'}  ${Math.abs(lon).toFixed(1)}°${lon>=0?'E':'W'}`;}
 function focusFeature(id,dist){const f=MK.find(m=>m.id===id);if(!f)return;
- if(f.moon){flyTo(f.moon.mesh.position.clone(),f.moon.dist+1.2);}else flyTo(f.pos,dist||(f.cat==='land'&&(id==='auren'||id==='mervath')?2.9:2.15));
+ if(f.moon){flyTo(f.moon.mesh.position.clone(),f.moon.dist+1.2);}else flyTo(f.pos,dist||(f.cat==='land'&&(id==='auren'||id==='mervath')?3.1:2.55));
  const c=CAT[f.cat];document.getElementById('infoK').textContent=(c?c[0]:'')+(f.type?' · '+f.type:'');document.getElementById('infoK').style.color=c?`var(${c[1]})`:'#fff';
  document.getElementById('infoT').textContent=f.name;document.getElementById('infoP').textContent=f.t||'';const L=document.getElementById('infoL');L.textContent=f.l?'🌱 How it supports life: '+f.l:'';L.style.display=f.l?'':'none';
- document.getElementById('infoC').textContent=f.lat!=null?fmtLL(f.lat,f.lon)+(()=>{const [h]=hAt(f.lat,f.lon);return h>=0?`  ·  elev ${Math.round(h*9000).toLocaleString()} m`:`  ·  depth ${Math.round(-h*15000).toLocaleString()} m`})():'';
+ document.getElementById('infoC').textContent=f.lat!=null?fmtLL(f.lat,f.lon)+(()=>{const [h]=hAt(f.lat,f.lon);return h>=0?`  ·  elev ${Math.round(h*4500).toLocaleString()} m`:`  ·  depth ${Math.round(-h*6800).toLocaleString()} m`})():'';
  infoEl.classList.add('show');}
 document.getElementById('infoX').onclick=()=>infoEl.classList.remove('show');
 const ALIAS={crown:'crown',trench:'trench',kaelor:'kaelor',seam:'seam',shear:'shear',hollow:'hollow',cinder:'cinder',lantern:'lantern',basin:'basin',auren:'auren',mervath:'mervath',river:'river',delta:'delta',canyon:'canyon',dunes:'dunes',teeth:'teeth',frost:'frost',verdant:'verdant',vents:'vents',ash:'ash',ocean:'ocean',boreal:'boreal',austral:'austral'};
@@ -800,7 +800,7 @@ canvas.addEventListener('pointermove',e=>{const now=performance.now();if(now-las
  const [lat,lon]=v2ll(hit);const [h,m]=hAt(lat,lon);let biome;
  if(h<0)biome=Math.abs(lat)>74?'Polar sea ice':-h>.45?'Deep ocean / abyssal plain':-h>.15?'Open ocean':'Shallow shelf sea';
  else if(h>.92||Math.abs(lat)/90*1.15+h*.9>1.02)biome='Ice & snow';else if(h>.5)biome='Bare mountain rock';else if(gauss(lat,lon,-16,43,6.5)>.4)biome='Volcanic ashland soil';else if(m>.62)biome='Plum rainforest';else if(m>.42)biome='Plum woodland & rustgrass';else if(m>.28)biome='Dry scrub';else biome='Desert dunes';
- ro.textContent=`${fmtLL(lat,lon)}  ·  ${h>=0?'elev '+Math.round(h*9000).toLocaleString()+' m':'depth '+Math.round(-h*15000).toLocaleString()+' m'}  ·  ${biome}`;});
+ ro.textContent=`${fmtLL(lat,lon)}  ·  ${h>=0?'elev '+Math.round(h*4500).toLocaleString()+' m':'depth '+Math.round(-h*6800).toLocaleString()+' m'}  ·  ${biome}`;});
 canvas.addEventListener('pointerdown',()=>{if(flying)flying=null;});
 controls.addEventListener('start',()=>{controls.autoRotate=false;});
 controls.addEventListener('end',()=>{setTimeout(()=>{if(!flying&&!touring)controls.autoRotate=layerState.rotate},4000);});
