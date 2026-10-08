@@ -219,7 +219,8 @@ svg.dg{background:#141a24;border-radius:10px;padding:8px}
 .obbtns button{border-radius:999px;padding:9px 16px;font-size:14px;border:1px solid #d9d5cc;background:#fff;color:#111}
 .obbtns .pri{background:#1a73e8;border-color:#1a73e8;color:#fff;font-weight:600;margin-left:auto}
 .obbtns .skip{border:0;background:none;color:#6b6f76;padding-left:0}
-.spot{position:relative;z-index:55!important;box-shadow:0 0 0 3px #8ab4f8,0 0 0 9px rgba(138,180,248,.25)!important;border-radius:12px;transition:box-shadow .3s}
+.lift{z-index:55!important}
+.spot{z-index:55!important;box-shadow:0 0 0 3px #8ab4f8,0 0 0 9px rgba(138,180,248,.25)!important;border-radius:12px;transition:box-shadow .3s}
 #help{position:fixed;z-index:20;top:16px;right:calc(var(--pw) + 92px);width:38px;height:38px;border-radius:10px;background:rgba(13,17,23,.92);border:1px solid var(--line);font-size:15px;font-weight:700}
 #help:hover{border-color:var(--accent)}
 @media (max-width:900px){#help{top:auto;right:8px;bottom:calc(46vh + 176px)}body.min #help{bottom:222px}body.infoOpen #help{display:none}}
@@ -782,8 +783,8 @@ const OB=[
  {i:'▶',t:'Take the guided tour',p:'Press Start tour to walk through every key feature step by step, or explore on your own. Press ? anytime to see this again.',el:'#tourBtn'},
 ];
 let obi=0;const ob=document.getElementById('ob');
-function obShow(i){obi=i;const st=OB[i];document.querySelectorAll('.spot').forEach(e=>e.classList.remove('spot'));
- if(st.el&&!(mobile()&&st.el==='#panel')){const e=document.querySelector(st.el);if(e&&getComputedStyle(e).display!=='none')e.classList.add('spot');}
+function obShow(i){obi=i;const st=OB[i];document.querySelectorAll('.spot,.lift').forEach(e=>e.classList.remove('spot','lift'));
+ if(st.el&&!(mobile()&&st.el==='#panel')){const e=document.querySelector(st.el);if(e&&getComputedStyle(e).display!=='none'){e.classList.add('spot');const h=e.closest('#hud');if(h)h.classList.add('lift');}}
  document.getElementById('obIco').textContent=st.i;document.getElementById('obStep').textContent=`Step ${i+1} of ${OB.length}`;
  document.getElementById('obT').textContent=st.t;document.getElementById('obP').textContent=st.p;
  document.getElementById('obDots').innerHTML=OB.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('');
@@ -791,7 +792,7 @@ function obShow(i){obi=i;const st=OB[i];document.querySelectorAll('.spot').forEa
  document.getElementById('obNext').textContent=i===OB.length-1?'Start tour':'Next';
  document.getElementById('obSkip').textContent=i===OB.length-1?'Explore on my own':'Skip';
  ob.classList.add('show');}
-function obClose(){ob.classList.remove('show');document.querySelectorAll('.spot').forEach(e=>e.classList.remove('spot'));try{localStorage.setItem('veyraOb','1')}catch(e){}}
+function obClose(){ob.classList.remove('show');document.querySelectorAll('.spot,.lift').forEach(e=>e.classList.remove('spot','lift'));try{localStorage.setItem('veyraOb','1')}catch(e){}}
 document.getElementById('obNext').onclick=()=>{if(obi<OB.length-1)obShow(obi+1);else{obClose();tourGo(0);}};
 document.getElementById('obBack').onclick=()=>obShow(Math.max(0,obi-1));
 document.getElementById('obSkip').onclick=obClose;
