@@ -492,7 +492,7 @@ function textures(){
  RIVERS.forEach((r,i)=>{g.strokeStyle='rgba(28,66,92,.9)';g.lineWidth=i===0?3.6:i<4?2.2:2.6;g.beginPath();densify(r,.3).forEach(([a,b],k)=>{const [X,Y]=px(a,b);k?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke();});
  g.strokeStyle='rgba(120,56,34,.9)';g.lineWidth=6;g.beginPath();densify([[19,-35],[16.5,-31.5],[15,-29.5],[12,-26.5]],.3).forEach(([a,b],k)=>{const [X,Y]=px(a,b);k?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke();
  const rc=document.createElement('canvas');rc.width=W;rc.height=H;const rg=rc.getContext('2d');const ri=rg.createImageData(W,H);
- for(let i=0;i<W*H;i++){const r=HG[i]<0?120:250;ri.data[i*4]=ri.data[i*4+1]=ri.data[i*4+2]=r;ri.data[i*4+3]=255;}rg.putImageData(ri,0,0);
+ for(let i=0;i<W*H;i++){const r=HG[i]<0?175:250;ri.data[i*4]=ri.data[i*4+1]=ri.data[i*4+2]=r;ri.data[i*4+3]=255;}rg.putImageData(ri,0,0);
  const cc=document.createElement('canvas');cc.width=W;cc.height=H;const cg=cc.getContext('2d');const ci=cg.createImageData(W,H);
  for(let y=0;y<H;y++){const lat=90-(y+.5)/H*180;for(let x=0;x<W;x++){const lon=(x+.5)/W*360-180;const p=ll2v(lat,lon);
   let v=fbm(p.x*3.4,p.y*6,p.z*3.4,5)+.12*Math.exp(-Math.pow(lat/8,2))+.12*Math.exp(-Math.pow((Math.abs(lat)-55)/10,2))-.15*Math.exp(-Math.pow((Math.abs(lat)-25)/8,2));
