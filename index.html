@@ -397,7 +397,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const D2R=Math.PI/180,R2D=180/Math.PI;
-const W=1024,H=512,CW=2048,CH=1024;
+const W=1536,H=768,CW=4096,CH=2048;
 const mobile=()=>innerWidth<=900;
 
 function ll2v(lat,lon,r=1){const a=lat*D2R,b=lon*D2R;return new THREE.Vector3(r*Math.cos(a)*Math.cos(b),r*Math.sin(a),-r*Math.cos(a)*Math.sin(b));}
@@ -470,11 +470,11 @@ function textures(){
  const C={deep:[4,14,34],mid:[8,30,64],shal:[22,78,104],coast:[46,120,128],beach:[132,120,96],forest:[44,30,28],forest2:[64,46,36],grass:[96,82,54],dry:[136,114,78],desert:[190,158,110],rock:[92,84,78],rock2:[60,54,50],snow:[236,240,246],tundra:[128,118,108],ash:[98,44,32],ice:[210,224,236]};
  for(let y=0;y<CH;y++){const v=(y+.5)/CH;const lat=90-v*180;const alat=Math.abs(lat);
   for(let x=0;x<CW;x++){const u=(x+.5)/CW;const o=(y*CW+x)*4;
-   const fine=(vnoise(x*.045,y*.045,1.3)-.5)*.07+(vnoise(x*.16,y*.16,2.7)-.5)*.03;
+   const fine=(vnoise(x*.0225,y*.0225,1.3)-.5)*.07+(vnoise(x*.08,y*.08,2.7)-.5)*.03+(vnoise(x*.35,y*.35,4.4)-.5)*.018;
    const h=sample(HG,u,v)+fine;let col;
    if(h<0){const t=-h;col=t<.04?mix(C.coast,C.shal,t/.04):t<.2?mix(C.shal,C.mid,(t-.04)/.16):mix(C.mid,C.deep,(t-.2)/.4);
     if(alat>73+fine*60)col=mix(col,C.ice,(alat-73)/3);}
-   else{const m=sample(MO,u,v)+.08+fine*1.5;const rn=h>.3?(vnoise(x*.09,y*.09,5.1)-.5)*.5+(vnoise(x*.3,y*.3,8.3)-.5)*.3:0;const hm=h+rn*Math.min(1,(h-.3)*2);const cold=alat/90*1.15+Math.max(0,h-.5)*.25;
+   else{const m=sample(MO,u,v)+.08+fine*1.5;const rn=h>.3?(vnoise(x*.045,y*.045,5.1)-.5)*.5+(vnoise(x*.15,y*.15,8.3)-.5)*.3:0;const hm=h+rn*Math.min(1,(h-.3)*2);const cold=alat/90*1.15+Math.max(0,h-.5)*.25;
     col=m>.6?mix(C.forest2,C.forest,(m-.6)/.3):m>.42?mix(C.grass,C.forest2,(m-.42)/.18):m>.28?mix(C.dry,C.grass,(m-.28)/.14):mix(C.desert,C.dry,(m-.1)/.18);
     const am=sample(AM,u,v);if(am>.1)col=mix(col,C.ash,am*1.3);
     if(h<.012)col=mix(C.beach,col,h/.012);
@@ -482,15 +482,15 @@ function textures(){
     if(cold>.9)col=mix(col,C.tundra,(cold-.9)/.1);
     if(cold>1.02||hm>1.5)col=mix(col,C.snow,Math.max((cold-1.02)/.06,(hm-1.45)/.4));}
    if(h>0){const du=1/W,dv=1/H;let gx=sample(HG,u+du,v)-sample(HG,u-du,v),gy=sample(HG,u,v+dv)-sample(HG,u,v-dv);
-    if(h>.3){const s2=Math.min(1,(h-.3)*2);gx+=(vnoise((x+1)*.09,y*.09,5.1)-vnoise((x-1)*.09,y*.09,5.1))*.5*s2+(vnoise((x+1)*.3,y*.3,8.3)-vnoise((x-1)*.3,y*.3,8.3))*.3*s2;gy+=(vnoise(x*.09,(y+1)*.09,5.1)-vnoise(x*.09,(y-1)*.09,5.1))*.5*s2+(vnoise(x*.3,(y+1)*.3,8.3)-vnoise(x*.3,(y-1)*.3,8.3))*.3*s2;}
+    if(h>.3){const s2=Math.min(1,(h-.3)*2);gx+=(vnoise((x+1)*.045,y*.045,5.1)-vnoise((x-1)*.045,y*.045,5.1))*.5*s2+(vnoise((x+1)*.15,y*.15,8.3)-vnoise((x-1)*.15,y*.15,8.3))*.3*s2;gy+=(vnoise(x*.045,(y+1)*.045,5.1)-vnoise(x*.045,(y-1)*.045,5.1))*.5*s2+(vnoise(x*.15,(y+1)*.15,8.3)-vnoise(x*.15,(y-1)*.15,8.3))*.3*s2;}
     const sh=Math.max(.45,Math.min(1.6,1+(gx+gy)*5));col=[col[0]*sh,col[1]*sh,col[2]*sh];}
    const k=1+fine*1.2;d[o]=col[0]*k;d[o+1]=col[1]*k;d[o+2]=col[2]*k;d[o+3]=255;
-   const bv=h<0?0:Math.min(255,h*150+(h>.3?(vnoise(x*.09,y*.09,5.1)-.5)*120:0));bd[o]=bd[o+1]=bd[o+2]=bv;bd[o+3]=255;}}
+   const bv=h<0?0:Math.min(255,h*150+(h>.3?(vnoise(x*.045,y*.045,5.1)-.5)*120:0));bd[o]=bd[o+1]=bd[o+2]=bv;bd[o+3]=255;}}
  g.putImageData(img,0,0);bg.putImageData(bimg,0,0);
  const px=(a,b)=>[(b+180)/360*CW,(90-a)/180*CH];
  g.lineCap=g.lineJoin='round';
- RIVERS.forEach((r,i)=>{g.strokeStyle='rgba(28,66,92,.9)';g.lineWidth=i===0?2:i<4?1.2:1.4;g.beginPath();densify(r,.3).forEach(([a,b],k)=>{const [X,Y]=px(a,b);k?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke();});
- g.strokeStyle='rgba(120,56,34,.9)';g.lineWidth=3.2;g.beginPath();densify([[19,-35],[16.5,-31.5],[15,-29.5],[12,-26.5]],.3).forEach(([a,b],k)=>{const [X,Y]=px(a,b);k?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke();
+ RIVERS.forEach((r,i)=>{g.strokeStyle='rgba(28,66,92,.9)';g.lineWidth=i===0?3.6:i<4?2.2:2.6;g.beginPath();densify(r,.3).forEach(([a,b],k)=>{const [X,Y]=px(a,b);k?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke();});
+ g.strokeStyle='rgba(120,56,34,.9)';g.lineWidth=6;g.beginPath();densify([[19,-35],[16.5,-31.5],[15,-29.5],[12,-26.5]],.3).forEach(([a,b],k)=>{const [X,Y]=px(a,b);k?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke();
  const rc=document.createElement('canvas');rc.width=W;rc.height=H;const rg=rc.getContext('2d');const ri=rg.createImageData(W,H);
  for(let i=0;i<W*H;i++){const r=HG[i]<0?120:250;ri.data[i*4]=ri.data[i*4+1]=ri.data[i*4+2]=r;ri.data[i*4+3]=255;}rg.putImageData(ri,0,0);
  const cc=document.createElement('canvas');cc.width=W;cc.height=H;const cg=cc.getContext('2d');const ci=cg.createImageData(W,H);
@@ -548,7 +548,7 @@ const STEPS={
 
 const canvas=document.getElementById('scene');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=THREE.SRGBColorSpace;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;
 const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(38,1,.01,400);
@@ -580,8 +580,8 @@ function build(){
  const T=textures();
  const map=new THREE.CanvasTexture(T.c);map.colorSpace=THREE.SRGBColorSpace;map.anisotropy=renderer.capabilities.getMaxAnisotropy();
  const bump=new THREE.CanvasTexture(T.bc);const rough=new THREE.CanvasTexture(T.rc);
- globe=new THREE.Mesh(new THREE.SphereGeometry(1,192,96),new THREE.MeshStandardMaterial({map,bumpMap:bump,bumpScale:4,roughnessMap:rough,roughness:1,metalness:0}));world.add(globe);
- const ct=new THREE.CanvasTexture(T.cc);clouds=new THREE.Mesh(new THREE.SphereGeometry(1.012,96,48),new THREE.MeshStandardMaterial({map:ct,transparent:true,depthWrite:false,opacity:.85}));world.add(clouds);
+ globe=new THREE.Mesh(new THREE.SphereGeometry(1,256,128),new THREE.MeshStandardMaterial({map,bumpMap:bump,bumpScale:3,roughnessMap:rough,roughness:1,metalness:0}));world.add(globe);
+ const ct=new THREE.CanvasTexture(T.cc);clouds=new THREE.Mesh(new THREE.SphereGeometry(1.012,160,80),new THREE.MeshStandardMaterial({map:ct,transparent:true,depthWrite:false,opacity:.85}));world.add(clouds);
  const vs='varying vec3 vw;varying vec3 wn;void main(){vec4 w=modelMatrix*vec4(position,1.);wn=normalize(mat3(modelMatrix)*normal);vw=normalize(cameraPosition-w.xyz);gl_Position=projectionMatrix*viewMatrix*w;}';
  world.add(new THREE.Mesh(new THREE.SphereGeometry(1.018,96,48),new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,uniforms:{sun:{value:sunDir}},vertexShader:vs,
   fragmentShader:'uniform vec3 sun;varying vec3 vw;varying vec3 wn;void main(){float f=pow(1.-max(dot(wn,vw),0.),3.5);float l=smoothstep(-.25,.5,dot(wn,sun));gl_FragColor=vec4(vec3(.35,.6,1.)*f*l*1.3,1.);}'})));
@@ -714,7 +714,7 @@ function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,clock.getDe
  renderer.render(scene,camera);updateMarkers();}
 controls.addEventListener('start',()=>{controls.autoRotate=false;});
 
-setTimeout(()=>{generate();setTimeout(()=>{build();setLayer('none');requestAnimationFrame(loop);document.getElementById('loader').classList.add('hide');flyTo(ll2v(20,-40),fitDist(),2600);},20);},50);
+setTimeout(()=>{generate();document.getElementById('loadmsg').textContent='Rendering high-resolution surface…';setTimeout(()=>{build();setLayer('none');requestAnimationFrame(loop);document.getElementById('loader').classList.add('hide');flyTo(ll2v(20,-40),fitDist(),2600);},20);},50);
 </script>
 </body>
 </html>
