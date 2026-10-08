@@ -3,165 +3,156 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Veyra · A Life-Sustaining Planet</title>
-<meta name="description" content="Veyra: an interactive 3D life-sustaining planet. Designing a Life-Sustaining Planet Project by Teddy & George.">
+<title>Veyra · Life-Sustaining Planet</title>
+<meta name="description" content="Veyra, a fictional life-sustaining planet. Designing a Life-Sustaining Planet Project by Teddy and George.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#03050b; --glass:rgba(10,16,30,.72); --glass2:rgba(16,24,44,.85); --line:rgba(140,170,255,.16);
-  --text:#e8eefc; --muted:#9aa8c6; --accent:#7cc4ff; --warm:#ffb46b;
-  --tect:#ff6a55; --land:#ffc04d; --erosion:#5fd0ff; --life:#7dff9b; --water:#4f8dff; --space:#d9a8ff;
-  --conv:#ff5a4a; --div:#49d6ff; --trans:#ffd84a; --hot:#ff9a3c;
+  --bg:#000;--panel:#0d1117;--panel2:#161b24;--line:#262d3a;--text:#e6e9ef;--muted:#8b94a7;--accent:#8ab4f8;
+  --plates:#f28b82;--land:#fdd663;--erosion:#78d9ec;--life:#81c995;--water:#8ab4f8;--systems:#c58af9;
+  --conv:#f28b82;--div:#78d9ec;--trans:#fdd663;--hot:#fcad70;
+  --pw:440px;
 }
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;overflow:hidden}
-#scene{position:fixed;inset:0;display:block}
-h1,h2,h3,h4{font-family:"Space Grotesk",Inter,sans-serif;margin:0}
-button{font:inherit;color:inherit}
-a{color:var(--accent)}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+#scene{position:fixed;inset:0;display:block;touch-action:none}
 
-/* loader */
-#loader{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:radial-gradient(circle at 50% 50%,#0c1630,#02030a 70%);transition:opacity .8s}
+#loader{position:fixed;inset:0;z-index:60;background:#000;display:grid;place-items:center;transition:opacity .6s}
 #loader.hide{opacity:0;pointer-events:none}
-#loader .ring{width:84px;height:84px;border-radius:50%;border:2px solid rgba(124,196,255,.15);border-top-color:var(--accent);animation:spin 1s linear infinite;margin:0 auto 18px}
-#loader p{color:var(--muted);text-align:center;font-size:14px;letter-spacing:.08em;text-transform:uppercase}
-@keyframes spin{to{transform:rotate(360deg)}}
+#loader div{color:var(--muted);font-size:13px;letter-spacing:.06em}
 
-/* top bar */
-#top{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;gap:14px;align-items:center;padding:12px 16px;pointer-events:none}
-#top>*{pointer-events:auto}
-.brand{display:flex;flex-direction:column;line-height:1.05;min-width:200px}
-.brand h1{font-size:22px;letter-spacing:.32em;font-weight:700}
-.brand span{font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:4px}
-#searchWrap{position:relative;flex:1;max-width:420px;margin:0 auto}
-#search{width:100%;background:var(--glass);border:1px solid var(--line);border-radius:999px;padding:10px 16px 10px 38px;color:var(--text);font-size:14px;outline:none;backdrop-filter:blur(14px)}
+#hud{position:fixed;left:16px;top:16px;z-index:20;width:300px;display:flex;flex-direction:column;gap:10px}
+.box{background:rgba(13,17,23,.92);border:1px solid var(--line);border-radius:12px}
+.title{padding:12px 14px}
+.title h1{margin:0;font-size:18px;font-weight:700;letter-spacing:.02em}
+.title p{margin:2px 0 0;font-size:12px;color:var(--muted)}
+#searchWrap{position:relative}
+#search{width:100%;background:rgba(13,17,23,.92);border:1px solid var(--line);border-radius:12px;padding:10px 12px 10px 34px;color:var(--text);font-size:13.5px;outline:none}
 #search:focus{border-color:var(--accent)}
-#searchWrap svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);opacity:.6}
-#results{position:absolute;top:110%;left:0;right:0;background:var(--glass2);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:none;backdrop-filter:blur(14px);max-height:50vh;overflow-y:auto}
-#results button{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;padding:9px 14px;cursor:pointer;font-size:13px}
-#results button:hover,#results button.sel{background:rgba(124,196,255,.12)}
-#results small{color:var(--muted);margin-left:auto}
-.topbtns{display:flex;gap:8px}
-.tbtn{background:var(--glass);border:1px solid var(--line);border-radius:999px;padding:9px 14px;font-size:13px;cursor:pointer;backdrop-filter:blur(14px);white-space:nowrap}
-.tbtn:hover{border-color:var(--accent)}
-.tbtn.on{background:rgba(124,196,255,.18);border-color:var(--accent)}
+#searchWrap svg{position:absolute;left:11px;top:11px;opacity:.55}
+#results{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--panel2);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:none;z-index:5}
+#results button{display:flex;width:100%;gap:8px;align-items:center;text-align:left;background:none;border:0;padding:8px 12px;font-size:13px}
+#results button:hover,#results button.sel{background:#222a38}
+#results small{margin-left:auto;color:var(--muted);font-size:11px}
+.layers{padding:6px}
+.layers h2{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:6px 8px 6px}
+.lyr{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;border-radius:8px;padding:8px;text-align:left}
+.lyr:hover{background:#1b2230}
+.lyr.on{background:#1f2a3d}
+.lyr .sw{width:10px;height:10px;border-radius:50%;flex:none;background:var(--c);opacity:.35}
+.lyr.on .sw{opacity:1;box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 30%,transparent)}
+.lyr b{font-size:13px;font-weight:600;display:block}
+.lyr span{font-size:11.5px;color:var(--muted)}
+.legend{display:none;padding:2px 8px 8px 28px;font-size:11.5px;color:var(--muted)}
+.lyr.on+.legend{display:block}
+.legend div{display:flex;align-items:center;gap:8px;margin:3px 0}
+.legend i{width:16px;height:3px;border-radius:2px;display:inline-block}
+.toggles{display:flex;gap:6px;padding:4px 8px 8px}
+.tg{flex:1;background:#141a24;border:1px solid var(--line);border-radius:8px;padding:6px;font-size:12px;color:var(--muted)}
+.tg.on{color:var(--text);border-color:#3a4a66;background:#1b2434}
 
-/* layers */
-#layers{position:fixed;z-index:20;top:62px;left:50%;transform:translateX(-50%);display:flex;gap:6px;flex-wrap:wrap;justify-content:center;max-width:min(760px,calc(100vw - 760px))}
-.chip{background:var(--glass);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:12px;cursor:pointer;backdrop-filter:blur(12px);display:flex;gap:6px;align-items:center;user-select:none}
-.chip.on{border-color:rgba(124,196,255,.55);background:rgba(124,196,255,.14)}
-.chip:not(.on){opacity:.55}
-.chip i{width:8px;height:8px;border-radius:50%;display:inline-block}
-
-/* rails */
-.rail{position:fixed;top:64px;bottom:64px;width:360px;z-index:15;overflow-y:auto;padding:4px 6px 30px;scrollbar-width:thin;scrollbar-color:rgba(124,196,255,.3) transparent}
-#left{left:10px}#right{right:10px}
-.card{background:var(--glass);border:1px solid var(--line);border-radius:18px;margin-bottom:12px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.35)}
-.card>header{display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer}
-.card>header .tag{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:3px}
-.card>header h2{font-size:16px;font-weight:600}
-.card>header .chev{margin-left:auto;transition:transform .25s;opacity:.6}
-.card.closed>header .chev{transform:rotate(-90deg)}
-.card .body{padding:0 16px 16px;font-size:13.5px;line-height:1.62;color:#d6def0}
-.card.closed .body{display:none}
-.card .body p{margin:0 0 10px}
-.card .body h3{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin:16px 0 6px}
-.card .body h4{font-size:14px;margin:12px 0 4px;color:#fff}
-.card .body ul{margin:4px 0 10px;padding-left:18px}
-.card .body li{margin-bottom:5px}
-.num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;font-family:"Space Grotesk";font-weight:700;font-size:13px;background:linear-gradient(135deg,#2b5cff,#7cc4ff);color:#fff;flex:none}
-.go{display:inline;background:rgba(124,196,255,.12);border:1px solid rgba(124,196,255,.3);border-radius:6px;padding:0 5px;cursor:pointer;color:#cfe6ff;font-size:.95em;white-space:nowrap}
-.go:hover{background:rgba(124,196,255,.28)}
-.go::before{content:"◎ ";font-size:.85em;opacity:.7}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 12px}
-.stat{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
-.stat b{display:block;font-family:"Space Grotesk";font-size:17px;color:#fff}
-.stat span{font-size:11px;color:var(--muted)}
-.bar{height:8px;border-radius:6px;overflow:hidden;display:flex;margin:6px 0 4px}
-.legendrow{display:flex;flex-wrap:wrap;gap:8px 12px;font-size:11.5px;color:var(--muted)}
-.legendrow i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
-.ing{border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin:10px 0;background:rgba(255,255,255,.03)}
-.ing h4{display:flex;align-items:center;gap:8px;margin:0 0 6px!important}
-.ing h4 em{font-style:normal;font-size:18px}
-.ing .where{font-size:12px;color:var(--muted);margin-bottom:6px}
+#panel{position:fixed;top:0;right:0;bottom:0;width:var(--pw);z-index:20;background:var(--panel);border-left:1px solid var(--line);display:flex;flex-direction:column}
+#tabs{display:flex;gap:2px;padding:10px 10px 0;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none;flex:none}
+#tabs button{background:none;border:0;padding:10px 10px 11px;font-size:13px;color:var(--muted);white-space:nowrap;border-bottom:2px solid transparent;font-weight:500}
+#tabs button.on{color:var(--text);border-bottom-color:var(--accent)}
+#content{flex:1;overflow-y:auto;padding:22px 26px 60px;scrollbar-width:thin;scrollbar-color:#2a3242 transparent}
+.pane{display:none}.pane.on{display:block}
+.pane .kicker{font-size:11px;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.pane h2{font-size:22px;line-height:1.25;margin:4px 0 14px;font-weight:700}
+.pane h3{font-size:15px;margin:26px 0 8px;font-weight:600;color:#fff}
+.pane h4{font-size:13.5px;margin:16px 0 4px;font-weight:600;color:#fff}
+.pane p,.pane li{font-size:14px;line-height:1.65;color:#c9cfdb}
+.pane p{margin:0 0 10px}
+.pane ul,.pane ol{padding-left:20px;margin:6px 0 12px}
+.pane li{margin-bottom:6px}
+.pane b{color:#fff;font-weight:600}
+.lnk{color:var(--accent);border-bottom:1px dotted currentColor;cursor:pointer}
+.lnk:hover{color:#b6d0ff}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:6px 0 14px}
+.stats div{background:var(--panel);padding:10px}
+.stats b{display:block;font-size:16px}
+.stats span{font-size:11px;color:var(--muted)}
+.bnd{border-left:3px solid var(--c);padding:2px 0 2px 12px;margin:14px 0}
+.bnd .t{font-size:11px;font-weight:600;color:var(--c);text-transform:uppercase;letter-spacing:.06em}
+.bnd p{margin:3px 0 0}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:6px 0 12px}
+th{text-align:left;color:var(--muted);font-weight:500;font-size:11.5px;padding:6px 8px 6px 0;border-bottom:1px solid var(--line)}
+td{padding:8px 8px 8px 0;border-bottom:1px solid #1c222d;color:#c9cfdb;vertical-align:top;line-height:1.45}
+td:first-child{color:#fff;font-weight:500;white-space:nowrap}
+.ing{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0}
+.ing h4{margin:0 0 8px!important;display:flex;gap:8px;align-items:center}
+.ing h4 em{font-style:normal;font-size:11px;color:var(--muted);font-weight:500;margin-left:auto}
+.ing dl{margin:0;display:grid;grid-template-columns:86px 1fr;gap:6px 10px;font-size:13.5px;line-height:1.55}
+.ing dt{color:var(--muted);font-size:12px;padding-top:1px}
+.ing dd{margin:0;color:#c9cfdb}
+.note{background:#151c28;border:1px solid #233149;border-radius:10px;padding:12px 14px;margin:14px 0;font-size:13.5px;line-height:1.6;color:#c9cfdb}
 .check{list-style:none;padding:0!important}
-.check li{display:flex;gap:9px;align-items:flex-start;border-bottom:1px dashed var(--line);padding:7px 0;margin:0!important}
-.check li::before{content:"✓";color:var(--life);font-weight:700;flex:none}
-.check b{color:#fff}
-.pill{display:inline-block;font-size:10px;padding:1px 7px;border-radius:999px;border:1px solid currentColor;margin-left:4px;vertical-align:1px}
-svg.diagram{width:100%;height:auto;display:block;margin:6px 0 10px;border-radius:12px;background:rgba(0,0,0,.25)}
-.callout{border-left:3px solid var(--warm);padding:6px 10px;background:rgba(255,180,107,.07);border-radius:0 10px 10px 0;margin:10px 0}
+.check li{display:grid;grid-template-columns:22px 1fr;border-bottom:1px solid #1c222d;padding:9px 0;margin:0!important}
+.check li::before{content:"✓";color:var(--life);font-weight:700}
+svg.dg{width:100%;height:auto;display:block;margin:8px 0 12px}
+.pbtn{background:#1b2434;border:1px solid #3a4a66;border-radius:8px;padding:8px 12px;font-size:13px;margin-top:6px}
 
-/* markers */
-#markers{position:fixed;inset:0;pointer-events:none;z-index:10}
-.mk{position:absolute;left:0;top:0;display:flex;align-items:center;gap:6px;pointer-events:auto;cursor:pointer;white-space:nowrap;will-change:transform;transition:opacity .2s}
-.mk .dot{width:10px;height:10px;border-radius:50%;background:var(--c);box-shadow:0 0 0 3px rgba(0,0,0,.35),0 0 12px var(--c);flex:none;position:relative}
-.mk .dot::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:1.5px solid var(--c);opacity:.0;animation:pulse 2.4s infinite}
-.mk.life .dot::after{opacity:1}
-@keyframes pulse{0%{transform:scale(.4);opacity:.9}100%{transform:scale(1.9);opacity:0}}
-.mk .lbl{font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:7px;background:rgba(5,9,20,.78);border:1px solid color-mix(in srgb,var(--c) 45%,transparent);text-shadow:0 1px 2px #000}
-.mk:hover .lbl{background:rgba(20,30,55,.95)}
-.mk.plate .dot{display:none}
-.mk.plate .lbl{background:none;border:0;font-family:"Space Grotesk";letter-spacing:.25em;text-transform:uppercase;font-size:11px;color:#ffe6c7;opacity:.85}
-.mk.proc .dot{display:none}
-.mk.proc .lbl{font-size:10.5px;font-style:italic;background:rgba(0,0,0,.55);border-style:dashed}
-.mk.hidden{opacity:0;pointer-events:none}
+#markers{position:fixed;inset:0;pointer-events:none;z-index:10;overflow:hidden}
+.mk{position:absolute;left:0;top:0;display:flex;align-items:center;gap:6px;pointer-events:auto;cursor:pointer;white-space:nowrap}
+.mk i{width:8px;height:8px;border-radius:50%;background:#fff;border:2px solid var(--c);box-shadow:0 0 0 1px rgba(0,0,0,.6);flex:none}
+.mk span{font-size:12px;font-weight:600;color:#fff;text-shadow:0 0 3px #000,0 0 3px #000,0 1px 2px #000}
+.mk.nolbl span{display:none}
+.mk.sel i{width:12px;height:12px;background:var(--c)}
+.mk.sel span{background:#fff;color:#111;text-shadow:none;padding:2px 7px;border-radius:5px}
+.mk.step i{width:18px;height:18px;border:0;background:var(--c);color:#111;font-style:normal;font-size:10.5px;font-weight:700;display:grid;place-items:center}
+.mk.step span{font-weight:500;font-size:11.5px}
+.mk.plate{pointer-events:none}.mk.plate i{display:none}
+.mk.plate span{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:500;color:rgba(255,255,255,.6)}
+.mk.off{display:none}
 
-/* info popup */
-#info{position:fixed;z-index:25;left:50%;bottom:78px;transform:translate(-50%,20px);width:min(520px,calc(100vw - 32px));background:var(--glass2);border:1px solid var(--line);border-radius:18px;padding:16px 18px;backdrop-filter:blur(18px);opacity:0;pointer-events:none;transition:.3s;box-shadow:0 20px 60px rgba(0,0,0,.5)}
-#info.show{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
-#info .k{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase}
-#info h3{font-size:20px;margin:3px 0 8px}
-#info p{font-size:13.5px;line-height:1.6;margin:0 0 8px;color:#d6def0}
-#info .lifep{border-top:1px solid var(--line);padding-top:8px;color:#c9f5d4}
-#info .x{position:absolute;right:12px;top:10px;background:none;border:0;font-size:20px;cursor:pointer;opacity:.6}
-#info .coords{font-size:11px;color:var(--muted);font-family:ui-monospace,monospace}
+#info{position:fixed;z-index:25;left:16px;bottom:16px;width:340px;background:rgba(13,17,23,.96);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:none}
+#info.show{display:block}
+#info .k{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding-right:20px}
+#info h3{font-size:17px;margin:3px 0 6px}
+#info p{font-size:13px;line-height:1.55;margin:0 0 8px;color:#c9cfdb}
+#info .life{color:#a8dab5}
+#info .c{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+#info .x{position:absolute;top:8px;right:10px;background:none;border:0;font-size:18px;color:var(--muted)}
+#info .nav{display:none;gap:6px;margin-top:10px}
+#info.tour .nav{display:flex}
+#info .nav button{background:#1b2434;border:1px solid #3a4a66;border-radius:8px;padding:6px 12px;font-size:12.5px}
+#readout{position:fixed;z-index:15;bottom:16px;right:calc(var(--pw) + 16px);font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums;text-shadow:0 1px 2px #000;pointer-events:none}
+#tourBtn{position:fixed;z-index:20;top:16px;right:calc(var(--pw) + 16px);background:rgba(13,17,23,.92);border:1px solid var(--line);border-radius:10px;padding:9px 14px;font-size:13px}
+#tourBtn:hover{border-color:var(--accent)}
 
-/* bottom readout */
-#readout{position:fixed;z-index:20;left:50%;bottom:14px;transform:translateX(-50%);background:var(--glass);border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:12px;font-family:ui-monospace,Menlo,monospace;color:#cfe0ff;backdrop-filter:blur(12px);white-space:nowrap;max-width:calc(100vw - 760px);overflow:hidden;text-overflow:ellipsis}
-#tourbar{position:fixed;z-index:26;left:50%;top:104px;transform:translateX(-50%);width:min(560px,calc(100vw - 32px));background:linear-gradient(135deg,rgba(43,92,255,.35),rgba(10,16,30,.9));border:1px solid rgba(124,196,255,.4);border-radius:16px;padding:12px 16px;display:none;backdrop-filter:blur(16px)}
-#tourbar.show{display:block}
-#tourbar .row{display:flex;gap:8px;align-items:center;margin-top:8px}
-#tourbar .row button{background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer;font-size:12px}
-#tourbar .t{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
-#tourbar p{margin:4px 0 0;font-size:13.5px;line-height:1.55}
-
-/* mobile */
-#mtabs{display:none}
-@media (max-width:1100px){
-  .rail{width:320px}
-  #layers{max-width:calc(100vw - 680px)}
-}
 @media (max-width:900px){
-  .rail{display:none;top:auto;bottom:58px;left:8px!important;right:8px!important;width:auto;max-height:58vh;z-index:22}
-  .rail.mshow{display:block}
-  .rail .card{display:none}
-  .rail .card.mcur{display:block}
-  #layers{top:auto;bottom:96px;max-width:calc(100vw - 16px);left:8px;right:8px;transform:none;flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start}
-  #mtabs{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:30;background:rgba(5,9,20,.92);border-top:1px solid var(--line);overflow-x:auto}
-  #mtabs button{flex:1;background:none;border:0;padding:12px 10px;font-size:12px;white-space:nowrap;color:var(--muted)}
-  #mtabs button.on{color:#fff;box-shadow:inset 0 -2px var(--accent)}
+  :root{--pw:0px}
+  #hud{left:8px;right:8px;top:8px;width:auto;gap:6px}
+  .title{display:none}
+  .layers{display:flex;overflow-x:auto;gap:4px;padding:5px;scrollbar-width:none}
+  .layers h2,.legend,.toggles{display:none!important}
+  .lyr{width:auto;flex:none;padding:6px 10px}
+  .lyr span{display:none}
+  .lyr b{font-size:12px}
+  #panel{top:auto;left:0;width:auto;height:46vh;border-left:0;border-top:1px solid var(--line);border-radius:14px 14px 0 0;transition:height .25s}
+  body.min #panel{height:46px}
+  #content{padding:16px 18px 40px}
+  .pane h2{font-size:19px}
+  #info{left:8px;right:8px;width:auto;bottom:calc(46vh + 8px)}
+  body.min #info{bottom:54px}
   #readout{display:none}
-  .brand{min-width:0}.brand h1{font-size:17px}.brand span{display:none}
-  .topbtns .hide-m{display:none}
-  #info{bottom:150px}
-  #tourbar{top:auto;bottom:150px}
-  body.sheet #layers{display:none}
+  #tourBtn{top:auto;right:8px;bottom:calc(46vh + 8px)}
+  body.min #tourBtn{bottom:54px}
+  #info.show~#tourBtn{display:none}
 }
 
-/* print = the written description as a clean document */
 @media print{
-  html,body{overflow:visible;height:auto;background:#fff;color:#000}
-  #scene,#markers,#top,#layers,#readout,#info,#tourbar,#mtabs,#loader,.noprint{display:none!important}
-  .rail{position:static;width:auto;overflow:visible;display:block!important;padding:0}
-  .card,.rail .card{display:block!important;background:none;border:0;box-shadow:none;backdrop-filter:none;break-inside:auto}
-  .card .body{display:block!important;color:#000;font-size:11pt}
-  .card>header .chev{display:none}
-  .card .body h3{color:#123}
-  .go{background:none;border:0;color:#000;padding:0}.go::before{content:""}
-  .stat b,.check b,.card .body h4{color:#000}
-  svg.diagram{background:#0b1222}
+  html,body{overflow:visible;height:auto;background:#fff}
+  #scene,#markers,#hud,#info,#readout,#tourBtn,#tabs,#loader,.noprint{display:none!important}
+  #panel{position:static;width:auto;border:0;background:#fff;display:block}
+  #content{overflow:visible;padding:0}
+  .pane{display:block!important;page-break-after:always}
+  .pane p,.pane li,td,.ing dd{color:#000}
+  .pane h2,.pane h3,.pane h4,.pane b,td:first-child{color:#000}
+  .lnk{color:#000;border:0}
+  .stats div,.note,.ing{background:#fff;color:#000}
 }
 </style>
 <script type="importmap">
@@ -171,652 +162,590 @@ svg.diagram{width:100%;height:auto;display:block;margin:6px 0 10px;border-radius
 <body>
 <canvas id="scene"></canvas>
 <div id="markers"></div>
+<div id="loader"><div id="loadmsg">Loading Veyra…</div></div>
 
-<div id="loader"><div><div class="ring"></div><p id="loadmsg">Forming planet Veyra…</p></div></div>
-
-<div id="top">
-  <div class="brand"><h1>VEYRA</h1><span>A Life-Sustaining Planet · Teddy &amp; George</span></div>
+<div id="hud">
+  <div class="box title"><h1>Veyra</h1><p>A life-sustaining planet · Teddy &amp; George</p></div>
   <div id="searchWrap">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#cfe0ff" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-    <input id="search" placeholder="Search Veyra — try “volcano”, “rift”, “delta”…" autocomplete="off">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    <input id="search" placeholder="Search places on Veyra" autocomplete="off">
     <div id="results"></div>
   </div>
-  <div class="topbtns">
-    <button class="tbtn" id="tourBtn">▶ Guided tour</button>
-    <button class="tbtn hide-m" id="printBtn" title="Print the written description (3 sections)">⎙ Print write-up</button>
+  <div class="box layers" id="layers">
+    <h2>Map layer</h2>
   </div>
 </div>
 
-<div id="layers"></div>
+<button id="tourBtn">▶ Take the tour</button>
 
-<div id="tourbar"><div class="t" id="tourStep"></div><p id="tourText"></p>
-  <div class="row"><button id="tPrev">◀ Back</button><button id="tNext">Next ▶</button><button id="tEnd" style="margin-left:auto">End tour</button></div></div>
+<aside id="panel">
+  <nav id="tabs"></nav>
+  <div id="content">
 
-<!-- ================= LEFT RAIL ================= -->
-<aside class="rail" id="left">
-
-<section class="card" data-m="planet">
-<header><div><span class="tag">Planet file</span><h2>Meet Veyra</h2></div><span class="chev">▾</span></header>
-<div class="body">
-<p><b>Veyra</b> is a fictional, scientifically plausible ocean-and-continent world and the second planet around <b>Ostra</b>, an orange K-type dwarf star. Drag to spin it, scroll to zoom, and click any glowing marker. Every label on the globe ties back to the writing on these cards.</p>
+<section class="pane on" data-tab="Overview">
+<div class="kicker">Designing a Life-Sustaining Planet</div>
+<h2>Meet Veyra</h2>
+<p>Veyra is our made-up planet that can support life. It orbits an orange star called <b>Ostra</b>. It has oceans, two continents, active plate tectonics and an atmosphere that keeps it warm and protected. Our goal was to design a planet where the geosphere, hydrosphere, atmosphere and biosphere all work together.</p>
 <div class="stats">
-<div class="stat"><b>1.12 M⊕</b><span>mass (gravity 1.05 g)</span></div>
-<div class="stat"><b>0.62 AU</b><span>orbit around Ostra (K-dwarf)</span></div>
-<div class="stat"><b>26 h</b><span>length of one day</span></div>
-<div class="stat"><b>236 days</b><span>length of one year (Earth days)</span></div>
-<div class="stat"><b>19°</b><span>axial tilt → gentle seasons</span></div>
-<div class="stat"><b>16 °C</b><span>average surface temperature</span></div>
-<div class="stat"><b>1.3 bar</b><span>air pressure at sea level</span></div>
-<div class="stat"><b>2 moons</b><span>Ryn (large) &amp; Pell (small)</span></div>
+<div><b>1.12×</b><span>Earth's mass</span></div>
+<div><b>16 °C</b><span>average temp</span></div>
+<div><b>74%</b><span>covered by ocean</span></div>
+<div><b>26 hrs</b><span>one day</span></div>
+<div><b>236 days</b><span>one year</span></div>
+<div><b>2</b><span>moons (Ryn, Pell)</span></div>
 </div>
-<h3>Surface</h3>
-<div class="bar"><span style="flex:74;background:#1d5fa8"></span><span style="flex:22;background:#7a3f72"></span><span style="flex:4;background:#e8f0ff"></span></div>
-<div class="legendrow"><span><i style="background:#1d5fa8"></i>74% ocean</span><span><i style="background:#7a3f72"></i>22% land</span><span><i style="background:#e8f0ff"></i>4% ice</span></div>
-<h3>Atmosphere</h3>
-<div class="bar"><span style="flex:75;background:#5d7cff"></span><span style="flex:22;background:#7dff9b"></span><span style="flex:1.4;background:#ffc04d"></span><span style="flex:1.6;background:#ff6a55"></span></div>
-<div class="legendrow"><span><i style="background:#5d7cff"></i>N₂ 75%</span><span><i style="background:#7dff9b"></i>O₂ 22%</span><span><i style="background:#ffc04d"></i>Ar 1.4%</span><span><i style="background:#ff6a55"></i>H₂O vapor ~0.9%, CO₂ 0.06%</span></div>
-<div class="callout"><b>Not a copy of Earth.</b> Veyra has a dimmer orange sun, thicker air, two moons that make complicated double tides, and <b>deep plum-colored plants</b>. Their pigments soak up more of Ostra's red-orange light, so its forests look purple from space.</div>
-<h3>Map legend</h3>
-<div class="legendrow">
-<span><i style="background:var(--conv)"></i>Convergent boundary</span><span><i style="background:var(--div)"></i>Divergent boundary</span><span><i style="background:var(--trans)"></i>Transform boundary</span><span><i style="background:var(--hot)"></i>Hotspot</span>
-<span><i style="background:var(--tect);border-radius:50%"></i>Tectonics</span><span><i style="background:var(--land);border-radius:50%"></i>Landforms</span><span><i style="background:var(--erosion);border-radius:50%"></i>Weathering &amp; erosion</span><span><i style="background:var(--life);border-radius:50%"></i>Supports life</span><span><i style="background:var(--water);border-radius:50%"></i>Water &amp; ice</span><span><i style="background:var(--space);border-radius:50%"></i>Moons</span>
-</div>
-</div></section>
-
-<section class="card" data-m="s1">
-<header><span class="num">1</span><div><span class="tag">Written description</span><h2>Planet Overview &amp; Geological Features</h2></div><span class="chev">▾</span></header>
-<div class="body">
-<h3>Introducing Veyra</h3>
-<p>Veyra orbits Ostra, an orange dwarf star with about 75% of the Sun's mass. At 0.62 AU it receives roughly 78% of the sunlight Earth gets. That places it inside Ostra's habitable zone, where liquid water can stay on the surface. It is 1.12 times Earth's mass, so the gravity is slightly stronger (1.05 g), and one day lasts 26 hours. One <b>global ocean, the Vael Ocean</b>, covers 74% of the surface. Two main continents rise out of it: <span class="go" data-f="auren">Auren</span> in the west and <span class="go" data-f="mervath">Mervath</span> in the east. There is also an ice-covered polar landmass and several volcanic island chains. The climate is mild, averaging 16 °C, with plum-colored forests, red volcanic soils, golden deserts and wide coastal wetlands.</p>
-
-<h3>The engine: active plate tectonics</h3>
-<p>Veyra is bigger than Earth, so its interior holds on to more heat: leftover heat from when the planet formed, plus heat from radioactive uranium, thorium and potassium decaying. That heat drives <b>convection currents in the mantle</b>. Hot, soft rock slowly rises, cools, spreads out and sinks again. The rigid lithosphere on top is broken into <b>seven plates</b> (Auren, Kesh, Sundra, Mervath, Vael, Cinder and Boreal), and the convection drags them along at 2–9 cm per year. Below the mantle, a liquid iron-nickel outer core churns and creates a strong <b>magnetic field</b>. Turn on <i>Plates</i> and <i>Plate motion</i> in the layer bar to see every boundary and which way it moves.</p>
-
-<h4>Divergent boundaries (plates pulling apart)</h4>
-<p>The <span class="go" data-f="seam">Seam Ridge</span> is a mid-ocean ridge where the Sundra and Auren plates spread about 6 cm per year. Magma rises into the gap, cools into new basalt seafloor and builds an underwater mountain chain. Seawater soaks into the hot rock and comes back out at the <span class="go" data-f="vents">Seam Vent Gardens</span> loaded with dissolved minerals. On land, the <span class="go" data-f="hollow">Hollow Rift</span> is slowly tearing Mervath apart. The ground has dropped into a long rift valley holding deep lakes, and in a few million years seawater will flood it and a new ocean will be born.</p>
-
-<h4>Convergent boundaries (plates colliding)</h4>
-<p><b>Ocean–continent:</b> The Sundra plate is made of dense, cold basalt, so it <b>subducts</b> (dives) under the lighter Mervath continent at the <span class="go" data-f="trench">Ember Trench</span>, which is 9.4 km deep. As the slab sinks, it releases water, which lowers the melting point of the mantle above it. The magma that forms rises to build the <b>Ember Arc</b> of volcanoes, including <span class="go" data-f="kaelor">Mount Kaelor</span> (6.1 km). <b>Ocean–ocean:</b> Where the Vael plate subducts under the Cinder plate, a curved chain of volcanic islands has formed, the <span class="go" data-f="cinder">Cinder Isles</span>. <b>Continent–continent:</b> About 40 million years ago the Kesh block crashed into Auren. Continental crust is too buoyant to subduct, so it crumpled, folded and stacked upward into the <span class="go" data-f="crown">Crown Range</span>. It reaches 8.4 km and is still rising a few millimeters every year, with frequent earthquakes.</p>
-
-<h4>Transform boundary (plates sliding past)</h4>
-<p>The <span class="go" data-f="shear">Shearline Fault</span> is where two plates grind sideways past each other. No crust is created or destroyed. Instead, stress builds up and is released as shallow earthquakes, and the fault offsets the Seam Ridge so the two ridge pieces don't line up.</p>
-
-<h4>Hotspot</h4>
-<p>The <span class="go" data-f="lantern">Lantern Isles</span> sit above a mantle plume that stays in one place while the Vael plate slides over it. The newest island is an active volcano. Each older island farther northwest has been worn down more, and the oldest ones have sunk below the waves as seamounts. The chain works like a record of which way the plate has moved.</p>
-
-<h3>How tectonics keeps Veyra alive</h3>
+<h3>How to explore the model</h3>
 <ul>
-<li><b>Climate regulation:</b> subduction carries carbon-rich seafloor sediments down into the mantle, and volcanoes later release that carbon as CO₂. This long-term <b>carbon–silicate cycle</b> works like a thermostat that keeps Veyra from freezing over or overheating (see Section 2).</li>
-<li><b>Material recycling:</b> the rock cycle never stops. New crust forms at ridges and old crust is destroyed at trenches, so fresh, mineral-rich rock is always being lifted up where it can be weathered into nutrients.</li>
-<li><b>Habitats:</b> mountains, rifts, island arcs and hotspots create very different environments, from rift lakes and coral-like reefs to rich volcanic soils and deep-sea vents.</li>
-<li><b>Protection:</b> the churning interior that drives the plates also powers the magnetic field, which shields the atmosphere and living things from Ostra's stellar wind.</li>
+<li>Drag to spin the planet and scroll (or pinch) to zoom.</li>
+<li>Pick a <b>map layer</b> on the left to see one set of features at a time: plate boundaries, landforms, erosion, life zones, the water cycle or the carbon cycle.</li>
+<li>Click any dot, or any <span class="lnk" data-f="crown">blue link</span> in the writing, to fly there and read about it.</li>
+</ul>
+<h3>How Veyra is different from Earth</h3>
+<ul>
+<li><b>An orange star.</b> Ostra is smaller and dimmer than the Sun, so Veyra orbits closer to it (0.62 AU) to stay warm enough for liquid water.</li>
+<li><b>Thicker air.</b> Air pressure is 1.3 times Earth's, and the extra greenhouse effect makes up for the dimmer star.</li>
+<li><b>Two moons.</b> Ryn and Pell create bigger, more complicated tides, which means stronger waves and more ocean mixing.</li>
+<li><b>Dark red-purple plants.</b> Ostra gives off mostly red and orange light, so Veyra's plants evolved darker pigments to absorb more of it. From space, the forests look dark reddish-brown instead of green.</li>
+</ul>
+<button class="pbtn noprint" id="printBtn">Print the written description</button>
+</section>
+
+<section class="pane" data-tab="1 · Geology">
+<div class="kicker">Section 1</div>
+<h2>Planet Overview and Geological Features</h2>
+
+<h3>What is Veyra like?</h3>
+<p>Veyra is a rocky planet a little bigger than Earth, with gravity 1.05 times as strong. It orbits Ostra in the star's habitable zone, where the temperature allows liquid water. Most of the surface is one big ocean, the <span class="lnk" data-f="ocean">Vael Ocean</span>. There are two continents, <span class="lnk" data-f="auren">Auren</span> and <span class="lnk" data-f="mervath">Mervath</span>, plus an icy land mass at the north pole and a few island chains. The climate is mild, about 16 °C on average, with rainforests, grasslands, deserts, wetlands and ice caps.</p>
+
+<h3>Does Veyra have active plate tectonics?</h3>
+<p>Yes. Because Veyra is bigger than Earth, its interior has stayed hot. Heat from its formation and from radioactive elements decaying causes <b>convection currents</b> in the mantle: hot rock rises, cools and sinks again in a slow loop. Those currents move the crust, which is broken into <b>seven plates</b> (Auren, Kesh, Sundra, Mervath, Vael, Cinder and Boreal). The plates move 2 to 9 cm per year. Choose the <b>Plate boundaries</b> layer to see all of them.</p>
+
+<h3>How do the plates interact?</h3>
+<div class="bnd" style="--c:var(--div)"><div class="t">Divergent · mid-ocean ridge</div><p><span class="lnk" data-f="seam">Seam Ridge</span>: two ocean plates pull apart. Magma rises into the gap and cools into new seafloor, building an underwater mountain range. Hot water vents form along it.</p></div>
+<div class="bnd" style="--c:var(--div)"><div class="t">Divergent · continental rift</div><p><span class="lnk" data-f="hollow">Hollow Rift</span>: Mervath is slowly splitting in two. The land in the middle dropped down and formed a long valley with deep lakes. Someday the ocean will flood in.</p></div>
+<div class="bnd" style="--c:var(--conv)"><div class="t">Convergent · ocean–continent</div><p><span class="lnk" data-f="trench">Ember Trench</span>: the dense ocean plate (Sundra) sinks under the lighter continent (Mervath). This is called subduction. The sinking plate releases water that melts the mantle above it, and the magma rises to form volcanoes like <span class="lnk" data-f="kaelor">Mount Kaelor</span>.</p></div>
+<div class="bnd" style="--c:var(--conv)"><div class="t">Convergent · ocean–ocean</div><p><span class="lnk" data-f="cinder">Cinder Isles</span>: one ocean plate sinks under another, creating a curved chain of volcanic islands next to a deep trench.</p></div>
+<div class="bnd" style="--c:var(--conv)"><div class="t">Convergent · continent–continent</div><p><span class="lnk" data-f="crown">Crown Range</span>: two continents crashed into each other. Neither one sinks, so the crust folds and pushes up into Veyra's tallest mountains (8.4 km). They are still rising and cause earthquakes.</p></div>
+<div class="bnd" style="--c:var(--trans)"><div class="t">Transform</div><p><span class="lnk" data-f="shear">Shearline Fault</span>: two plates slide past each other sideways. No crust is made or destroyed, but the plates get stuck and then slip, causing earthquakes.</p></div>
+<div class="bnd" style="--c:var(--hot)"><div class="t">Hotspot</div><p><span class="lnk" data-f="lantern">Lantern Isles</span>: a plume of hot mantle stays in one place while the plate moves over it, making a line of volcanic islands. The active island is at one end, and the older islands are more eroded.</p></div>
+
+<h3>How does tectonics help life on Veyra?</h3>
+<ul>
+<li><b>It controls the climate.</b> Subduction carries carbon from the seafloor down into the mantle, and volcanoes release it back into the air as CO₂. This keeps the amount of greenhouse gas balanced over millions of years, so Veyra doesn't freeze or overheat.</li>
+<li><b>It recycles materials.</b> Old crust is destroyed at trenches and new crust forms at ridges. Mountains keep pushing up fresh rock that weathers into nutrients like phosphorus.</li>
+<li><b>It creates habitats.</b> Mountains, rift lakes, volcanic soil, islands and deep-sea vents all give life different places to live.</li>
+<li><b>It protects the planet.</b> The same hot, moving interior keeps Veyra's liquid iron core flowing, which creates a magnetic field that blocks harmful radiation from Ostra.</li>
 </ul>
 
-<h3>Landforms present</h3>
-<p>Fold mountains (<span class="go" data-f="crown">Crown Range</span>), stratovolcanoes (<span class="go" data-f="kaelor">Mount Kaelor</span>), volcanic island arcs (<span class="go" data-f="cinder">Cinder Isles</span>), shield-volcano hotspot islands (<span class="go" data-f="lantern">Lantern Isles</span>), a deep-sea trench (<span class="go" data-f="trench">Ember Trench</span>), a mid-ocean ridge (<span class="go" data-f="seam">Seam Ridge</span>), a rift valley with lakes (<span class="go" data-f="hollow">Hollow Rift</span>), a broad ocean basin and abyssal plain (<span class="go" data-f="basin">Great Vael Basin</span>), desert dunes (<span class="go" data-f="dunes">Ashen Dunes</span>), a canyon (<span class="go" data-f="canyon">Glasswind Canyon</span>), a river delta (<span class="go" data-f="delta">Silvermouth Delta</span>), sea cliffs and sea stacks (<span class="go" data-f="teeth">Teeth of Ryn</span>), glacial valleys (<span class="go" data-f="frost">Frostmere Valleys</span>) and polar ice caps.</p>
-</div></section>
+<h3>What landforms are on Veyra?</h3>
+<table>
+<tr><th>Landform</th><th>Example</th><th>How it formed</th></tr>
+<tr><td>Mountains</td><td><span class="lnk" data-f="crown">Crown Range</span></td><td>Continent–continent collision</td></tr>
+<tr><td>Volcanoes</td><td><span class="lnk" data-f="kaelor">Mount Kaelor</span>, <span class="lnk" data-f="lantern">Lantern Isles</span></td><td>Subduction and a hotspot</td></tr>
+<tr><td>Ocean basin</td><td><span class="lnk" data-f="basin">Great Vael Basin</span></td><td>Old seafloor spread out from ridges</td></tr>
+<tr><td>Ocean trench</td><td><span class="lnk" data-f="trench">Ember Trench</span></td><td>Subduction</td></tr>
+<tr><td>Rift valley</td><td><span class="lnk" data-f="hollow">Hollow Rift</span></td><td>Continent pulling apart</td></tr>
+<tr><td>Island arc</td><td><span class="lnk" data-f="cinder">Cinder Isles</span></td><td>Ocean–ocean subduction</td></tr>
+<tr><td>Canyon</td><td><span class="lnk" data-f="canyon">Glasswind Canyon</span></td><td>Flash floods and wind</td></tr>
+<tr><td>Sea cliffs</td><td><span class="lnk" data-f="teeth">Teeth of Ryn</span></td><td>Wave erosion</td></tr>
+<tr><td>Delta</td><td><span class="lnk" data-f="delta">Silvermouth Delta</span></td><td>River deposition</td></tr>
+</table>
+</section>
 
-<section class="card" data-m="s2">
-<header><span class="num">2</span><div><span class="tag">Written description</span><h2>Atmosphere, Water &amp; Weathering</h2></div><span class="chev">▾</span></header>
-<div class="body">
+<section class="pane" data-tab="2 · Water &amp; Air">
+<div class="kicker">Section 2</div>
+<h2>Atmosphere, Water and Weathering</h2>
+
 <h3>The atmosphere</h3>
-<p>Veyra's air is 75% nitrogen, 22% oxygen and 1.4% argon, with water vapor (about 0.9%) and carbon dioxide (0.06%). That is about 600 ppm of CO₂, a little more than Earth. Because Ostra is dimmer than our Sun, the thicker 1.3-bar atmosphere and extra greenhouse gases trap just enough heat to keep the average temperature at 16 °C. Oxygen high in the atmosphere forms an <b>ozone layer</b> that blocks harmful UV light. The <b>magnetic field</b> deflects the stellar wind so it can't strip the atmosphere away, which is what happened to Mars.</p>
+<p>Veyra's air is about 75% nitrogen, 22% oxygen, 1% argon, plus water vapor and a small amount of carbon dioxide (0.06%). The air pressure is 1.3 times Earth's. The thicker air and slightly higher CO₂ trap more heat, which is needed because Ostra is dimmer than our Sun. An <b>ozone layer</b> blocks harmful UV light. The <b>magnetic field</b> protects the atmosphere from being blown away by stellar wind, which is what happened to Mars.</p>
 
-<h3>Energy sources</h3>
-<p>Veyra's <b>main energy source is its star, Ostra</b>. Its orange light powers photosynthesis, heats the ocean so water evaporates, and warms the equator more than the poles. That uneven heating creates winds and ocean currents. There are also two backup sources of energy. <b>Geothermal heat</b> from the interior powers deep-sea vents, where entire ecosystems live without sunlight. <b>Tidal energy</b> from the two moons, Ryn and Pell, stirs the oceans and lifts nutrients up from the deep water.</p>
+<h3>Energy source</h3>
+<p>Veyra's main energy source is its star, <b>Ostra</b>. Its light powers photosynthesis, heats the ocean so water evaporates, and heats the equator more than the poles, which creates wind and ocean currents. Orange stars like Ostra stay stable for tens of billions of years, so life has plenty of time to develop. Veyra also has <b>heat from inside the planet</b>, which powers deep-sea vents, and <b>tidal energy</b> from its two moons, which stirs up the ocean.</p>
 
-<h3>Where the water is</h3>
-<p>About 96% of Veyra's water is in the <span class="go" data-f="ocean">Vael Ocean</span>, which averages 3.9 km deep. Roughly 2% is frozen in the <span class="go" data-f="boreal">Boreal Ice Cap</span> and the <span class="go" data-f="austral">Austral sea ice</span>. The rest is groundwater in aquifers under Auren, lakes like the <span class="go" data-f="hollow">Hollow Rift lakes</span>, rivers like the <span class="go" data-f="river">Silvermouth</span>, and water vapor and clouds in the air.</p>
-
-<h3>The water cycle <span class="pill" style="color:var(--water)">turn on “Processes”</span></h3>
-<p>(1) <b>Evaporation:</b> Ostra heats the Vael Ocean, and water evaporates. The salt stays behind, so this step naturally purifies the water into fresh water. (2) <b>Transport:</b> steady westerly winds push the moist air east toward Auren. (3) <b>Condensation:</b> when the air hits the <span class="go" data-f="crown">Crown Range</span> it is forced upward. It expands, cools and condenses into thick clouds (this is called orographic lift). (4) <b>Precipitation:</b> more than 3,000 mm of rain falls each year on the windward <span class="go" data-f="verdant">Verdant Slopes</span>. (5) <b>Runoff, infiltration and transpiration:</b> the water collects into the <span class="go" data-f="river">Silvermouth River</span>, soaks into the ground as groundwater, or is pulled up by plants and released from their leaves, and eventually all of it flows back to the sea. On the far side of the mountains, the air sinks, warms up and dries out. That makes a <b>rain shadow</b>, which is why the <span class="go" data-f="dunes">Ashen Dunes</span> desert sits right next to a rainforest. It's a clear example of the geosphere changing the atmosphere.</p>
-
-<h3>Why water's properties make life possible</h3>
+<h3>Where is the water?</h3>
 <ul>
-<li><b>Universal solvent:</b> water molecules are polar, so they dissolve salts, minerals and nutrients. That lets rivers carry phosphorus to the sea and lets cells move chemicals around.</li>
-<li><b>High specific heat:</b> the ocean absorbs huge amounts of heat during the day and in summer and releases it slowly. This keeps coastal temperatures steady and spreads heat toward the poles through currents.</li>
-<li><b>Ice floats:</b> ice is less dense than liquid water, so it forms a floating, insulating lid on polar seas and rift lakes. Life keeps swimming underneath even in winter.</li>
-<li><b>Cohesion &amp; adhesion:</b> water molecules stick to each other and to surfaces, so water can climb up through plant tissues by capillary action, all the way to the top of the 90-meter plum trees.</li>
-<li><b>Wide liquid range:</b> at 1.3 bar, water doesn't boil until about 107 °C. That keeps it liquid over a huge range of temperatures, so chemical reactions always have a medium to happen in.</li>
+<li><b>Ocean (about 96%):</b> the salty <span class="lnk" data-f="ocean">Vael Ocean</span>, about 3.9 km deep on average.</li>
+<li><b>Ice (about 2%):</b> the <span class="lnk" data-f="boreal">Boreal Ice Cap</span> and the <span class="lnk" data-f="austral">Austral sea ice</span>.</li>
+<li><b>Fresh water on land:</b> rivers like the <span class="lnk" data-f="river">Silvermouth</span>, the <span class="lnk" data-f="hollow">Hollow Rift lakes</span> and groundwater underground.</li>
+<li><b>In the air:</b> water vapor and clouds.</li>
 </ul>
 
-<h3>Weathering: breaking rock down</h3>
-<p><b>Mechanical weathering:</b> In the <span class="go" data-f="crown">Crown Range</span> and <span class="go" data-f="frost">Frostmere Valleys</span>, water seeps into cracks and freezes. Ice expands by 9%, which pries the rock apart (frost wedging). Roots of plum forests grow into cracks and widen them (root wedging). In the <span class="go" data-f="dunes">Ashen Dunes</span>, hot days and cold nights make rock expand and contract until it flakes apart, while blowing sand sandblasts it. <b>Chemical weathering:</b> CO₂ dissolves in rain to make weak carbonic acid, which slowly dissolves silicate and limestone rock. Oxygen <b>oxidizes</b> (rusts) iron in the volcanic basalt, which is why the <span class="go" data-f="ash">Kaelor Ashlands</span> are brick red. Hydrolysis turns feldspar into clay, which makes soil better at holding water.</p>
+<h3>How does the water cycle work?</h3>
+<p>Choose the <b>Water cycle</b> layer to see these steps on the map.</p>
+<ol>
+<li><b>Evaporation:</b> Ostra heats the ocean and water turns into vapor. The salt is left behind, so the vapor is fresh water.</li>
+<li><b>Condensation:</b> wind carries the moist air east. When it hits the <span class="lnk" data-f="crown">Crown Range</span> it is pushed up, cools down and forms clouds.</li>
+<li><b>Precipitation:</b> heavy rain falls on the <span class="lnk" data-f="verdant">Verdant Slopes</span>, over 3,000 mm per year.</li>
+<li><b>Runoff and groundwater:</b> rainwater flows into the <span class="lnk" data-f="river">Silvermouth River</span> or soaks into the ground. Plants also release water back into the air (transpiration).</li>
+<li><b>Back to the ocean:</b> the river empties at the <span class="lnk" data-f="delta">delta</span> and the cycle starts again.</li>
+</ol>
+<p>On the other side of the mountains, the air has already lost its water, so it sinks and dries out. This <b>rain shadow</b> is why the <span class="lnk" data-f="dunes">Ashen Dunes</span> desert is right next to a rainforest.</p>
 
-<h3>Erosion: moving it somewhere else</h3>
-<p><b>Water:</b> the <span class="go" data-f="river">Silvermouth River</span> has cut a steep V-shaped valley through the mountains and carries tons of sediment to the fan-shaped <span class="go" data-f="delta">Silvermouth Delta</span>. <b>Wind and flash floods:</b> these carved the 1.2 km-deep <span class="go" data-f="canyon">Glasswind Canyon</span>. <b>Glaciers:</b> moving ice scraped out the U-shaped <span class="go" data-f="frost">Frostmere Valleys</span>. <b>Waves:</b> because Veyra has two moons, its tidal range can be twice Earth's. The pounding surf has carved tall cliffs, arches and sea stacks called the <span class="go" data-f="teeth">Teeth of Ryn</span>. <b>Gravity:</b> landslides on the steep Crown Range slopes dump loose rock into the rivers.</p>
+<h3>How do water's properties allow life to exist?</h3>
+<ul>
+<li><b>It dissolves almost anything.</b> Water carries nutrients through rivers, soil and the inside of cells.</li>
+<li><b>It holds a lot of heat.</b> The ocean warms up and cools down slowly, so temperatures on Veyra stay steady between day and night and between seasons.</li>
+<li><b>Ice floats.</b> Lakes and polar seas freeze on top, not from the bottom, so animals can survive underneath in winter.</li>
+<li><b>It sticks to itself and other things.</b> This lets water climb up through plant stems to reach the leaves.</li>
+<li><b>It stays liquid over a wide range.</b> With Veyra's thicker air, water doesn't boil until about 107 °C.</li>
+</ul>
 
-<h3>Nutrient cycling &amp; climate control</h3>
-<p>Weathering frees <b>phosphorus, potassium, calcium and iron</b> that were locked inside rock. Erosion delivers them by river to the delta and the coast, where they feed blooms of plankton and wetland plants. When those organisms die, decomposers return the nutrients to the soil and seafloor. Some sediment gets buried, carried down into a subduction zone, melted, and brought back up by volcanoes as fresh rock that gets weathered again. That loop never stops. Weathering also acts as Veyra's <b>thermostat</b>. When the planet warms, more rain falls and weathering speeds up, pulling CO₂ out of the air into rock, which cools the planet. When it cools, weathering slows down and volcanic CO₂ builds up again, which warms it back up.</p>
-</div></section>
-</aside>
+<h3>Weathering</h3>
+<p>Weathering breaks rock into smaller pieces.</p>
+<ul>
+<li><b>Mechanical:</b> in the <span class="lnk" data-f="crown">Crown Range</span> and <span class="lnk" data-f="frost">Frostmere Valleys</span>, water freezes in cracks and expands, splitting the rock (frost wedging). Plant roots also grow into cracks. In the <span class="lnk" data-f="dunes">desert</span>, hot days and cold nights make rock crack and flake.</li>
+<li><b>Chemical:</b> CO₂ mixes with rain to make a weak acid that slowly dissolves rock. Oxygen rusts the iron in volcanic rock, which is why the <span class="lnk" data-f="ash">Kaelor Ashlands</span> have red soil.</li>
+</ul>
 
-<!-- ================= RIGHT RAIL ================= -->
-<aside class="rail" id="right">
+<h3>Erosion</h3>
+<p>Erosion moves the broken rock somewhere else.</p>
+<table>
+<tr><th>Cause</th><th>Where on Veyra</th><th>What it made</th></tr>
+<tr><td>Rivers</td><td><span class="lnk" data-f="river">Silvermouth River</span></td><td>V-shaped valley and a delta</td></tr>
+<tr><td>Wind + floods</td><td><span class="lnk" data-f="canyon">Glasswind Canyon</span></td><td>1.2 km deep canyon</td></tr>
+<tr><td>Glaciers</td><td><span class="lnk" data-f="frost">Frostmere Valleys</span></td><td>U-shaped valleys</td></tr>
+<tr><td>Waves</td><td><span class="lnk" data-f="teeth">Teeth of Ryn</span></td><td>Sea cliffs and sea stacks</td></tr>
+</table>
 
-<section class="card" data-m="s3">
-<header><span class="num">3</span><div><span class="tag">Written description</span><h2>Life Ingredients</h2></div><span class="chev">▾</span></header>
-<div class="body">
-<p>Veyra includes <b>all 8 of the 8 essential ingredients for life</b>, more than the required 6. Each one below explains how that ingredient is built into the planet's systems, not just listed.</p>
+<h3>How do weathering and erosion support ecosystems?</h3>
+<p>Rock contains nutrients that living things need, like <b>phosphorus, potassium, calcium and iron</b>. Weathering releases them, and erosion carries them by river to soils, wetlands and the ocean, where they feed plants and plankton. When those organisms die, decomposers return the nutrients to the soil and seafloor. Some sediment eventually gets pulled into the mantle at a trench and comes back up through volcanoes as new rock, so the cycle keeps going.</p>
+<p>Weathering also helps control the climate. When Veyra gets warmer, there is more rain and more weathering, which pulls CO₂ out of the air and cools things down. When it gets cooler, weathering slows down, and volcanic CO₂ builds back up and warms it.</p>
+</section>
 
-<div class="ing"><h4><em>💧</em>Liquid water</h4><div class="where">Vael Ocean · rivers · rift lakes · aquifers · clouds</div>
-<p>Water is where every Veyran cell does its chemistry. It dissolves nutrients and moves them around inside organisms and across the planet. Veyra's distance from Ostra, its thick greenhouse atmosphere and its heat-storing ocean all work together to keep most of the water liquid. Ostra-powered evaporation is constantly recycling it, the magnetic field stops the stellar wind from stripping it away, and volcanoes keep releasing new water vapor from the mantle.</p></div>
+<section class="pane" data-tab="3 · Life">
+<div class="kicker">Section 3</div>
+<h2>Life Ingredients</h2>
+<p>We included <b>all 8</b> ingredients for life. For each one, here's where it's found on Veyra, why life needs it and how the planet's systems keep it available.</p>
 
-<div class="ing"><h4><em>☀️</em>Energy</h4><div class="where">Ostra's light · geothermal vents · tidal mixing</div>
-<p>Life needs energy to build and run its cells. On land and in the sunlit upper ocean, plum-pigmented plants and plankton capture Ostra's orange light through photosynthesis. As a K-dwarf, Ostra will shine steadily for about 30 billion years, far longer than our Sun. In the dark deep sea, microbes at the <span class="go" data-f="vents">Seam Vent Gardens</span> use chemosynthesis, getting energy from hydrogen sulfide coming out of the vents. That supply keeps going as long as the interior stays hot and the plates keep moving.</p></div>
+<div class="ing"><h4>Liquid water <em>hydrosphere</em></h4><dl>
+<dt>Where</dt><dd>The Vael Ocean, rivers, rift lakes, groundwater and clouds.</dd>
+<dt>Why</dt><dd>Every chemical reaction in a living cell happens in water.</dd>
+<dt>Sustained by</dt><dd>Veyra's distance from Ostra and its greenhouse atmosphere keep it liquid. The water cycle keeps fresh water moving to land. The magnetic field stops it from being stripped into space, and volcanoes add new water vapor.</dd></dl></div>
 
-<div class="ing"><h4><em>⚫</em>Carbon</h4><div class="where">air (CO₂) · ocean (dissolved) · limestone · living things</div>
-<p>Carbon forms the backbone of every organic molecule: sugars, proteins and DNA. Plants pull CO₂ from the air to build their tissues. Animals eat them and breathe CO₂ back out. Ocean organisms lock carbon into shells, which pile up into limestone. Over millions of years, that limestone is subducted at the <span class="go" data-f="trench">Ember Trench</span> and returned to the air by <span class="go" data-f="kaelor">Mount Kaelor</span>. This is the carbon cycle that keeps both life and the climate balanced.</p></div>
+<div class="ing"><h4>Energy <em>star + interior</em></h4><dl>
+<dt>Where</dt><dd>Sunlight from Ostra, heat from deep-sea vents, and tides.</dd>
+<dt>Why</dt><dd>Living things need energy to grow and move.</dd>
+<dt>Sustained by</dt><dd>Plants and plankton use Ostra's light for photosynthesis, and Ostra will shine steadily for billions of years. At the <span class="lnk" data-f="vents">Seam Vent Gardens</span>, bacteria use chemicals from the vents instead (chemosynthesis), which keeps working as long as the plates keep moving.</dd></dl></div>
 
-<div class="ing"><h4><em>🌫️</em>Nitrogen</h4><div class="where">75% of the air · soils · ocean</div>
-<p>Organisms need nitrogen to build proteins and DNA, but the N₂ gas in the air is very hard for them to use. On Veyra, lightning in the stormy Crown Range clouds and nitrogen-fixing microbes living on plum-tree roots convert it into nitrates that dissolve in soil water. Decomposers return nitrogen to the soil when organisms die, and other bacteria release it back into the air. Volcanoes also add fresh nitrogen from the mantle.</p></div>
+<div class="ing"><h4>Carbon <em>all four spheres</em></h4><dl>
+<dt>Where</dt><dd>CO₂ in the air, dissolved in the ocean, in limestone rock and in every living thing.</dd>
+<dt>Why</dt><dd>Carbon is the building block of sugars, proteins and DNA.</dd>
+<dt>Sustained by</dt><dd>The carbon cycle. Plants take CO₂ from the air, and animals breathe it back out. Shells become limestone, which is subducted at the <span class="lnk" data-f="trench">Ember Trench</span> and released again by <span class="lnk" data-f="kaelor">Mount Kaelor</span>.</dd></dl></div>
 
-<div class="ing"><h4><em>🫧</em>Oxygen</h4><div class="where">22% of the air · dissolved in seawater · in water &amp; rocks</div>
-<p>Oxygen lets animals run cellular respiration, the most efficient way to release energy from food. Up high, it forms the ozone shield that blocks harmful UV light. Photosynthesis by forests and ocean plankton constantly replaces the oxygen that animals use up. Cold, wave-churned polar water and the tidal mixing from the two moons dissolve oxygen into the deep ocean so sea life can breathe there too.</p></div>
+<div class="ing"><h4>Nitrogen <em>atmosphere</em></h4><dl>
+<dt>Where</dt><dd>75% of the air, plus soil and seawater.</dd>
+<dt>Why</dt><dd>It is needed to make proteins and DNA.</dd>
+<dt>Sustained by</dt><dd>Lightning and bacteria on plant roots turn nitrogen gas into a form plants can use. Decomposers return it to the soil, other bacteria release it back to the air, and volcanoes add more.</dd></dl></div>
 
-<div class="ing"><h4><em>⚛️</em>Hydrogen</h4><div class="where">water (H₂O) · organic molecules · vent fluids</div>
-<p>Hydrogen is part of water and of nearly every biological molecule. Hydrogen bonds are what hold DNA's two strands together and give water its special properties. Most of Veyra's hydrogen is locked safely inside water. Veyra's stronger gravity, cold upper atmosphere and magnetic field stop it from leaking into space. Vent fluids at the Seam Ridge also release hydrogen gas that deep-sea microbes use for food.</p></div>
+<div class="ing"><h4>Oxygen <em>atmosphere</em></h4><dl>
+<dt>Where</dt><dd>22% of the air, dissolved in seawater, and in water and rocks.</dd>
+<dt>Why</dt><dd>Animals use it to get energy from food (respiration), and the ozone layer blocks UV light.</dd>
+<dt>Sustained by</dt><dd>Photosynthesis by forests and ocean plankton keeps refilling it. Waves and tides mix it down into the deep ocean.</dd></dl></div>
 
-<div class="ing"><h4><em>🪨</em>Phosphorus</h4><div class="where">volcanic &amp; mountain rock (apatite) · soils · delta sediment</div>
-<p>Phosphorus is part of DNA and ATP, the molecule cells use to carry energy. It doesn't exist as a gas, so it can <i>only</i> enter the biosphere when rock is weathered. Veyra's young, actively rising mountains and fresh volcanic rock make sure that supply never runs out. Rain dissolves phosphorus out of rock, the <span class="go" data-f="river">Silvermouth</span> carries it to the <span class="go" data-f="delta">delta</span>, and tectonics eventually lifts the buried sediment back up to be weathered again.</p></div>
+<div class="ing"><h4>Hydrogen <em>hydrosphere</em></h4><dl>
+<dt>Where</dt><dd>Mostly in water (H₂O) and in all living things.</dd>
+<dt>Why</dt><dd>It is part of water and almost every biological molecule, and it helps hold DNA together.</dd>
+<dt>Sustained by</dt><dd>It stays locked in water. Veyra's stronger gravity and magnetic field keep it from escaping to space. Vents also release hydrogen that deep-sea bacteria use.</dd></dl></div>
 
-<div class="ing"><h4><em>🟡</em>Sulfur</h4><div class="where">volcanic gases · hydrothermal vents · seawater sulfate</div>
-<p>Sulfur helps proteins fold into the right shapes so they work. Volcanoes like <span class="go" data-f="kaelor">Kaelor</span> release sulfur gases that rain washes into soils and the sea. At the vents, hydrogen sulfide is both a nutrient and an energy source for chemosynthetic microbes. Subduction carries sulfur-rich sediments down so that volcanoes can release them again.</p></div>
-</div></section>
+<div class="ing"><h4>Phosphorus <em>geosphere</em></h4><dl>
+<dt>Where</dt><dd>In rock (especially volcanic and mountain rock), soil and river sediment.</dd>
+<dt>Why</dt><dd>Cells need it for DNA and for ATP, which carries energy in cells.</dd>
+<dt>Sustained by</dt><dd>It only gets released when rock weathers. Veyra's growing mountains and fresh volcanic rock keep supplying it, and the <span class="lnk" data-f="river">Silvermouth River</span> carries it to the <span class="lnk" data-f="delta">delta</span> and the ocean.</dd></dl></div>
 
-<section class="card" data-m="sys">
-<header><span class="num" style="background:linear-gradient(135deg,#1a9b59,#7dff9b)">∞</span><div><span class="tag">Rubric · Integration of Systems</span><h2>How Veyra's Systems Work Together</h2></div><span class="chev">▾</span></header>
-<div class="body">
-<svg class="diagram" viewBox="0 0 340 300" font-family="Inter,sans-serif">
-<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="#cfe0ff"/></marker></defs>
-<g stroke="#cfe0ff" stroke-width="1.4" fill="none" marker-end="url(#ah)" opacity=".85">
-<path d="M120 70 Q170 40 214 66"/><path d="M220 92 Q170 120 124 92"/>
-<path d="M78 112 Q60 150 78 188"/><path d="M98 192 Q116 150 98 116"/>
-<path d="M262 112 Q280 150 262 188"/><path d="M242 190 Q224 150 242 116"/>
-<path d="M120 222 Q170 252 216 228"/><path d="M220 208 Q170 182 124 206"/>
-<path d="M118 110 L218 196"/><path d="M220 112 L122 194"/>
+<div class="ing"><h4>Sulfur <em>geosphere</em></h4><dl>
+<dt>Where</dt><dd>Volcanic gases, hydrothermal vents and seawater.</dd>
+<dt>Why</dt><dd>It helps proteins hold their shape.</dd>
+<dt>Sustained by</dt><dd>Volcanoes release sulfur that rain washes into soil and the sea. At the vents, bacteria use hydrogen sulfide for energy. Subduction carries sulfur back down so it can be released again.</dd></dl></div>
+</section>
+
+<section class="pane" data-tab="Systems">
+<div class="kicker">Integration of Systems</div>
+<h2>How Veyra's Systems Work Together</h2>
+<p>On Veyra, the four spheres depend on each other. Each arrow below is one way a sphere affects another.</p>
+<svg class="dg" viewBox="0 0 380 270" font-family="Inter,sans-serif">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#8b94a7"/></marker></defs>
+<g stroke="#8b94a7" stroke-width="1.5" fill="none" marker-end="url(#a)">
+<path d="M140 52 H238"/><path d="M238 72 H140"/>
+<path d="M82 92 V176"/><path d="M102 176 V92"/>
+<path d="M278 92 V176"/><path d="M298 176 V92"/>
+<path d="M140 208 H238"/><path d="M238 228 H140"/>
+<path d="M136 86 L242 186"/>
 </g>
-<g font-size="12" font-weight="600" text-anchor="middle" fill="#fff">
-<circle cx="88" cy="88" r="38" fill="#3a1d16" stroke="#ff6a55"/><text x="88" y="86">Geosphere</text><text x="88" y="101" font-size="9" fill="#ffb4a8" font-weight="400">plates · rock</text>
-<circle cx="252" cy="88" r="38" fill="#121e3d" stroke="#7cc4ff"/><text x="252" y="86">Atmosphere</text><text x="252" y="101" font-size="9" fill="#bcdcff" font-weight="400">air · climate</text>
-<circle cx="88" cy="214" r="38" fill="#0e2340" stroke="#4f8dff"/><text x="88" y="212">Hydrosphere</text><text x="88" y="227" font-size="9" fill="#a9c6ff" font-weight="400">ocean · ice · rivers</text>
-<circle cx="252" cy="214" r="38" fill="#10301c" stroke="#7dff9b"/><text x="252" y="212">Biosphere</text><text x="252" y="227" font-size="9" fill="#bff7cc" font-weight="400">plum forests · reefs</text>
+<g font-size="13" font-weight="600" text-anchor="middle">
+<rect x="22" y="30" width="118" height="62" rx="10" fill="#2b1c1c" stroke="#f28b82"/><text x="81" y="66" fill="#fff">Geosphere</text>
+<rect x="240" y="30" width="118" height="62" rx="10" fill="#1a2233" stroke="#8ab4f8"/><text x="299" y="66" fill="#fff">Atmosphere</text>
+<rect x="22" y="178" width="118" height="62" rx="10" fill="#14243a" stroke="#78d9ec"/><text x="81" y="214" fill="#fff">Hydrosphere</text>
+<rect x="240" y="178" width="118" height="62" rx="10" fill="#17281d" stroke="#81c995"/><text x="299" y="214" fill="#fff">Biosphere</text>
 </g>
-<g font-size="8.6" fill="#d6def0" text-anchor="middle">
-<text x="170" y="40">volcanic CO₂, N₂, H₂O</text><text x="170" y="128">acid rain → weathering</text>
-<text x="40" y="153">slab water</text><text x="40" y="163">→ magma</text>
-<text x="132" y="150" text-anchor="start">erosion</text>
-<text x="300" y="150">O₂ via</text><text x="300" y="160">photosynth.</text>
-<text x="206" y="150" text-anchor="end">CO₂ in</text>
-<text x="170" y="262">water for every cell</text><text x="170" y="176">transpiration</text>
-<text x="150" y="196" fill="#ffd9a8">nutrients · vents</text>
+<g font-size="10" fill="#c9cfdb" text-anchor="middle">
+<text x="189" y="46">volcanic gases</text><text x="189" y="86">acid rain</text>
+<text x="54" y="138">erodes</text><text x="132" y="138">magma</text>
+<text x="252" y="138">O₂, H₂O</text><text x="330" y="138">CO₂</text>
+<text x="189" y="202">water for life</text><text x="189" y="244">transpiration</text>
+<text x="208" y="128">nutrients</text>
 </g></svg>
-<p>None of Veyra's systems could keep life going alone. Each one feeds the others in loops:</p>
+
+<h3>The main connections</h3>
 <ul>
-<li><b>Geosphere → Atmosphere:</b> volcanoes on the <span class="go" data-f="kaelor">Ember Arc</span> release CO₂, water vapor and nitrogen, which created the air and keep it replenished. The <span class="go" data-f="crown">Crown Range</span> blocks wind and creates a rain shadow.</li>
-<li><b>Atmosphere → Hydrosphere:</b> Ostra-heated winds drive evaporation and ocean currents, and CO₂ dissolves in rain to make carbonic acid.</li>
-<li><b>Hydrosphere → Geosphere:</b> rain, rivers, ice and waves weather and erode rock. Water carried down by subducting slabs lowers the mantle's melting point and creates magma.</li>
-<li><b>Geosphere → Biosphere:</b> weathered rock supplies phosphorus and other minerals. Volcanic ash builds the fertile <span class="go" data-f="ash">Ashlands</span>, and vents feed deep-sea life.</li>
-<li><b>Biosphere → Atmosphere:</b> plum forests and plankton release O₂ and take in CO₂. Transpiration adds water vapor that turns into more rain.</li>
-<li><b>Biosphere → Geosphere:</b> roots and lichens speed up weathering, and shells pile up into limestone.</li>
+<li><b>Geosphere → Atmosphere:</b> volcanoes like <span class="lnk" data-f="kaelor">Kaelor</span> release CO₂, water vapor and nitrogen. The <span class="lnk" data-f="crown">Crown Range</span> blocks wind and causes a rain shadow.</li>
+<li><b>Atmosphere → Hydrosphere:</b> wind drives evaporation and ocean currents. CO₂ mixes with rain to make weak acid.</li>
+<li><b>Hydrosphere → Geosphere:</b> rain, rivers, ice and waves weather and erode rock. Water carried down with subducting plates helps melt rock into magma.</li>
+<li><b>Geosphere → Biosphere:</b> weathered rock gives soil its nutrients, volcanic ash makes fertile land, and vents feed deep-sea life.</li>
+<li><b>Biosphere → Atmosphere:</b> plants and plankton make oxygen and take in CO₂. Plants also release water vapor.</li>
+<li><b>Biosphere → Geosphere:</b> roots break up rock, and shells pile up to form limestone.</li>
 </ul>
-<h3>Follow one carbon atom</h3>
-<p>Mount Kaelor erupts a CO₂ molecule → a plum tree on the Verdant Slopes absorbs it → the leaf falls and decomposes, and rain carries the carbon as carbonic acid into the Silvermouth → it reaches the sea, where a shell-building plankton uses it → the shell sinks and becomes limestone on the Sundra plate → the plate carries it to the Ember Trench and subducts it → it melts and erupts from Kaelor again. <b>All four spheres, one loop.</b></p>
-<div class="callout"><b>What if the plates stopped?</b> Volcanoes would stop releasing CO₂ while weathering kept pulling it out of the air. The mountains would erode flat, nutrients would run out, and Veyra would cool into a frozen planet. Tectonics is what holds the whole system together.</div>
-</div></section>
 
-<section class="card closed" data-m="xsec">
-<header><div><span class="tag">Visual model · cross-section</span><h2>Inside a Subduction Zone</h2></div><span class="chev">▾</span></header>
-<div class="body">
-<svg class="diagram" viewBox="0 0 340 200" font-family="Inter,sans-serif" font-size="9">
-<defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="#fff"/></marker>
-<linearGradient id="mant" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a3a1a"/><stop offset="1" stop-color="#3a1206"/></linearGradient></defs>
-<rect width="340" height="200" fill="url(#mant)"/>
-<path d="M0 60 L150 60 L170 82 L340 50 L340 0 L0 0Z" fill="#12304f"/>
-<path d="M0 60 L150 60 L170 82 L170 96 L150 74 L0 74Z" fill="#3f3f4a"/>
-<path d="M150 74 L170 96 L300 200 L270 200 L160 104Z" fill="#4b4b58" opacity=".95"/>
-<path d="M170 82 L235 44 L250 30 L262 44 L340 50 L340 78 L178 96Z" fill="#6b4a3a"/>
-<path d="M247 32 L253 32 L256 60 L244 60Z" fill="#ff6a2a"/>
-<path d="M250 60 C246 90 238 110 232 130" stroke="#ffb03c" stroke-width="4" fill="none" stroke-dasharray="3 3"/>
-<ellipse cx="230" cy="136" rx="16" ry="8" fill="#ff7a2a"/>
-<path d="M249 26 q-10 -14 -2 -24 M252 26 q8 -12 14 -22" stroke="#ccc" fill="none" opacity=".7"/>
-<g stroke="#fff" stroke-width="1.3" marker-end="url(#ah2)"><path d="M30 67 H110"/><path d="M215 158 L245 182"/><path d="M320 64 H285"/></g>
-<g fill="#fff"><text x="20" y="40">Vael Ocean</text><text x="20" y="88">Sundra plate (dense basalt)</text>
-<text x="128" y="114">Ember Trench</text><text x="175" y="180">slab sinks, releases water</text>
-<text x="256" y="22">Mt. Kaelor</text><text x="262" y="140">magma rises</text><text x="268" y="90">Mervath continent</text><text x="268" y="100">(light granite)</text><text x="20" y="160" fill="#ffd2b0">mantle convection</text></g>
-</svg>
-<p>Dense oceanic crust sinks under lighter continental crust. Water carried down with the slab lowers the melting point of the mantle above it, so magma forms and rises to feed Kaelor's eruptions. Those eruptions build new land, release CO₂ and deposit fertile ash. This is how a geosphere process directly supports the atmosphere and biosphere.</p>
-<svg class="diagram" viewBox="0 0 340 120" font-family="Inter,sans-serif" font-size="9">
-<rect width="340" height="120" fill="#0d1426"/>
-<path d="M0 120 L0 80 L60 78 L110 60 L140 20 L160 8 L180 22 L210 50 L250 72 L340 76 L340 120Z" fill="#5a4636"/>
-<path d="M140 20 L160 8 L180 22 L170 26 L160 18 L150 26Z" fill="#eef"/>
-<path d="M0 82 L60 80 L110 62 L130 42" fill="none" stroke="#7a3f72" stroke-width="5"/>
-<g stroke="#6cc8ff" stroke-width="1.3" fill="none" marker-end="url(#ah2)"><path d="M10 60 Q60 50 110 36"/><path d="M200 18 Q240 30 280 58" stroke="#ffb46b"/></g>
-<g fill="#6cc8ff" opacity=".8"><circle cx="118" cy="44" r="1.5"/><circle cx="124" cy="52" r="1.5"/><circle cx="112" cy="54" r="1.5"/><circle cx="128" cy="60" r="1.5"/></g>
-<g fill="#fff"><text x="8" y="50">moist westerly air</text><text x="64" y="100">Verdant Slopes (rainforest)</text><text x="138" y="114">Crown Range</text><text x="232" y="98">Ashen Dunes (rain shadow)</text><text x="230" y="40" fill="#ffd2b0">dry, sinking air</text></g>
-</svg>
-</div></section>
+<h3>Example: following one carbon atom</h3>
+<p>Choose the <b>Carbon cycle</b> layer to see this loop on the planet.</p>
+<ol>
+<li><span class="lnk" data-f="kaelor">Mount Kaelor</span> erupts and releases CO₂ into the air. <i>(geosphere → atmosphere)</i></li>
+<li>The CO₂ dissolves in rain and washes into the ocean. <i>(atmosphere → hydrosphere)</i></li>
+<li>Plankton use it to build shells. <i>(hydrosphere → biosphere)</i></li>
+<li>The shells sink and become limestone on the seafloor. <i>(biosphere → geosphere)</i></li>
+<li>The plate carries the limestone into the <span class="lnk" data-f="trench">Ember Trench</span>, where it melts and feeds the volcano again.</li>
+</ol>
 
-<section class="card closed" data-m="rubric">
-<header><div><span class="tag">Self-check</span><h2>Rubric Checklist</h2></div><span class="chev">▾</span></header>
-<div class="body">
+<div class="note"><b>What if Veyra's plates stopped moving?</b> Volcanoes would stop adding CO₂, but weathering would keep removing it. Veyra would slowly cool and freeze. The mountains would also wear down flat, and new nutrients would stop being released. Plate tectonics is what keeps all the systems running.</div>
+</section>
+
+<section class="pane" data-tab="Rubric">
+<div class="kicker">Self-check</div>
+<h2>Rubric Checklist</h2>
 <ul class="check">
-<li><span><b>Creativity &amp; Design (5)</b>: original world (orange star, two moons, plum plants, double tides) that stays scientifically plausible.</span></li>
-<li><span><b>Scientific Accuracy (8)</b>: plate tectonics, climate regulation, water, weathering, erosion and mineral/nutrient cycling are all explained with ideas from the unit.</span></li>
-<li><span><b>Visual Model (5)</b>: labeled tectonic boundaries (convergent ×3 types, divergent ×2, transform, hotspot), landforms, water, weathering/erosion, life zones, plus arrows and captions for processes (toggle <i>Processes</i> &amp; <i>Plate motion</i>).</span></li>
-<li><span><b>Section 1 (8)</b>: planet introduction, tectonic activity, plate interactions, landforms, material recycling, climate regulation and links to life.</span></li>
-<li><span><b>Section 2 (8)</b>: water's properties, atmosphere + water cycle, energy source, where water is located, weathering &amp; erosion, nutrient cycling.</span></li>
-<li><span><b>Section 3 (8)</b>: 8 of 8 ingredients, each explaining where it is found, why it matters and how it is sustained.</span></li>
-<li><span><b>Integration of Systems (8)</b>: system web diagram, six two-way interactions and a full carbon-atom loop.</span></li>
-<li><span><b>Required visual items:</b> tectonic plates &amp; boundaries ✓ · mountains, volcanoes, ocean basins ✓ · rivers, valleys, cliffs ✓ · labeled life areas: oceans, fertile land, volcanic regions ✓ · water cycle ✓ · main energy source ✓</span></li>
+<li><span><b>Creativity &amp; Design:</b> an orange star, two moons, thicker air and dark red plants, while still following real science.</span></li>
+<li><span><b>Scientific Accuracy:</b> plate tectonics, climate regulation, water, weathering, erosion and nutrient cycling are explained using ideas from the unit.</span></li>
+<li><span><b>Visual Model:</b> labeled plate boundaries, landforms, bodies of water, volcanoes, weathering and erosion, and life zones, with arrows and labels showing processes (see the map layers).</span></li>
+<li><span><b>Section 1:</b> planet introduction, tectonic activity, every type of plate interaction, landforms, recycling, climate regulation and links to life.</span></li>
+<li><span><b>Section 2:</b> atmosphere, energy source, location of water, the water cycle, water's properties, weathering, erosion and nutrient cycling.</span></li>
+<li><span><b>Section 3:</b> all 8 ingredients, each with where it is found, why it matters and how it is sustained.</span></li>
+<li><span><b>Integration of Systems:</b> a diagram, six connections between spheres, a full carbon loop and a "what if" example.</span></li>
+<li><span><b>Required on the model:</b> plates and boundaries · mountains, volcanoes, ocean basins · rivers, valleys, cliffs · labeled oceans, fertile land and volcanic regions · water cycle · energy source.</span></li>
 </ul>
-<p style="color:var(--muted);font-size:12px">Tip: the <b>⎙ Print write-up</b> button prints all three written sections as a clean document.</p>
-</div></section>
+</section>
+  </div>
 </aside>
 
-<div id="info"><button class="x" id="infoX">×</button><div class="k" id="infoK"></div><h3 id="infoT"></h3><p id="infoP"></p><p class="lifep" id="infoL"></p><div class="coords" id="infoC"></div></div>
-<div id="readout">Hover over Veyra to read coordinates, elevation and biome</div>
-<nav id="mtabs"></nav>
+<div id="info"><button class="x" id="infoX" aria-label="Close">×</button><div class="k" id="infoK"></div><h3 id="infoT"></h3><p id="infoP"></p><p class="life" id="infoL"></p><div class="c" id="infoC"></div>
+<div class="nav"><button id="tPrev">Back</button><button id="tNext">Next</button><span id="tCount" style="margin-left:auto;font-size:11px;color:var(--muted);align-self:center"></span></div></div>
+<div id="readout"></div>
 
 <script type="module">
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-const D2R=Math.PI/180, R2D=180/Math.PI;
-const W=1024, H=512, DISP=0.045;
+const D2R=Math.PI/180,R2D=180/Math.PI;
+const W=1024,H=512,CW=2048,CH=1024;
+const mobile=()=>innerWidth<=900;
 
-/* ---------- math helpers ---------- */
 function ll2v(lat,lon,r=1){const a=lat*D2R,b=lon*D2R;return new THREE.Vector3(r*Math.cos(a)*Math.cos(b),r*Math.sin(a),-r*Math.cos(a)*Math.sin(b));}
-function v2ll(v){const n=v.clone().normalize();return [Math.asin(n.y)*R2D, Math.atan2(-n.z,n.x)*R2D];}
-function hash(x,y,z){let h=(Math.imul(x,374761393)+Math.imul(y,668265263)+Math.imul(z,1274126177))|0;h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967296;}
-function vnoise(x,y,z){const xi=Math.floor(x),yi=Math.floor(y),zi=Math.floor(z);let xf=x-xi,yf=y-yi,zf=z-zi;
- const u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf),w=zf*zf*(3-2*zf);
+function v2ll(v){const n=v.clone().normalize();return [Math.asin(n.y)*R2D,Math.atan2(-n.z,n.x)*R2D];}
+function hash(x,y,z){let h=(Math.imul(x,374761393)+Math.imul(y,668265263)+Math.imul(z,1274126177))|0;h=Math.imul(h^(h>>>13),1274126177);return((h^(h>>>16))>>>0)/4294967296;}
+function vnoise(x,y,z){const xi=Math.floor(x),yi=Math.floor(y),zi=Math.floor(z);const xf=x-xi,yf=y-yi,zf=z-zi;const u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf),w=zf*zf*(3-2*zf);
  const a=hash(xi,yi,zi),b=hash(xi+1,yi,zi),c=hash(xi,yi+1,zi),d=hash(xi+1,yi+1,zi),e=hash(xi,yi,zi+1),f=hash(xi+1,yi,zi+1),g=hash(xi,yi+1,zi+1),h=hash(xi+1,yi+1,zi+1);
  const x1=a+(b-a)*u,x2=c+(d-c)*u,x3=e+(f-e)*u,x4=g+(h-g)*u;const y1=x1+(x2-x1)*v,y2=x3+(x4-x3)*v;return y1+(y2-y1)*w;}
 function fbm(x,y,z,o){let s=0,a=.5,f=1,n=0;for(let i=0;i<o;i++){s+=a*(vnoise(x*f+i*17.1,y*f,z*f)*2-1);n+=a;f*=2.03;a*=.5;}return s/n;}
 function ridged(x,y,z,o){let s=0,a=.5,f=1,n=0;for(let i=0;i<o;i++){s+=a*(1-Math.abs(vnoise(x*f,y*f+i*9.3,z*f)*2-1));n+=a;f*=2.1;a*=.5;}return s/n;}
-function angDeg(a,b,c,d){return Math.acos(Math.max(-1,Math.min(1,ll2v(a,b).dot(ll2v(c,d)))))*R2D;}
-function densify(pts,step=0.5){const out=[];for(let i=0;i<pts.length-1;i++){const A=ll2v(...pts[i]),B=ll2v(...pts[i+1]);const ang=A.angleTo(B)*R2D;const n=Math.max(1,Math.ceil(ang/step));
- for(let k=0;k<n;k++){const t=k/n;const s=Math.sin(ang*D2R);const v=s<1e-6?A.clone():A.clone().multiplyScalar(Math.sin((1-t)*ang*D2R)/s).add(B.clone().multiplyScalar(Math.sin(t*ang*D2R)/s));out.push(v2ll(v));}}
- out.push(pts[pts.length-1]);return out;}
-const gauss=(lat,lon,cl,co,w)=>{const d=angDeg(lat,lon,cl,co);return Math.exp(-d*d/(2*w*w));};
+function densify(pts,step=.5){const out=[];for(let i=0;i<pts.length-1;i++){const A=ll2v(...pts[i]),B=ll2v(...pts[i+1]);const ang=A.angleTo(B);const n=Math.max(1,Math.ceil(ang*R2D/step));const s=Math.sin(ang);
+ for(let k=0;k<n;k++){const t=k/n;const v=s<1e-6?A.clone():A.clone().multiplyScalar(Math.sin((1-t)*ang)/s).add(B.clone().multiplyScalar(Math.sin(t*ang)/s));out.push(v2ll(v));}}out.push(pts[pts.length-1]);return out;}
+function gaussLL(lat,lon,cl,co,w){const p=ll2v(lat,lon),q=ll2v(cl,co);const d=Math.acos(Math.min(1,p.dot(q)))*R2D;return Math.exp(-d*d/(2*w*w));}
 
-/* ---------- world design data ---------- */
 const CONT=[[18,-45,34],[-12,-38,18],[-15,58,30],[5,85,20],[76,30,15],[-80,-120,13],[-36,-150,13]];
 const BOUNDS=[
- {id:'crown',type:'conv',name:'Crown Range suture (continent–continent)',pts:[[46,-54],[36,-51],[24,-49],[10,-46]],plates:['Auren','Kesh'],motion:'toward'},
- {id:'trench',type:'conv',name:'Ember Trench (ocean–continent)',pts:[[16,30],[2,27],[-12,26],[-28,29],[-42,33]],plates:['Sundra','Mervath'],motion:'toward'},
- {id:'cinder',type:'conv',name:'Cinder Trench (ocean–ocean)',pts:[[20,112],[28,120],[35,131],[39,145]],plates:['Vael','Cinder'],motion:'toward'},
- {id:'seamN',type:'div',name:'Seam Ridge (north)',pts:[[64,2],[44,5],[24,7],[3,8]],motion:'away'},
- {id:'shear',type:'trans',name:'Shearline Fault (transform)',pts:[[3,8],[1,16]],motion:'slide'},
- {id:'seamS',type:'div',name:'Seam Ridge (south)',pts:[[1,16],[-20,15],[-40,13],[-62,12]],motion:'away'},
- {id:'hollow',type:'div',name:'Hollow Rift (continental rift)',pts:[[6,74],[-6,78],[-20,80],[-32,77]],motion:'away'},
- {id:'vaelrise',type:'div',name:'Vael Rise (mid-ocean ridge)',pts:[[62,-118],[34,-126],[4,-122],[-28,-131],[-58,-126]],motion:'away'},
- {id:'boreal',type:'conv',name:'Boreal margin',pts:[[56,60],[54,90],[58,118]],motion:'toward'},
+ {id:'crown',type:'conv',pts:[[46,-54],[36,-51],[24,-49],[10,-46]],m:'in'},
+ {id:'trench',type:'conv',pts:[[16,30],[2,27],[-12,26],[-28,29],[-42,33]],m:'in'},
+ {id:'cinder',type:'conv',pts:[[20,112],[28,120],[35,131],[39,145]],m:'in'},
+ {id:'seamN',type:'div',pts:[[64,2],[44,5],[24,7],[3,8]],m:'out'},
+ {id:'shear',type:'trans',pts:[[3,8],[1,16]],m:'slide'},
+ {id:'seamS',type:'div',pts:[[1,16],[-20,15],[-40,13],[-62,12]],m:'out'},
+ {id:'hollow',type:'div',pts:[[6,74],[-6,78],[-20,80],[-32,77]],m:'out'},
+ {id:'vaelrise',type:'div',pts:[[62,-118],[34,-126],[4,-122],[-28,-131],[-58,-126]],m:'out'},
+ {id:'boreal',type:'conv',pts:[[56,60],[54,90],[58,118]],m:'in'},
 ];
 const ARC=[[14,36],[2,35],[-8,36.5],[-20,38],[-32,40]];
 const CINDER_ISL=[[24,121],[30,127],[35,135],[38,142],[41,149]];
 const LANTERN=[[2,172,1],[6,166,.72],[10,160,.48],[13,154,.3],[16,148,.16],[19,142,.08]];
 const RIVERS=[
- {name:'Silvermouth',pts:[[34,-51],[32,-55],[33,-60],[30,-65],[31,-70],[30,-74],[30.4,-77.5]],w:2.2},
- {name:'delta1',pts:[[30.4,-77.5],[32,-79.5]],w:1.4},{name:'delta2',pts:[[30.4,-77.5],[29,-80]],w:1.4},{name:'delta3',pts:[[30.4,-77.5],[30.6,-80.5]],w:1.4},
- {name:'Ashrun',pts:[[-6,40],[-10,48],[-12,58],[-15,68],[-16,78]],w:1.8},
- {name:'Kesh wash',pts:[[20,-47],[19,-41],[17,-35],[15,-30],[13,-26]],w:1.1},
- {name:'Teeth stream',pts:[[-14,-40],[-20,-41],[-27,-40]],w:1.2},
+ [[34,-51],[32,-55],[33,-60],[30,-65],[31,-70],[30,-74],[30.4,-77.5]],[[30.4,-77.5],[32,-79.5]],[[30.4,-77.5],[29,-80]],[[30.4,-77.5],[30.6,-80.5]],
+ [[-6,40],[-10,48],[-12,58],[-15,68],[-16,78]],[[20,-47],[19,-41],[17,-35],[15,-30],[13,-26]],[[-14,-40],[-20,-41],[-27,-40]],
+ [[40,-52],[44,-60],[46,-68],[47,-74]],[[-2,42],[2,52],[6,62],[8,70]],[[70,22],[66,26]],
 ];
 
-/* ---------- planet generation ---------- */
-const HG=new Float32Array(W*H), MO=new Float32Array(W*H);
-function stampInto(P,N,lat,lon,amp,w){
- const r=w*3, cy=(90-lat)/180*H, ry=r/180*H;
- const y0=Math.max(0,Math.floor(cy-ry)), y1=Math.min(H-1,Math.ceil(cy+ry));
- for(let y=y0;y<=y1;y++){const la=90-(y+.5)/H*180;const cl=Math.max(.06,Math.cos(la*D2R));const rx=r/cl/360*W;const cx=(lon+180)/360*W;
+const HG=new Float32Array(W*H),MO=new Float32Array(W*H),AM=new Float32Array(W*H);
+function stamp(P,N,lat,lon,amp,w){const r=w*3,cy=(90-lat)/180*H,ry=r/180*H;const y0=Math.max(0,Math.floor(cy-ry)),y1=Math.min(H-1,Math.ceil(cy+ry));
+ for(let y=y0;y<=y1;y++){const la=90-(y+.5)/H*180;const cl=Math.max(.06,Math.cos(la*D2R));const rx=r/cl/360*W,cx=(lon+180)/360*W;
   for(let x=Math.floor(cx-rx);x<=Math.ceil(cx+rx);x++){const xx=((x%W)+W)%W;const lo=(x+.5)/W*360-180;const dl=(lo-lon)*cl,dt=la-lat;const d2=dl*dl+dt*dt;if(d2>r*r)continue;
-   const v=amp*Math.exp(-d2/(2*w*w));const i=y*W+xx;if(amp>0){if(v>P[i])P[i]=v}else{if(v<N[i])N[i]=v}}}}
-function stampLine(P,N,pts,amp,w,step=.4){for(const [a,b] of densify(pts,step))stampInto(P,N,a,b,amp,w);}
-
+   const v=amp*Math.exp(-d2/(2*w*w));const i=y*W+xx;if(amp>0){if(v>P[i])P[i]=v}else if(v<N[i])N[i]=v;}}}
+const line=(P,N,pts,a,w)=>{for(const [x,y] of densify(pts,.4))stamp(P,N,x,y,a,w);};
 function generate(){
- const P=new Float32Array(W*H),N=new Float32Array(W*H),Pv=new Float32Array(W*H);
- // tectonic relief
- stampLine(P,N,BOUNDS[0].pts,1.0,2.4);              // Crown Range fold mountains
- stampLine(P,N,[[44,-58],[30,-54],[16,-50]],.55,2.2); // foothills
- stampLine(P,N,BOUNDS[1].pts.map(([a,b])=>[a,b-1]),-.9,1.3); // Ember Trench
- stampLine(P,N,ARC,.5,1.8);                          // Ember Arc
- stampLine(P,N,BOUNDS[2].pts,-.85,1.2);              // Cinder trench
- for(const [a,b] of CINDER_ISL)stampInto(P,N,a+3,b-2,.62,.75);
- for(const id of ['seamN','seamS','vaelrise']){const B=BOUNDS.find(b=>b.id===id);stampLine(P,N,B.pts,.3,1.7);}
- stampLine(P,N,BOUNDS[4].pts,.18,.8);
- const hol=BOUNDS.find(b=>b.id==='hollow').pts;
- stampLine(P,N,hol.map(([a,b])=>[a,b-2.6]),.42,1.5);stampLine(P,N,hol.map(([a,b])=>[a,b+2.6]),.42,1.5);
- stampLine(P,N,hol,-.75,.85);                         // rift floor with lakes
- for(const [a,b,s] of LANTERN)stampInto(P,N,a,b,1.05*s,.8);
- stampInto(Pv,N,-8,36.5,.72,.9);                     // Mt Kaelor cone
- stampLine(P,N,[[18,-34],[15,-30],[12,-27]],-.001,.1); // placeholder (canyon drawn in color)
- stampLine(P,N,[[-28,-46],[-31,-40],[-29,-33]],.0,.1);
+ const P=new Float32Array(W*H),N=new Float32Array(W*H),V=new Float32Array(W*H),Z=new Float32Array(W*H);
+ line(P,N,BOUNDS[0].pts,1,2.4);line(P,N,[[44,-58],[30,-54],[16,-50]],.55,2.2);
+ line(P,N,BOUNDS[1].pts.map(([a,b])=>[a,b-1]),-.9,1.3);line(P,N,ARC,.5,1.8);
+ line(P,N,BOUNDS[2].pts,-.85,1.2);for(const [a,b] of CINDER_ISL)stamp(P,N,a+3,b-2,.62,.75);
+ for(const B of BOUNDS.filter(b=>b.type==='div'&&b.id!=='hollow'))line(P,N,B.pts,.3,1.7);
+ const hol=BOUNDS[6].pts;line(P,N,hol.map(([a,b])=>[a,b-2.6]),.42,1.5);line(P,N,hol.map(([a,b])=>[a,b+2.6]),.42,1.5);line(P,N,hol,-.75,.85);
+ for(const [a,b,s] of LANTERN)stamp(P,N,a,b,1.05*s,.8);
+ stamp(V,N,-8,36.5,.72,.9);stamp(Z,Z,-16,43,1,6.5);
  for(let y=0;y<H;y++){const lat=90-(y+.5)/H*180;
   for(let x=0;x<W;x++){const lon=(x+.5)/W*360-180;const p=ll2v(lat,lon);const i=y*W+x;
    const warp=fbm(p.x*1.7+3,p.y*1.7,p.z*1.7,4);
-   let land=-2;for(const [cl,co,r] of CONT){const d=Math.acos(Math.max(-1,Math.min(1,p.dot(ll2v(cl,co)))))*R2D;land=Math.max(land,1-d/r);}
-   land+=warp*.55;
-   const det=fbm(p.x*5.1,p.y*5.1+7,p.z*5.1,5);
-   let h=land*.75-.08+det*.15;
-   if(h<0)h=Math.max(h*1.3,-.62)+det*.08;
-   const rg=ridged(p.x*7,p.y*7,p.z*7,4);
-   h+=P[i]*(.55+.75*rg)+Pv[i]+N[i];
-   // keep rift lakes / trenches as water, Lantern atolls tiny
-   HG[i]=h;
-   // moisture field
+   let land=-2;for(const [cl,co,r] of CONT){const q=ll2v(cl,co);land=Math.max(land,1-Math.acos(Math.max(-1,Math.min(1,p.dot(q))))*R2D/r);}
+   land+=warp*.55;const det=fbm(p.x*5.1,p.y*5.1+7,p.z*5.1,5);
+   let h=land*.75-.08+det*.15;if(h<0)h=Math.max(h*1.3,-.62)+det*.08;
+   h+=P[i]*(.55+.75*ridged(p.x*7,p.y*7,p.z*7,4))+V[i]+N[i];HG[i]=h;
    let m=.55+fbm(p.x*2.4+11,p.y*2.4,p.z*2.4,3)*.5;
-   m-=.75*gauss(lat,lon,22,-35,11);          // rain shadow
-   m+=.45*gauss(lat,lon,27,-61,9);           // windward slopes
-   m-=.25*Math.exp(-Math.pow((Math.abs(lat)-24)/8,2)); // subtropical dry belt
-   m+=.2*Math.exp(-Math.pow(lat/9,2));        // equatorial wet belt
-   MO[i]=m;
-  }}
+   m-=.75*gaussLL(lat,lon,22,-35,11);m+=.45*gaussLL(lat,lon,27,-61,9);
+   m-=.25*Math.exp(-Math.pow((Math.abs(lat)-24)/8,2));m+=.2*Math.exp(-Math.pow(lat/9,2));
+   MO[i]=m;AM[i]=Z[i];}}
+}
+function sample(A,u,v){const x=u*W-.5,y=v*H-.5;const x0=Math.floor(x),y0=Math.max(0,Math.min(H-2,Math.floor(y)));const fx=x-x0,fy=Math.max(0,Math.min(1,y-y0));
+ const xa=((x0%W)+W)%W,xb=(xa+1)%W;return (A[y0*W+xa]*(1-fx)+A[y0*W+xb]*fx)*(1-fy)+(A[(y0+1)*W+xa]*(1-fx)+A[(y0+1)*W+xb]*fx)*fy;}
+
+function textures(){
+ const c=document.createElement('canvas');c.width=CW;c.height=CH;const g=c.getContext('2d');const img=g.createImageData(CW,CH),d=img.data;
+ const bc=document.createElement('canvas');bc.width=CW;bc.height=CH;const bg=bc.getContext('2d');const bimg=bg.createImageData(CW,CH),bd=bimg.data;
+ const mix=(a,b,t)=>{t=Math.max(0,Math.min(1,t));return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];};
+ const C={deep:[4,14,34],mid:[8,30,64],shal:[22,78,104],coast:[46,120,128],beach:[176,160,124],forest:[46,30,30],forest2:[70,48,40],grass:[112,92,62],dry:[150,124,86],desert:[196,166,118],rock:[104,96,90],snow:[236,240,246],tundra:[128,118,108],ash:[98,44,32],ice:[210,224,236]};
+ for(let y=0;y<CH;y++){const v=(y+.5)/CH;const lat=90-v*180;const alat=Math.abs(lat);
+  for(let x=0;x<CW;x++){const u=(x+.5)/CW;const o=(y*CW+x)*4;
+   const fine=(vnoise(x*.045,y*.045,1.3)-.5)*.07+(vnoise(x*.16,y*.16,2.7)-.5)*.03;
+   const h=sample(HG,u,v)+fine;let col;
+   if(h<0){const t=-h;col=t<.04?mix(C.coast,C.shal,t/.04):t<.2?mix(C.shal,C.mid,(t-.04)/.16):mix(C.mid,C.deep,(t-.2)/.4);
+    if(alat>73+fine*60)col=mix(col,C.ice,(alat-73)/3);}
+   else{const m=sample(MO,u,v)+fine*1.5;const cold=alat/90*1.15+h*.9;
+    col=m>.6?mix(C.forest2,C.forest,(m-.6)/.3):m>.42?mix(C.grass,C.forest2,(m-.42)/.18):m>.28?mix(C.dry,C.grass,(m-.28)/.14):mix(C.desert,C.dry,(m-.1)/.18);
+    const am=sample(AM,u,v);if(am>.1)col=mix(col,C.ash,am*1.3);
+    if(h<.02)col=mix(C.beach,col,h/.02);
+    if(h>.45)col=mix(col,C.rock,(h-.45)/.3);
+    if(cold>.9)col=mix(col,C.tundra,(cold-.9)/.1);
+    if(cold>1.02||h>.95)col=mix(col,C.snow,Math.max((cold-1.02)/.06,(h-.95)/.1));}
+   const k=1+fine*1.2;d[o]=col[0]*k;d[o+1]=col[1]*k;d[o+2]=col[2]*k;d[o+3]=255;
+   const bv=h<0?0:Math.min(255,h*220);bd[o]=bd[o+1]=bd[o+2]=bv;bd[o+3]=255;}}
+ g.putImageData(img,0,0);bg.putImageData(bimg,0,0);
+ const px=(a,b)=>[(b+180)/360*CW,(90-a)/180*CH];
+ g.lineCap=g.lineJoin='round';
+ RIVERS.forEach((r,i)=>{g.strokeStyle='rgba(40,96,130,.95)';g.lineWidth=i===0?2.6:i<4?1.6:1.9;g.beginPath();densify(r,.3).forEach(([a,b],k)=>{const [X,Y]=px(a,b);k?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke();});
+ g.strokeStyle='rgba(120,56,34,.9)';g.lineWidth=3.2;g.beginPath();densify([[19,-35],[16.5,-31.5],[15,-29.5],[12,-26.5]],.3).forEach(([a,b],k)=>{const [X,Y]=px(a,b);k?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke();
+ const rc=document.createElement('canvas');rc.width=W;rc.height=H;const rg=rc.getContext('2d');const ri=rg.createImageData(W,H);
+ for(let i=0;i<W*H;i++){const r=HG[i]<0?120:250;ri.data[i*4]=ri.data[i*4+1]=ri.data[i*4+2]=r;ri.data[i*4+3]=255;}rg.putImageData(ri,0,0);
+ const cc=document.createElement('canvas');cc.width=W;cc.height=H;const cg=cc.getContext('2d');const ci=cg.createImageData(W,H);
+ for(let y=0;y<H;y++){const lat=90-(y+.5)/H*180;for(let x=0;x<W;x++){const lon=(x+.5)/W*360-180;const p=ll2v(lat,lon);
+  let v=fbm(p.x*3.4,p.y*6,p.z*3.4,5)+.12*Math.exp(-Math.pow(lat/8,2))+.12*Math.exp(-Math.pow((Math.abs(lat)-55)/10,2))-.15*Math.exp(-Math.pow((Math.abs(lat)-25)/8,2));
+  const i=y*W+x;v+=.3*(MO[i]-.5);if(HG[i]<0)v+=.02;
+  const a=Math.max(0,Math.min(1,(v-.08)/.32));const o=i*4;ci.data[o]=ci.data[o+1]=ci.data[o+2]=255;ci.data[o+3]=Math.pow(a,1.4)*220;}}
+ cg.putImageData(ci,0,0);
+ return {c,bc,rc,cc};
 }
 
-function colorize(){
- const c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');const img=g.createImageData(W,H);const d=img.data;
- const dc=document.createElement('canvas');dc.width=W;dc.height=H;const dg=dc.getContext('2d');const dimg=dg.createImageData(W,H);const dd=dimg.data;
- const rc=document.createElement('canvas');rc.width=W;rc.height=H;const rgx=rc.getContext('2d');const rimg=rgx.createImageData(W,H);const rd=rimg.data;
- const mix=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];
- const C={deep:[5,18,52],mid:[12,48,104],shal:[34,122,150],beach:[214,196,150],forest:[74,30,70],forest2:[104,44,88],grass:[140,96,76],dry:[176,140,96],desert:[214,176,118],rock:[112,100,94],snow:[240,244,250],tundra:[150,138,128],ash:[110,40,32],seaice:[214,228,240]};
- for(let y=0;y<H;y++){const lat=90-(y+.5)/H*180;for(let x=0;x<W;x++){const i=y*W+x,o=i*4;const lon=(x+.5)/W*360-180;const h=HG[i];let col;
-   const n=vnoise(x*.09,y*.09,3)*.12-.06;
-   if(h<0){const t=Math.min(1,-h/.7);col=t<.25?mix(C.shal,C.mid,t/.25):mix(C.mid,C.deep,Math.min(1,(t-.25)/.6));
-     if(Math.abs(lat)>73+n*40)col=mix(col,C.seaice,Math.min(1,(Math.abs(lat)-73)/4));}
-   else{const m=MO[i];const cold=Math.abs(lat)/90*1.15+h*.9;
-     if(m>.62)col=mix(C.forest2,C.forest,Math.min(1,(m-.62)/.3));else if(m>.42)col=mix(C.grass,C.forest2,(m-.42)/.2);else if(m>.28)col=mix(C.dry,C.grass,(m-.28)/.14);else col=mix(C.desert,C.dry,Math.max(0,(m-.1)/.18));
-     const ag=gauss(lat,lon,-16,43,6.5);if(ag>.15)col=mix(col,C.ash,Math.min(1,ag*1.2));
-     if(h<.025)col=mix(C.beach,col,h/.025);
-     if(h>.5)col=mix(col,C.rock,Math.min(1,(h-.5)/.25));
-     if(cold>.92)col=mix(col,C.tundra,Math.min(1,(cold-.92)/.1));
-     if(cold>1.02||h>.92)col=mix(col,C.snow,Math.min(1,Math.max((cold-1.02)/.08,(h-.92)/.12)));}
-   d[o]=col[0]*(1+n);d[o+1]=col[1]*(1+n);d[o+2]=col[2]*(1+n);d[o+3]=255;
-   const hv=Math.max(0,Math.min(1,h))*255;dd[o]=dd[o+1]=dd[o+2]=hv;dd[o+3]=255;
-   const rv=h<0?(Math.abs(lat)>74?200:150):235;rd[o]=rd[o+1]=rd[o+2]=rv;rd[o+3]=255;}}
- g.putImageData(img,0,0);dg.putImageData(dimg,0,0);rgx.putImageData(rimg,0,0);
- // rivers & canyon
- const px=(la,lo)=>[(lo+180)/360*W,(90-la)/180*H];
- g.lineCap='round';g.lineJoin='round';
- for(const r of RIVERS){g.strokeStyle='rgba(70,150,205,.95)';g.lineWidth=r.w;g.beginPath();densify(r.pts,.5).forEach(([a,b],k)=>{const [X,Y]=px(a,b);k?g.lineTo(X,Y):g.moveTo(X,Y);});g.stroke();}
- g.strokeStyle='rgba(120,52,30,.95)';g.lineWidth=3;g.beginPath();densify([[19,-35],[16.5,-31.5],[15,-29.5],[12,-26.5]],.4).forEach(([a,b],k)=>{const [X,Y]=px(a,b);k?g.lineTo(X,Y):g.moveTo(X,Y);});g.stroke();
- g.strokeStyle='rgba(235,200,150,.6)';g.lineWidth=1;g.stroke();
- return {color:c,disp:dc,rough:rc};
-}
-
-function cloudsTex(){
- const c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');const img=g.createImageData(W,H);const d=img.data;
- for(let y=0;y<H;y++){const lat=90-(y+.5)/H*180;for(let x=0;x<W;x++){const lon=(x+.5)/W*360-180;const p=ll2v(lat,lon);const i=(y*W+x)*4;
-  let v=fbm(p.x*3.1,p.y*6.2,p.z*3.1,5)*.9+.08;
-  v+=.25*Math.exp(-Math.pow(lat/7,2))+.18*Math.exp(-Math.pow((Math.abs(lat)-55)/10,2))-.2*Math.exp(-Math.pow((Math.abs(lat)-25)/8,2));
-  v+=.45*gauss(lat,lon,28,-58,7)-.5*gauss(lat,lon,22,-35,10);
-  const a=Math.max(0,Math.min(1,(v-.12)/.35));d[i]=d[i+1]=d[i+2]=255;d[i+3]=a*235;}}
- g.putImageData(img,0,0);return c;}
-
-/* ---------- features ---------- */
-const CAT={tect:['Tectonics','--tect'],land:['Landform','--land'],erosion:['Weathering & erosion','--erosion'],life:['Supports life','--life'],water:['Water & ice','--water'],space:['Moon','--space']};
-const F=[
- {id:'crown',cat:'tect',name:'Crown Range',lat:34,lon:-51,type:'Convergent boundary · continent–continent collision',t:'Fold mountains up to 8.4 km tall, pushed up when the Kesh block slammed into Auren. Neither plate is dense enough to subduct, so the crust crumples, folds and thrusts upward. They are still rising a few mm per year, which causes frequent earthquakes.',l:'The range forces moist westerly air upward, creating the rains that feed the Verdant Slopes and the Silvermouth River. Its weathering rock is a major source of phosphorus.'},
- {id:'trench',cat:'tect',name:'Ember Trench',lat:-10,lon:25,type:'Convergent boundary · ocean–continent subduction',t:'At 9.4 km, the deepest point on Veyra. Here the dense basalt Sundra plate dives beneath the lighter Mervath continent and sinks back into the mantle.',l:'Subduction recycles carbon-rich seafloor sediment into the mantle, which is the slow half of Veyra\'s carbon thermostat.'},
- {id:'kaelor',cat:'tect',name:'Mount Kaelor · Ember Arc',lat:-8,lon:36.5,type:'Stratovolcano on a subduction volcanic arc',t:'A 6.1 km cone-shaped volcano. Water released from the sinking slab lowers the melting point of the mantle, and the magma that forms rises to feed a chain of explosive volcanoes along Mervath\'s west coast.',l:'Eruptions release CO₂, N₂, water vapor and sulfur that resupply the atmosphere, and the ash weathers into rich soil.'},
- {id:'seam',cat:'tect',name:'Seam Ridge',lat:30,lon:6.5,type:'Divergent boundary · mid-ocean ridge',t:'An underwater volcanic mountain chain where the Auren and Sundra plates pull apart about 6 cm per year. Magma fills the gap and cools into brand-new basalt seafloor.',l:'New crust and hydrothermal vents along the ridge bring dissolved metals and sulfur into the ocean.'},
- {id:'shear',cat:'tect',name:'Shearline Fault',lat:2,lon:12,type:'Transform boundary',t:'Two plates grind sideways past each other. No crust is made or destroyed, but built-up stress is released as shallow earthquakes. The fault offsets the two halves of the Seam Ridge.',l:'Fault cracks act as pathways that let seawater circulate into hot rock and become mineral-rich.'},
- {id:'hollow',cat:'tect',name:'Hollow Rift & Lakes',lat:-14,lon:79.5,type:'Divergent boundary · continental rift valley',t:'Mervath is being pulled apart. The middle block has dropped into a long rift valley with steep walls and a chain of deep freshwater lakes. In a few million years the sea will flood in and a new ocean will form.',l:'The rift lakes are oases of fresh water full of fish and algae, fed by the Ashrun River and by hot springs.'},
- {id:'cinder',cat:'tect',name:'Cinder Isles',lat:33,lon:128,type:'Convergent boundary · ocean–ocean island arc',t:'Where the Vael plate subducts under the Cinder plate, a curved chain of volcanic islands has risen above a deep trench.',l:'The new volcanic islands are colonized first by lichens and seabirds, which shows how life spreads onto brand-new land.'},
- {id:'lantern',cat:'tect',name:'Lantern Isles (hotspot)',lat:4,lon:170,type:'Hotspot · mantle plume volcanic chain',t:'A fixed mantle plume punches through the moving Vael plate. The southeast island is active, and the islands get older, more eroded and lower toward the northwest until they disappear as sunken seamounts.',l:'Warm, shallow, nutrient-rich water around the islands supports glowing reefs, the "lanterns" that gave the islands their name.'},
- {id:'basin',cat:'land',name:'Great Vael Basin',lat:-12,lon:-172,type:'Ocean basin · abyssal plain',t:'The wide, flat floor of Veyra\'s largest ocean, about 5 km down, covered in fine sediment that has drifted down from above.',l:'Tides from Ryn and Pell, plus upwelling currents, lift nutrients from the deep basin into the sunlit surface water.'},
- {id:'auren',cat:'land',name:'Auren',lat:6,lon:-60,type:'Continent',t:'The western continent, made of old granite with the young Crown Range down its middle. Rainforest on the west side, desert on the east.',l:'Its range of habitats, from wetland to rainforest to desert, makes it the most diverse place on Veyra.'},
- {id:'mervath',cat:'land',name:'Mervath',lat:-30,lon:58,type:'Continent',t:'The eastern continent, edged by volcanoes on the west and split by the Hollow Rift in the east.',l:'Volcanic soils and rift lakes make it the planet\'s breadbasket.'},
- {id:'river',cat:'erosion',name:'Silvermouth River',lat:32,lon:-62,type:'River erosion · V-shaped valley',t:'Fed by more than 3,000 mm of rain a year, the river has cut a steep V-shaped valley through the Crown Range foothills and carries sediment toward the sea.',l:'It moves fresh water and weathered nutrients (phosphorus, potassium, calcium) from the mountains to the lowlands and the coast.'},
- {id:'delta',cat:'life',name:'Silvermouth Delta Wetlands',lat:30.5,lon:-79,type:'Deposition · river delta',t:'Where the river slows down at the coast, it drops its sediment and builds a fan of channels, marshes and mudflats.',l:'Fertile land: nutrient-rich mud makes this one of the most productive ecosystems on the planet, a nursery for fish and birds.'},
- {id:'canyon',cat:'erosion',name:'Glasswind Canyon',lat:15.5,lon:-30,type:'Wind & flash-flood erosion',t:'A 1.2 km-deep canyon in the rain shadow, carved by rare but violent flash floods and sandblasting winds. You can see colorful rock layers in its walls.',l:'Its shaded walls catch dew and shelter hardy desert plants and animals.'},
- {id:'dunes',cat:'erosion',name:'Ashen Dunes',lat:24,lon:-36,type:'Rain-shadow desert · wind erosion & deposition',t:'Air that dropped its rain on the western slopes sinks down the east side, warming and drying as it goes. The result is a sea of wind-built dunes.',l:'Dust blown off the dunes carries iron and phosphorus out to sea, where it fertilizes plankton.'},
- {id:'teeth',cat:'erosion',name:'Teeth of Ryn',lat:-29.5,lon:-40,type:'Wave erosion · sea cliffs & sea stacks',t:'The double tides from two moons make huge waves that have carved tall cliffs, arches and isolated sea stacks along southern Auren.',l:'Tidepools between the stacks are packed with life that has adapted to the constantly changing tides.'},
- {id:'frost',cat:'erosion',name:'Frostmere Valleys',lat:71,lon:22,type:'Glacial erosion · U-shaped valleys',t:'Moving glaciers have scraped deep U-shaped valleys and fjords. Frost wedging breaks off the jagged peaks above them.',l:'Ground-up rock flour washes into coastal water and feeds cold-water plankton blooms.'},
- {id:'verdant',cat:'life',name:'Verdant Slopes Rainforest',lat:27,lon:-61,type:'Fertile land · temperate rainforest',t:'The windward side of the Crown Range gets heavy orographic rain. Giant plum-leaved trees grow up to 90 m tall here.',l:'Fertile land: the highest rates of photosynthesis on Veyra, producing much of its oxygen.'},
- {id:'vents',cat:'life',name:'Seam Vent Gardens',lat:-24,lon:14.5,type:'Volcanic region · hydrothermal vents',t:'Chimneys of black "smokers" pour out 350 °C water full of dissolved minerals and hydrogen sulfide.',l:'Volcanic region: chemosynthetic microbes form the base of a deep food web, including tube worms, crabs and fish, that lives without any sunlight.'},
- {id:'ash',cat:'life',name:'Kaelor Ashlands',lat:-17,lon:44,type:'Volcanic region · fertile volcanic soil',t:'Weathered volcanic ash has formed deep, red, mineral-rich soils on the slopes behind the Ember Arc.',l:'Volcanic region + fertile land: the richest soils on Veyra, covered in dense plum woodland and grassland.'},
- {id:'ocean',cat:'life',name:'Vael Ocean',lat:-6,lon:-105,type:'Ocean · the global sea',t:'Covering 74% of Veyra and averaging 3.9 km deep, it holds 96% of the planet\'s water and stores heat from Ostra.',l:'Ocean: plankton here make about half of Veyra\'s oxygen and form the base of the marine food web.'},
- {id:'reefs',cat:'life',name:'Lantern Reefs',lat:-2,lon:176,type:'Ocean · shallow reef',t:'Reefs built from shells ring the hotspot islands and glow at night with bioluminescence.',l:'Ocean: a biodiversity hotspot that locks carbon into limestone.'},
- {id:'flats',cat:'life',name:'Twin-Tide Flats',lat:0,lon:103,type:'Ocean · intertidal zone',t:'Two moons make tides that change on a complicated schedule. Huge mudflats are flooded and exposed again several times a day.',l:'Ocean / coast: a rich zone where land and sea mix, and a good guess for where Veyran life first crawled onto land.'},
- {id:'boreal',cat:'water',name:'Boreal Ice Cap',lat:80,lon:40,type:'Frozen water · polar ice sheet',t:'A thick ice sheet on the polar Boreal Shield, holding about 2% of Veyra\'s water.',l:'It reflects sunlight back to space, and the cold meltwater it releases sinks and drives deep ocean currents.'},
- {id:'austral',cat:'water',name:'Austral Sea Ice',lat:-79,lon:60,type:'Frozen water · floating sea ice',t:'Sea ice floats because ice is less dense than liquid water.',l:'The floating ice insulates the water underneath so marine life survives the polar winter.'},
+const LAYERS=[
+ {id:'none',name:'Overview',desc:'Clean view of the planet',c:'#e6e9ef'},
+ {id:'plates',name:'Plate boundaries',desc:'Plates, boundaries, motion',c:'var(--plates)',legend:[['var(--conv)','Convergent'],['var(--div)','Divergent'],['var(--trans)','Transform'],['var(--hot)','Hotspot'],['#fff','→ plate motion']]},
+ {id:'land',name:'Landforms',desc:'Mountains, volcanoes, basins',c:'var(--land)'},
+ {id:'erosion',name:'Weathering & erosion',desc:'Rivers, valleys, cliffs',c:'var(--erosion)'},
+ {id:'life',name:'Life zones',desc:'Oceans, fertile land, volcanic',c:'var(--life)'},
+ {id:'water',name:'Water cycle',desc:'Ostra, evaporation, rain, runoff',c:'var(--water)'},
+ {id:'systems',name:'Carbon cycle',desc:'How the 4 spheres connect',c:'var(--systems)'},
 ];
-const PLATES=[['Auren Plate',22,-75],['Kesh Plate',12,-34],['Sundra Plate',-10,0],['Mervath Plate',-40,62],['Vael Plate',-30,-160],['Cinder Plate',50,150],['Boreal Plate',66,80]];
+const F=[
+ {id:'crown',L:['plates','land'],name:'Crown Range',lat:34,lon:-51,k:'Convergent boundary · continent–continent',t:'Veyra\'s tallest mountains (8.4 km). Two continents collided, and since neither could sink, the crust folded and pushed upward. They are still rising and cause earthquakes.',l:'The mountains force wet ocean air upward, which creates the rain that feeds the rainforest and the Silvermouth River.'},
+ {id:'trench',L:['plates','land'],name:'Ember Trench',lat:-10,lon:25,k:'Convergent boundary · ocean–continent',t:'The deepest spot on Veyra (9.4 km). The heavy ocean plate sinks under the lighter continent here (subduction).',l:'Subduction carries carbon down into the mantle, which helps control the climate over long periods of time.'},
+ {id:'kaelor',L:['land','systems'],name:'Mount Kaelor',lat:-8,lon:36.5,k:'Volcano · subduction zone',t:'A 6.1 km tall volcano. Water from the sinking plate melts the mantle, and the magma rises up to erupt here.',l:'Eruptions add CO₂, water vapor and nitrogen to the air, and the ash turns into fertile soil.'},
+ {id:'seam',L:['plates'],name:'Seam Ridge',lat:30,lon:6.5,k:'Divergent boundary · mid-ocean ridge',t:'Two ocean plates pull apart about 6 cm per year. Magma fills the gap and forms new seafloor.',l:'Hot water vents along the ridge release minerals that feed deep-sea life.'},
+ {id:'shear',L:['plates'],name:'Shearline Fault',lat:2,lon:12,k:'Transform boundary',t:'Two plates slide past each other sideways. They get stuck and slip, causing earthquakes. No crust is made or destroyed.',l:'Cracks along the fault let seawater flow into hot rock and pick up minerals.'},
+ {id:'hollow',L:['plates','land','life','water'],name:'Hollow Rift',lat:-14,lon:79.5,k:'Divergent boundary · continental rift',t:'Mervath is splitting apart. The middle sank into a long valley with deep lakes. In the future the ocean will flood in.',l:'The rift lakes are a large source of fresh water full of fish and algae.'},
+ {id:'cinder',L:['plates','land'],name:'Cinder Isles',lat:33,lon:128,k:'Convergent boundary · ocean–ocean',t:'One ocean plate sinks under another and forms a curved chain of volcanic islands.',l:'New volcanic islands are new land for life to move onto.'},
+ {id:'lantern',L:['plates','land'],name:'Lantern Isles',lat:4,lon:170,k:'Hotspot volcanoes',t:'A hot plume in the mantle stays still while the plate moves over it. The newest island is active, and the older islands to the northwest are worn down.',l:'Warm, shallow water around the islands supports reefs.'},
+ {id:'basin',L:['land'],name:'Great Vael Basin',lat:-12,lon:-172,k:'Ocean basin',t:'The deep, flat floor of Veyra\'s largest ocean, about 5 km down.',l:'Tides and currents bring nutrients up from the deep basin to the surface.'},
+ {id:'auren',L:['land'],name:'Auren',lat:6,lon:-58,k:'Continent',t:'The western continent. It has rainforest on the west side of the Crown Range and desert on the east side.',l:'It has the most different habitats of anywhere on Veyra.'},
+ {id:'mervath',L:['land'],name:'Mervath',lat:-30,lon:58,k:'Continent',t:'The eastern continent, with volcanoes along its west coast and the Hollow Rift in the east.',l:'Its volcanic soils and rift lakes make it very fertile.'},
+ {id:'river',L:['erosion','water'],name:'Silvermouth River',lat:32,lon:-62,k:'Erosion by water',t:'Heavy rain feeds this river. It has cut a steep V-shaped valley through the foothills and carries sediment to the sea.',l:'It carries fresh water and nutrients from the mountains to the lowlands and the coast.'},
+ {id:'delta',L:['erosion','life'],name:'Silvermouth Delta',lat:30.5,lon:-79,k:'Deposition · wetlands',t:'Where the river reaches the ocean it slows down and drops its sediment, building a fan of marshes and channels.',l:'Fertile land: nutrient-rich mud makes this one of the most productive places on Veyra.'},
+ {id:'canyon',L:['erosion','land'],name:'Glasswind Canyon',lat:15.5,lon:-30,k:'Erosion by wind and flash floods',t:'A 1.2 km deep canyon in the desert, carved by rare but powerful floods and blowing sand.',l:'The shaded canyon walls hold moisture for desert plants and animals.'},
+ {id:'dunes',L:['erosion','water'],name:'Ashen Dunes',lat:24,lon:-36,k:'Rain-shadow desert',t:'The air loses its rain on the other side of the mountains, so this side is dry. Wind builds sand dunes.',l:'Wind carries dust from here out to sea, where its iron feeds plankton.'},
+ {id:'teeth',L:['erosion','land'],name:'Teeth of Ryn',lat:-29.5,lon:-40,k:'Erosion by waves',t:'Strong waves from the double tides have carved tall sea cliffs and rock pillars called sea stacks.',l:'Tide pools between the rocks are full of life.'},
+ {id:'frost',L:['erosion'],name:'Frostmere Valleys',lat:71,lon:22,k:'Erosion by glaciers',t:'Glaciers carved U-shaped valleys. Frost wedging breaks apart the peaks above.',l:'Ground-up rock washes into the sea and feeds plankton.'},
+ {id:'verdant',L:['life','water'],name:'Verdant Slopes',lat:27,lon:-61,k:'Fertile land · rainforest',t:'The rainy side of the Crown Range, covered in dark red-leaved forest up to 90 m tall.',l:'Fertile land: the forest makes a large share of Veyra\'s oxygen.'},
+ {id:'vents',L:['life'],name:'Seam Vent Gardens',lat:-24,lon:14.5,k:'Volcanic region · deep-sea vents',t:'Hot, mineral-rich water pours out of the seafloor at about 350 °C.',l:'Volcanic region: bacteria use chemicals from the vents for energy, and tube worms, crabs and fish feed on them, all without sunlight.'},
+ {id:'ash',L:['life'],name:'Kaelor Ashlands',lat:-17,lon:44,k:'Volcanic region · fertile soil',t:'Old volcanic ash has weathered into deep red soil full of minerals.',l:'Volcanic region and fertile land: the richest soil on Veyra.'},
+ {id:'ocean',L:['life','water'],name:'Vael Ocean',lat:-6,lon:-105,k:'Ocean',t:'Covers 74% of Veyra and holds about 96% of its water.',l:'Ocean: plankton here make about half of Veyra\'s oxygen and start the ocean food chain.'},
+ {id:'reefs',L:['life'],name:'Lantern Reefs',lat:-2,lon:176,k:'Ocean · reef',t:'Reefs built from shells around the hotspot islands.',l:'Ocean: home to many different species, and the shells store carbon.'},
+ {id:'flats',L:['life'],name:'Twin-Tide Flats',lat:0,lon:103,k:'Ocean · tidal zone',t:'Two moons make tides that flood and drain these mudflats several times a day.',l:'Ocean coast: a rich area where land and sea mix.'},
+ {id:'boreal',L:['water'],name:'Boreal Ice Cap',lat:80,lon:40,k:'Frozen water',t:'A thick ice sheet at the north pole, holding about 2% of Veyra\'s water.',l:'Its cold meltwater sinks and helps drive ocean currents.'},
+ {id:'austral',L:['water'],name:'Austral Sea Ice',lat:-79,lon:60,k:'Frozen water',t:'Floating sea ice around the south pole. It floats because ice is less dense than water.',l:'The ice acts like a lid that keeps the water underneath from freezing, so sea life survives the winter.'},
+];
+const PLATES=[['Auren plate',22,-75],['Kesh plate',12,-34],['Sundra plate',-10,0],['Mervath plate',-40,62],['Vael plate',-30,-160],['Cinder plate',50,150],['Boreal plate',66,80]];
+const STEPS={
+ water:{col:0x8ab4f8,closed:true,pts:[[22,-96,.004],[24,-88,.05],[27,-74,.08],[28,-62,.085],[29,-56,.05],[30,-55,.01],[32,-60,.004],[30.5,-68,.004],[30.5,-76,.004],[26,-88,.004]],
+  labels:[['1','Evaporation',23,-93],['2','Condensation (clouds)',28,-70],['3','Precipitation',29,-57],['4','Runoff & groundwater',31.5,-67],['5','Back to the ocean',29,-82],['☀','Ostra heats the ocean (energy)',14,-100],['→','Rain shadow: dry air',23,-40]]},
+ systems:{col:0xc58af9,closed:true,pts:[[-8,36.5,.01],[-5,36,.08],[-2,28,.08],[-4,19,.01],[-12,16,.002],[-18,20,.002],[-14,25,.002],[-11,30,.002]],
+  labels:[['1','Volcano releases CO₂',-7,38],['2','CO₂ dissolves in rain',-1,28],['3','Plankton build shells',-4,17],['4','Shells → limestone',-18,18],['5','Subducted, melts, erupts again',-14,28]]},
+};
 
-/* ---------- three.js scene ---------- */
 const canvas=document.getElementById('scene');
-const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
-renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);
-renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;
 const scene=new THREE.Scene();
-const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.01,500);
-camera.position.copy(ll2v(18,-30,innerWidth<900?5.2:4.1));
+const camera=new THREE.PerspectiveCamera(38,1,.01,400);
 const controls=new OrbitControls(camera,canvas);
-controls.enableDamping=true;controls.dampingFactor=.07;controls.minDistance=1.25;controls.maxDistance=8;controls.rotateSpeed=.55;controls.zoomSpeed=.8;controls.enablePan=false;
-controls.autoRotate=true;controls.autoRotateSpeed=.35;
+controls.enableDamping=true;controls.dampingFactor=.08;controls.enablePan=false;controls.minDistance=1.35;controls.maxDistance=7;controls.rotateSpeed=.5;controls.zoomSpeed=.7;
+controls.autoRotate=true;controls.autoRotateSpeed=.25;
+function layout(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);camera.aspect=w/h;
+ if(mobile())camera.setViewOffset(w,h,0,h*.2,w,h);else{const pw=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pw'))||440;camera.setViewOffset(w,h,(pw-316)/2,0,w,h);}
+ camera.updateProjectionMatrix();}
+camera.position.copy(ll2v(20,-40,mobile()?5.2:3.7));layout();addEventListener('resize',layout);
 
-const sunDir=new THREE.Vector3(-.6,.25,.75).normalize();
-const sun=new THREE.DirectionalLight(0xffe1c0,2.3);sun.position.copy(sunDir.clone().multiplyScalar(10));scene.add(sun);
-const amb=new THREE.HemisphereLight(0xb8ccff,0x302030,.85);scene.add(amb);
+const sunDir=new THREE.Vector3(-.35,.3,1).normalize();
+const sun=new THREE.DirectionalLight(0xfff0dc,3);scene.add(sun);
+const amb=new THREE.AmbientLight(0x8090b0,.18);scene.add(amb);
+{const n=2500,pos=new Float32Array(n*3);for(let i=0;i<n;i++){const v=new THREE.Vector3().randomDirection().multiplyScalar(150);pos.set([v.x,v.y,v.z],i*3);}
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));scene.add(new THREE.Points(g,new THREE.PointsMaterial({color:0xffffff,size:.35,transparent:true,opacity:.7})));}
+function glow(a,b){const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d');const r=g.createRadialGradient(64,64,0,64,64,64);r.addColorStop(0,a);r.addColorStop(.15,a);r.addColorStop(.4,b);r.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=r;g.fillRect(0,0,128,128);return new THREE.CanvasTexture(c);}
+const star=new THREE.Sprite(new THREE.SpriteMaterial({map:glow('rgba(255,244,228,1)','rgba(255,150,60,.25)'),depthWrite:false}));star.scale.setScalar(14);scene.add(star);
+const dotTex=glow('rgba(255,255,255,1)','rgba(255,255,255,.3)');
 
-// stars
-{const g=new THREE.BufferGeometry();const n=6000,pos=new Float32Array(n*3),col=new Float32Array(n*3);
- for(let i=0;i<n;i++){const v=new THREE.Vector3().randomDirection().multiplyScalar(120+Math.random()*80);pos.set([v.x,v.y,v.z],i*3);const t=Math.random();const c=new THREE.Color().setHSL(.55+t*.15-(t>.85?.5:0),.5,.65+Math.random()*.3);col.set([c.r,c.g,c.b],i*3);}
- g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setAttribute('color',new THREE.BufferAttribute(col,3));
- scene.add(new THREE.Points(g,new THREE.PointsMaterial({size:.45,vertexColors:true,sizeAttenuation:true,transparent:true,opacity:.9})));}
-function glowTex(inner,outer){const c=document.createElement('canvas');c.width=c.height=256;const g=c.getContext('2d');const gr=g.createRadialGradient(128,128,0,128,128,128);gr.addColorStop(0,inner);gr.addColorStop(.2,inner);gr.addColorStop(.45,outer);gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.fillRect(0,0,256,256);return new THREE.CanvasTexture(c);}
-const star=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex('rgba(255,240,220,1)','rgba(255,140,50,.35)'),blending:THREE.AdditiveBlending,depthWrite:false}));
-star.position.copy(sunDir.clone().multiplyScalar(90));star.scale.setScalar(26);scene.add(star);
-const PROC_SPRITE=glowTex('rgba(255,255,255,1)','rgba(255,255,255,.25)');
-
-const planet=new THREE.Group();scene.add(planet);
-let globe,clouds,atmo,overlays={};
-
-// moons
+const world=new THREE.Group();scene.add(world);
+let globe,clouds;const layerObjs={};const flows=[];
 const moons=[];
-function makeMoon(name,r,dist,speed,tint,incl){const c=document.createElement('canvas');c.width=256;c.height=128;const g=c.getContext('2d');const im=g.createImageData(256,128);
- for(let y=0;y<128;y++)for(let x=0;x<256;x++){const p=ll2v(90-y/128*180,x/256*360-180);const v=.55+fbm(p.x*4+r*9,p.y*4,p.z*4,5)*.5;const o=(y*256+x)*4;im.data[o]=v*tint[0];im.data[o+1]=v*tint[1];im.data[o+2]=v*tint[2];im.data[o+3]=255;}
- g.putImageData(im,0,0);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;
- const m=new THREE.Mesh(new THREE.SphereGeometry(r,48,24),new THREE.MeshStandardMaterial({map:t,roughness:1}));scene.add(m);
- const o={name,mesh:m,dist,speed,incl,phase:Math.random()*6};moons.push(o);return o;}
-makeMoon('Ryn',.2,4.6,.05,[205,200,192],.12);makeMoon('Pell',.09,3.2,.11,[220,180,150],-.2);
-
-function altAt(lat,lon){const x=Math.floor((lon+180)/360*W)%W,y=Math.min(H-1,Math.max(0,Math.floor((90-lat)/180*H)));return Math.max(0,Math.min(1,HG[y*W+(x+W)%W]))*DISP;}
-function hAt(lat,lon){const x=Math.floor((lon+180)/360*W)%W,y=Math.min(H-1,Math.max(0,Math.floor((90-lat)/180*H)));const i=y*W+(x+W)%W;return [HG[i],MO[i]];}
-function surf(lat,lon,extra=0){return ll2v(lat,lon,1+altAt(lat,lon)+extra);}
+function moon(name,r,dist,speed,incl,tint){const m=new THREE.Mesh(new THREE.SphereGeometry(r,32,16),new THREE.MeshStandardMaterial({color:tint,roughness:1}));scene.add(m);moons.push({name,m,dist,speed,incl,ph:Math.random()*6});}
+moon('Ryn',.16,5,.04,.12,0xbdb8b0);moon('Pell',.07,3.4,.09,-.2,0xc8a890);
 
 function build(){
- const tex=colorize();
- const map=new THREE.CanvasTexture(tex.color);map.colorSpace=THREE.SRGBColorSpace;map.anisotropy=8;
- const disp=new THREE.CanvasTexture(tex.disp);const rough=new THREE.CanvasTexture(tex.rough);
- globe=new THREE.Mesh(new THREE.SphereGeometry(1,512,256),new THREE.MeshStandardMaterial({map,displacementMap:disp,displacementScale:DISP,bumpMap:disp,bumpScale:6,roughnessMap:rough,roughness:1,metalness:0}));
- planet.add(globe);
- const ct=new THREE.CanvasTexture(cloudsTex());ct.colorSpace=THREE.SRGBColorSpace;
- clouds=new THREE.Mesh(new THREE.SphereGeometry(1.032,128,64),new THREE.MeshStandardMaterial({map:ct,transparent:true,depthWrite:false,opacity:.5}));planet.add(clouds);
- atmo=new THREE.Mesh(new THREE.SphereGeometry(1.12,96,48),new THREE.ShaderMaterial({side:THREE.BackSide,blending:THREE.AdditiveBlending,transparent:true,depthWrite:false,
-  vertexShader:`varying vec3 vN;void main(){vN=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
-  fragmentShader:`varying vec3 vN;void main(){float i=pow(max(.68-dot(vN,vec3(0,0,1.)),0.),4.);gl_FragColor=vec4(.45,.68,1.,1.)*i*1.1;}`}));
- planet.add(atmo);
- // thin inner haze rim
- const rim=new THREE.Mesh(new THREE.SphereGeometry(1.05,96,48),new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
-  vertexShader:`varying vec3 vN;varying vec3 vV;void main(){vN=normalize(normalMatrix*normal);vec4 mv=modelViewMatrix*vec4(position,1.);vV=normalize(-mv.xyz);gl_Position=projectionMatrix*mv;}`,
-  fragmentShader:`varying vec3 vN;varying vec3 vV;void main(){float f=pow(1.-max(dot(vN,vV),0.),4.);gl_FragColor=vec4(.5,.72,1.,f*.28);}`}));
- planet.add(rim);overlays.rim=rim;
+ const T=textures();
+ const map=new THREE.CanvasTexture(T.c);map.colorSpace=THREE.SRGBColorSpace;map.anisotropy=renderer.capabilities.getMaxAnisotropy();
+ const bump=new THREE.CanvasTexture(T.bc);const rough=new THREE.CanvasTexture(T.rc);
+ globe=new THREE.Mesh(new THREE.SphereGeometry(1,192,96),new THREE.MeshStandardMaterial({map,bumpMap:bump,bumpScale:4,roughnessMap:rough,roughness:1,metalness:0}));world.add(globe);
+ const ct=new THREE.CanvasTexture(T.cc);clouds=new THREE.Mesh(new THREE.SphereGeometry(1.012,96,48),new THREE.MeshStandardMaterial({map:ct,transparent:true,depthWrite:false,opacity:.85}));world.add(clouds);
+ const vs='varying vec3 vw;varying vec3 wn;void main(){vec4 w=modelMatrix*vec4(position,1.);wn=normalize(mat3(modelMatrix)*normal);vw=normalize(cameraPosition-w.xyz);gl_Position=projectionMatrix*viewMatrix*w;}';
+ world.add(new THREE.Mesh(new THREE.SphereGeometry(1.018,96,48),new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,uniforms:{sun:{value:sunDir}},vertexShader:vs,
+  fragmentShader:'uniform vec3 sun;varying vec3 vw;varying vec3 wn;void main(){float f=pow(1.-max(dot(wn,vw),0.),3.5);float l=smoothstep(-.25,.5,dot(wn,sun));gl_FragColor=vec4(vec3(.35,.6,1.)*f*l*1.3,1.);}'})));
+ world.add(new THREE.Mesh(new THREE.SphereGeometry(1.06,96,48),new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.BackSide,uniforms:{sun:{value:sunDir}},vertexShader:vs,
+  fragmentShader:'uniform vec3 sun;varying vec3 vw;varying vec3 wn;void main(){float d=dot(-wn,vw);float f=pow(clamp(1.-d*3.2,0.,1.),2.5)*smoothstep(0.,.08,d);float l=smoothstep(-.4,.5,dot(-wn,sun));gl_FragColor=vec4(vec3(.3,.55,1.)*f*.7*(.15+l),1.);}'})));
 
- // plate boundaries
- const bG=new THREE.Group();const COLS={conv:0xff5a4a,div:0x49d6ff,trans:0xffd84a};
- for(const b of BOUNDS){const pts=densify(b.pts,.8).map(([a,c])=>surf(a,c,.006));const curve=new THREE.CatmullRomCurve3(pts);
-  const m=new THREE.Mesh(new THREE.TubeGeometry(curve,pts.length*2,.0042,6,false),new THREE.MeshBasicMaterial({color:COLS[b.type],transparent:true,opacity:.95}));bG.add(m);
-  if(b.type==='conv'){// teeth to show subduction/collision
-   const dp=densify(b.pts,3);for(let k=1;k<dp.length-1;k++){const p=surf(...dp[k],.008);const tri=new THREE.Mesh(new THREE.ConeGeometry(.009,.018,3),new THREE.MeshBasicMaterial({color:COLS.conv}));tri.position.copy(p);
-    const nxt=ll2v(...dp[k+1]).sub(ll2v(...dp[k-1])).normalize();const side=new THREE.Vector3().crossVectors(p.clone().normalize(),nxt).normalize();tri.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),side);tri.position.add(side.multiplyScalar(.01));bG.add(tri);}}
- }
- for(const [a,b,s] of LANTERN){const ring=new THREE.Mesh(new THREE.RingGeometry(.012*s+.006,.014*s+.01,32),new THREE.MeshBasicMaterial({color:0xff9a3c,side:THREE.DoubleSide,transparent:true,opacity:.9}));const p=surf(a,b,.01);ring.position.copy(p);ring.lookAt(p.clone().multiplyScalar(2));bG.add(ring);}
- planet.add(bG);overlays.bounds=bG;
+ const pg=new THREE.Group();const COL={conv:0xf28b82,div:0x78d9ec,trans:0xfdd663};
+ for(const b of BOUNDS){const pts=densify(b.pts,.8).map(([a,c])=>ll2v(a,c,1.004));
+  pg.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),pts.length*2,.0028,5,false),new THREE.MeshBasicMaterial({color:COL[b.type]})));
+  const dp=densify(b.pts,1);const picks=b.pts.length>2?[.3,.72]:[.5];
+  for(const f of picks){const k=Math.min(Math.floor(dp.length*f),dp.length-1);const c=ll2v(...dp[k]);const tan=ll2v(...dp[Math.min(k+1,dp.length-1)]).sub(ll2v(...dp[Math.max(k-1,0)])).normalize();const nrm=new THREE.Vector3().crossVectors(c,tan).normalize();
+   for(const s of [1,-1]){const off=b.m==='slide'?.022:.05;const pos=c.clone().add(nrm.clone().multiplyScalar(off*s)).normalize().multiplyScalar(1.01);
+    const dir=b.m==='in'?nrm.clone().multiplyScalar(-s):b.m==='out'?nrm.clone().multiplyScalar(s):tan.clone().multiplyScalar(s);
+    const a=new THREE.Group();const sh=new THREE.Mesh(new THREE.CylinderGeometry(.0024,.0024,.03,6),new THREE.MeshBasicMaterial({color:0xffffff}));sh.position.y=-.015;
+    const hd=new THREE.Mesh(new THREE.ConeGeometry(.008,.02,12),new THREE.MeshBasicMaterial({color:0xffffff}));hd.position.y=.008;a.add(sh,hd);a.position.copy(pos);a.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir);pg.add(a);}}}
+ {const [a,b]=LANTERN[0];const ring=new THREE.Mesh(new THREE.RingGeometry(.016,.021,40),new THREE.MeshBasicMaterial({color:0xfcad70,side:THREE.DoubleSide}));const p=ll2v(a,b,1.004);ring.position.copy(p);ring.lookAt(p.clone().multiplyScalar(2));pg.add(ring);}
+ world.add(pg);layerObjs.plates=pg;
 
- // plate motion arrows
- const aG=new THREE.Group();const amat=new THREE.MeshBasicMaterial({color:0xffffff});
- function arrow(p,dir,col=0xffffff){const g=new THREE.Group();const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.0028,.0028,.04,6),new THREE.MeshBasicMaterial({color:col}));shaft.position.y=-.02;const head=new THREE.Mesh(new THREE.ConeGeometry(.009,.022,10),new THREE.MeshBasicMaterial({color:col}));head.position.y=.008;g.add(shaft,head);g.position.copy(p);g.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir);return g;}
- for(const b of BOUNDS){const dp=densify(b.pts,1);const picks=b.pts.length>2?[Math.floor(dp.length*.3),Math.floor(dp.length*.72)]:[Math.floor(dp.length/2)];
-  for(const k of picks){const k0=Math.max(0,k-1),k1=Math.min(dp.length-1,k+1);const c=ll2v(...dp[k]);const tan=ll2v(...dp[k1]).sub(ll2v(...dp[k0])).normalize();const nrm=new THREE.Vector3().crossVectors(c,tan).normalize();
-   const off=.05;const base=c.clone();
-   for(const s of [1,-1]){let pos=base.clone().add(nrm.clone().multiplyScalar(off*s)).normalize();const [la,lo]=v2ll(pos);pos=surf(la,lo,.018);let dir;
-    if(b.motion==='toward')dir=nrm.clone().multiplyScalar(-s);else if(b.motion==='away')dir=nrm.clone().multiplyScalar(s);else dir=tan.clone().multiplyScalar(s);
-    if(b.motion==='slide')pos=surf(...v2ll(base.clone().add(nrm.clone().multiplyScalar(.025*s)).normalize()),.018);
-    aG.add(arrow(pos,dir,b.type==='conv'?0xffb0a8:b.type==='div'?0xb6f0ff:0xfff0a0));}}}
- planet.add(aG);overlays.arrows=aG;
+ for(const key of ['water','systems']){const S=STEPS[key];const g=new THREE.Group();
+  const pts=S.pts.map(([a,b,e])=>ll2v(a,b,1.004+e));const curve=new THREE.CatmullRomCurve3(pts,S.closed,'centripetal');
+  g.add(new THREE.Mesh(new THREE.TubeGeometry(curve,160,.0022,5,S.closed),new THREE.MeshBasicMaterial({color:S.col,transparent:true,opacity:.5})));
+  const n=30,geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(n*3),3));
+  g.add(new THREE.Points(geo,new THREE.PointsMaterial({color:S.col,size:.03,map:dotTex,transparent:true,depthWrite:false})));
+  flows.push({key,curve,geo,n});world.add(g);layerObjs[key]=g;}
+ {const pts=[[29,-52,.07],[26,-45,.05],[23,-38,.01]].map(([a,b,e])=>ll2v(a,b,1.004+e));const cv=new THREE.CatmullRomCurve3(pts);
+  layerObjs.water.add(new THREE.Mesh(new THREE.TubeGeometry(cv,40,.002,5,false),new THREE.MeshBasicMaterial({color:0xfcad70})));
+  const hd=new THREE.Mesh(new THREE.ConeGeometry(.008,.022,12),new THREE.MeshBasicMaterial({color:0xfcad70}));hd.position.copy(cv.getPoint(1));hd.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),cv.getTangent(1));layerObjs.water.add(hd);}
 
- // processes
- const PROCS=[
-  {id:'wc',name:'Water cycle: evaporation → condensation → rain → runoff',col:0x6cc8ff,closed:true,pts:[[24,-92,.0],[25,-84,.05],[27,-72,.08],[28,-60,.085],[29,-55,.06],[31,-55,.012],[32,-60,.005],[30.5,-67,.004],[30.5,-74,.004],[29,-82,.0]],label:[27,-72,.1]},
-  {id:'rs',name:'Rain shadow: dry air sinks & warms',col:0xffb46b,pts:[[29,-53,.09],[27,-46,.075],[24,-39,.04],[22,-32,.012]],label:[25,-40,.07]},
-  {id:'cc',name:'Carbon cycle: outgassing → rain → seafloor → subduction',col:0xff7b6b,closed:true,pts:[[-8,36.5,.04],[-6,37,.1],[-4,30,.1],[-6,22,.05],[-8,18,.0],[-10,22,-.005],[-11,26,-.012],[-10,31,-.02],[-8,35,-.005]],label:[-4,30,.11]},
-  {id:'nu',name:'Nutrients: weathered rock → river → delta → plankton',col:0x7dff9b,pts:[[34,-51,.03],[32,-56,.01],[33,-61,.006],[30.5,-66,.005],[30.5,-73,.005],[30.4,-78,.004],[30,-83,.002]],label:[33,-66,.04]},
-  {id:'up',name:'Tidal mixing & upwelling (moons Ryn + Pell)',col:0xd9a8ff,closed:true,pts:[[-10,-150,-.01],[-12,-160,.004],[-10,-172,.004],[-8,-162,-.01]],label:[-6,-160,.04]},
- ];
- const pG=new THREE.Group();overlays.procs=pG;overlays.procData=[];
- for(const p of PROCS){const pts=p.pts.map(([a,b,e])=>ll2v(a,b,1+Math.max(altAt(a,b),0)+e+.008));const curve=new THREE.CatmullRomCurve3(pts,!!p.closed,'centripetal');
-  const line=new THREE.Mesh(new THREE.TubeGeometry(curve,120,.0016,5,!!p.closed),new THREE.MeshBasicMaterial({color:p.col,transparent:true,opacity:.35}));pG.add(line);
-  if(!p.closed){const end=curve.getPoint(1),tg=curve.getTangent(1);const h=new THREE.Mesh(new THREE.ConeGeometry(.01,.026,10),new THREE.MeshBasicMaterial({color:p.col}));h.position.copy(end);h.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),tg);pG.add(h);}
-  const n=26;const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(n*3),3));
-  const pts3=new THREE.Points(geo,new THREE.PointsMaterial({color:p.col,size:.028,map:PROC_SPRITE,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));pG.add(pts3);
-  overlays.procData.push({curve,geo,n,speed:p.closed?.05:.09});
-  addMarker({id:'proc-'+p.id,name:p.name,proc:true,col:'#'+p.col.toString(16).padStart(6,'0'),pos:ll2v(p.label[0],p.label[1],1+altAt(p.label[0],p.label[1])+p.label[2])});}
- planet.add(pG);
-
- // markers
- for(const f of F)addMarker({...f,pos:surf(f.lat,f.lon,.012)});
- for(const [n,a,b] of PLATES)addMarker({id:'plate-'+n,name:n,plate:true,pos:surf(a,b,.02)});
- for(const m of moons)addMarker({id:'moon-'+m.name,name:'Moon '+m.name,cat:'space',moon:m,type:'Moon',t:m.name==='Ryn'?'Veyra\'s large moon. Its gravity pulls up the main tides.':'A small, fast inner moon. Its tides add to and subtract from Ryn\'s, making a complicated double-tide pattern.',l:'The tides mix nutrients and oxygen through the ocean and create intertidal habitats like the Twin-Tide Flats.'});
+ for(const f of F)addMarker({...f,pos:ll2v(f.lat,f.lon,1.006),pri:2});
+ for(const [n,a,b] of PLATES)addMarker({id:'p-'+n,name:n,L:['plates'],plate:true,pos:ll2v(a,b,1.006),pri:4});
+ for(const key in STEPS)STEPS[key].labels.forEach(([num,txt,a,b],i)=>addMarker({id:key+i,name:txt,num,L:[key],step:true,pos:ll2v(a,b,1.03),pri:1,c:key==='water'?(num==='→'?'var(--hot)':num==='☀'?'#fdd663':'var(--water)'):'var(--systems)'}));
 }
 
-/* ---------- markers (DOM) ---------- */
-const MK=[];const mkRoot=document.getElementById('markers');
-const layerState={labels:true,tect:true,land:true,erosion:true,life:true,water:true,space:true,plates:true,arrows:false,procs:true,clouds:true,atmo:true,real:false,rotate:true};
-function addMarker(m){const el=document.createElement('div');el.className='mk'+(m.plate?' plate':'')+(m.proc?' proc':'')+(m.cat?' '+m.cat:'');
- el.style.setProperty('--c',m.col||(m.cat?`var(${CAT[m.cat][1]})`:'#fff'));
- el.innerHTML=`<span class="dot"></span><span class="lbl">${m.name}</span>`;
- if(!m.plate&&!m.proc)el.onclick=e=>{e.stopPropagation();focusFeature(m.id)};
+const MK=[];const mkRoot=document.getElementById('markers');let layer='none',selected=null;
+const LCOL=Object.fromEntries(LAYERS.map(l=>[l.id,l.c]));
+function addMarker(m){const el=document.createElement('div');el.className='mk off'+(m.plate?' plate':'')+(m.step?' step':'');
+ el.innerHTML=`<i>${m.step?m.num:''}</i><span>${m.name}</span>`;el._off=true;
+ if(!m.plate&&!m.step)el.onclick=e=>{e.stopPropagation();select(m.id)};
  mkRoot.appendChild(el);m.el=el;MK.push(m);}
-const tmp=new THREE.Vector3(),camDir=new THREE.Vector3();
+const tv=new THREE.Vector3();
 function updateMarkers(){
- const w=innerWidth,h=innerHeight;
- for(const m of MK){let show=layerState.labels;
-  if(m.plate)show=layerState.plates;else if(m.proc)show=layerState.procs;else if(m.cat)show=show&&layerState[m.cat];
-  let p;if(m.moon){p=m.moon.mesh.position.clone().add(new THREE.Vector3(0,m.moon.mesh.geometry.parameters.radius+.05,0));}else p=m.pos;
-  if(show){tmp.copy(p);
-   if(!m.moon){camDir.copy(camera.position).sub(p).normalize();const facing=p.clone().normalize().dot(camDir);if(facing<.12)show=false;
-     const dist=camera.position.distanceTo(p);if(m.cat==='land'&&(m.id==='auren'||m.id==='mervath')&&dist<1.2)show=false;}
-   else{const toCam=camera.position.clone().sub(p);const ray=new THREE.Ray(camera.position,p.clone().sub(camera.position).normalize());if(ray.intersectsSphere(new THREE.Sphere(new THREE.Vector3(),1.02))&&camera.position.distanceTo(p)>camera.position.length())show=false;}
-   tmp.project(camera);if(tmp.z>1)show=false;
-   const x=(tmp.x*.5+.5)*w,y=(-tmp.y*.5+.5)*h;m.el.style.transform=`translate(${x-5}px,${y-5}px)`;}
-  m.el.classList.toggle('hidden',!show);}
+ const w=innerWidth,h=innerHeight;const cam=camera.position;const placed=[];
+ const vis=MK.filter(m=>m.id===selected||m.L.includes(layer));
+ vis.sort((a,b)=>(a.id===selected?-1:a.pri)-(b.id===selected?-1:b.pri));
+ for(const m of MK)m._v=false;
+ for(const m of vis){const p=m.pos;const facing=p.x*(cam.x-p.x)+p.y*(cam.y-p.y)+p.z*(cam.z-p.z);if(facing<.02*cam.length())continue;
+  tv.copy(p).project(camera);const x=(tv.x*.5+.5)*w,y=(-tv.y*.5+.5)*h;
+  m._v=true;if(m.el._off){m.el._off=false;m.el.classList.remove('off');}
+  if(!m.ww)m.ww=m.el.offsetWidth||m.name.length*7+20;
+  const r={x:x-6,y:y-10,w:m.ww,h:20};const hit=placed.some(q=>r.x<q.x+q.w&&r.x+r.w>q.x&&r.y<q.y+q.h&&r.y+r.h>q.y);
+  m.el.style.transform=`translate(${x-(m.step?9:6)}px,${y-(m.step?9:6)}px)`;m.el.classList.toggle('nolbl',hit&&m.id!==selected);
+  if(!hit||m.id===selected)placed.push(r);
+  m.el.style.setProperty('--c',m.c||LCOL[m.L.includes(layer)?layer:m.L[0]]);
+  m.el.classList.toggle('sel',m.id===selected);}
+ for(const m of MK)if(!m._v&&!m.el._off){m.el._off=true;m.el.classList.add('off');}
 }
 
-/* ---------- layers UI ---------- */
-const LAYERS=[['labels','Labels'],['tect','Tectonics','--tect'],['land','Landforms','--land'],['erosion','Erosion','--erosion'],['life','Life zones','--life'],['water','Water/ice','--water'],['plates','Plates & boundaries','--conv'],['arrows','Plate motion'],['procs','Processes','--accent'],['clouds','Clouds'],['atmo','Atmosphere'],['real','Night side'],['rotate','Auto-rotate'],['space','Moons','--space']];
-const layersEl=document.getElementById('layers');
-for(const [k,n,c] of LAYERS){const b=document.createElement('div');b.className='chip'+(layerState[k]?' on':'');b.innerHTML=(c?`<i style="background:var(${c})"></i>`:'')+n;b.onclick=()=>{layerState[k]=!layerState[k];b.classList.toggle('on',layerState[k]);applyLayers();};layersEl.appendChild(b);}
-function applyLayers(){if(!globe)return;overlays.bounds.visible=layerState.plates;overlays.arrows.visible=layerState.arrows;overlays.procs.visible=layerState.procs;clouds.visible=layerState.clouds;atmo.visible=layerState.atmo;overlays.rim.visible=layerState.atmo;
- amb.intensity=layerState.real?.06:.85;sun.intensity=layerState.real?3.2:2.3;controls.autoRotate=layerState.rotate&&!flying&&!touring;for(const m of moons)m.mesh.visible=layerState.space;}
+const lEl=document.getElementById('layers');
+LAYERS.forEach(l=>{const b=document.createElement('button');b.className='lyr'+(l.id===layer?' on':'');b.dataset.id=l.id;b.style.setProperty('--c',l.c);
+ b.innerHTML=`<i class="sw"></i><div><b>${l.name}</b><span>${l.desc}</span></div>`;b.onclick=()=>setLayer(l.id);lEl.appendChild(b);
+ const lg=document.createElement('div');lg.className='legend';if(l.legend)lg.innerHTML=l.legend.map(([c,t])=>`<div><i style="background:${c}"></i>${t}</div>`).join('');lEl.appendChild(lg);});
+const tgs=document.createElement('div');tgs.className='toggles';tgs.innerHTML='<button class="tg on" data-t="clouds">Clouds</button><button class="tg" data-t="day">Full daylight</button><button class="tg on" data-t="spin">Spin</button>';lEl.appendChild(tgs);
+const opts={clouds:true,day:false,spin:true};
+tgs.querySelectorAll('.tg').forEach(b=>b.onclick=()=>{const k=b.dataset.t;opts[k]=!opts[k];b.classList.toggle('on',opts[k]);applyOpts();});
+function applyOpts(){if(clouds)clouds.visible=opts.clouds&&(layer==='none'||layer==='water');amb.intensity=opts.day?1.1:.18;controls.autoRotate=opts.spin&&!flying&&!touring&&!selected;}
+function setLayer(id){layer=id;lEl.querySelectorAll('.lyr').forEach(b=>b.classList.toggle('on',b.dataset.id===id));
+ for(const k in layerObjs)layerObjs[k].visible=k===id;
+ if(selected&&!touring){const s=F.find(m=>m.id===selected);if(s&&!s.L.includes(id)){selected=null;info.classList.remove('show');}}
+ applyOpts();}
 
-/* ---------- fly-to & info ---------- */
 let flying=null,touring=false;
-function flyTo(dir,dist=2.35,dur=1600){const from=camera.position.clone();const fromD=from.length();const a=from.clone().normalize(),b=dir.clone().normalize();
- flying={a,b,fromD,dist,t0:performance.now(),dur};controls.autoRotate=false;}
-function stepFly(now){if(!flying)return;const {a,b,fromD,dist,t0,dur}=flying;let t=Math.min(1,(now-t0)/dur);const e=t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
- const ang=a.angleTo(b);let v;if(ang<1e-4)v=b.clone();else{const s=Math.sin(ang);v=a.clone().multiplyScalar(Math.sin((1-e)*ang)/s).add(b.clone().multiplyScalar(Math.sin(e*ang)/s));}
- const d=fromD+(dist-fromD)*e+Math.sin(e*Math.PI)*Math.min(.9,ang*.5);camera.position.copy(v.multiplyScalar(d));camera.lookAt(0,0,0);if(t>=1){flying=null;applyLayers();}}
-const infoEl=document.getElementById('info');
-function fmtLL(lat,lon){return `${Math.abs(lat).toFixed(1)}°${lat>=0?'N':'S'}  ${Math.abs(lon).toFixed(1)}°${lon>=0?'E':'W'}`;}
-function focusFeature(id,dist){const f=MK.find(m=>m.id===id);if(!f)return;
- if(f.moon){flyTo(f.moon.mesh.position.clone(),f.moon.dist+1.2);}else flyTo(f.pos,dist||(f.cat==='land'&&(id==='auren'||id==='mervath')?3.1:2.55));
- const c=CAT[f.cat];document.getElementById('infoK').textContent=(c?c[0]:'')+(f.type?' · '+f.type:'');document.getElementById('infoK').style.color=c?`var(${c[1]})`:'#fff';
- document.getElementById('infoT').textContent=f.name;document.getElementById('infoP').textContent=f.t||'';const L=document.getElementById('infoL');L.textContent=f.l?'🌱 How it supports life: '+f.l:'';L.style.display=f.l?'':'none';
- document.getElementById('infoC').textContent=f.lat!=null?fmtLL(f.lat,f.lon)+(()=>{const [h]=hAt(f.lat,f.lon);return h>=0?`  ·  elev ${Math.round(h*4500).toLocaleString()} m`:`  ·  depth ${Math.round(-h*6800).toLocaleString()} m`})():'';
- infoEl.classList.add('show');}
-document.getElementById('infoX').onclick=()=>infoEl.classList.remove('show');
-const ALIAS={crown:'crown',trench:'trench',kaelor:'kaelor',seam:'seam',shear:'shear',hollow:'hollow',cinder:'cinder',lantern:'lantern',basin:'basin',auren:'auren',mervath:'mervath',river:'river',delta:'delta',canyon:'canyon',dunes:'dunes',teeth:'teeth',frost:'frost',verdant:'verdant',vents:'vents',ash:'ash',ocean:'ocean',boreal:'boreal',austral:'austral'};
-document.querySelectorAll('.go').forEach(g=>g.onclick=e=>{e.stopPropagation();if(innerWidth<=900)closeSheet();focusFeature(ALIAS[g.dataset.f]||g.dataset.f);});
+function flyTo(dir,dist,dur=1400){const a=camera.position.clone().normalize(),b=dir.clone().normalize();flying={a,b,d0:camera.position.length(),d1:dist,t0:performance.now(),dur};controls.autoRotate=false;}
+function stepFly(now){if(!flying)return;const {a,b,d0,d1,t0,dur}=flying;const t=Math.min(1,(now-t0)/dur);const e=t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+ const ang=a.angleTo(b);let v=b.clone();if(ang>1e-4){const s=Math.sin(ang);v=a.clone().multiplyScalar(Math.sin((1-e)*ang)/s).add(b.clone().multiplyScalar(Math.sin(e*ang)/s));}
+ const d=d0+(d1-d0)*e+Math.sin(e*Math.PI)*Math.min(.8,ang*.35);camera.position.copy(v.multiplyScalar(d));camera.lookAt(0,0,0);if(t>=1)flying=null;}
+canvas.addEventListener('pointerdown',()=>{flying=null;});
 
-/* ---------- cards ---------- */
-document.querySelectorAll('.card>header').forEach(h=>h.onclick=()=>{if(innerWidth>900)h.parentElement.classList.toggle('closed')});
+const info=document.getElementById('info');
+const fmt=(a,b)=>`${Math.abs(a).toFixed(1)}° ${a>=0?'N':'S'}, ${Math.abs(b).toFixed(1)}° ${b>=0?'E':'W'}`;
+function hAt(lat,lon){return sample(HG,(lon+180)/360,(90-lat)/180);}
+function elev(h){return h>=0?`Elevation ${Math.round(h*4500).toLocaleString()} m`:`Depth ${Math.round(-h*6800).toLocaleString()} m`;}
+function select(id,keepLayer){const f=F.find(x=>x.id===id);if(!f)return;selected=id;
+ if(!keepLayer&&!f.L.includes(layer))setLayer(f.L[0]);
+ flyTo(ll2v(f.lat,f.lon),['auren','mervath','ocean','basin'].includes(id)?3:2.25);
+ const lc=LCOL[f.L.includes(layer)?layer:f.L[0]];
+ document.getElementById('infoK').textContent=f.k;document.getElementById('infoK').style.color=lc;
+ document.getElementById('infoT').textContent=f.name;document.getElementById('infoP').textContent=f.t;
+ document.getElementById('infoL').textContent='Supports life: '+f.l;
+ document.getElementById('infoC').textContent=fmt(f.lat,f.lon)+' · '+elev(hAt(f.lat,f.lon));
+ info.classList.add('show');applyOpts();
+ if(mobile())document.body.classList.add('min');}
+document.getElementById('infoX').onclick=()=>{selected=null;touring=false;info.classList.remove('show','tour');applyOpts();};
+document.querySelectorAll('.lnk').forEach(a=>a.onclick=()=>select(a.dataset.f));
 
-/* ---------- search ---------- */
-const sIn=document.getElementById('search'),sRes=document.getElementById('results');let sSel=0,sList=[];
-function renderSearch(){const q=sIn.value.trim().toLowerCase();if(!q){sRes.style.display='none';return;}
- sList=F.filter(f=>(f.name+' '+f.type+' '+f.t).toLowerCase().includes(q)).slice(0,9);sSel=0;
- sRes.innerHTML=sList.map((f,i)=>`<button data-i="${i}" class="${i?'':'sel'}"><i style="width:8px;height:8px;border-radius:50%;background:var(${CAT[f.cat][1]})"></i>${f.name}<small>${CAT[f.cat][0]}</small></button>`).join('')||'<button disabled>No matches on Veyra</button>';
- sRes.style.display='block';sRes.querySelectorAll('button[data-i]').forEach(b=>b.onclick=()=>pick(+b.dataset.i));}
-function pick(i){const f=sList[i];if(!f)return;sIn.value=f.name;sRes.style.display='none';sIn.blur();focusFeature(f.id);}
-sIn.oninput=renderSearch;sIn.onkeydown=e=>{if(e.key==='ArrowDown'||e.key==='ArrowUp'){sSel=(sSel+(e.key==='ArrowDown'?1:-1)+sList.length)%Math.max(1,sList.length);sRes.querySelectorAll('button').forEach((b,i)=>b.classList.toggle('sel',i===sSel));e.preventDefault();}if(e.key==='Enter')pick(sSel);if(e.key==='Escape'){sRes.style.display='none';sIn.blur();}};
-addEventListener('click',e=>{if(!document.getElementById('searchWrap').contains(e.target))sRes.style.display='none';});
+const tabsEl=document.getElementById('tabs'),panes=[...document.querySelectorAll('.pane')];
+panes.forEach((p,i)=>{const b=document.createElement('button');b.textContent=p.dataset.tab;if(!i)b.className='on';
+ b.onclick=()=>{document.body.classList.remove('min');tabsEl.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));panes.forEach(x=>x.classList.toggle('on',x===p));document.getElementById('content').scrollTop=0;};tabsEl.appendChild(b);});
+if(mobile()){const b=document.createElement('button');b.textContent='▾ Hide';b.onclick=()=>{document.body.classList.toggle('min');b.textContent=document.body.classList.contains('min')?'▴ Read':'▾ Hide';};tabsEl.prepend(b);}
+document.getElementById('printBtn').onclick=()=>print();
 
-/* ---------- tour ---------- */
-const TOUR=[
- {f:null,dir:[18,-30],d:4,h:'Welcome to Veyra',x:'A life-sustaining world orbiting the orange star Ostra. Its geosphere, hydrosphere, atmosphere and biosphere are all linked. Follow the tour to see how.'},
- {f:'crown',h:'Convergent: continent–continent',x:'The Crown Range formed when two continents collided. The rock crumpled upward into 8.4 km fold mountains that also steer the weather.'},
- {f:'verdant',h:'Water cycle in action',x:'Moist ocean air rises over the range, cools, condenses and pours rain onto the plum rainforest. Watch the blue particles loop: evaporation → condensation → precipitation → runoff.',on:['procs']},
- {f:'dunes',h:'Rain shadow',x:'Dry air sinking down the far side of the mountains creates the Ashen Dunes desert. Mountains (geosphere) shape the climate (atmosphere).'},
- {f:'river',h:'Erosion & nutrient transport',x:'The Silvermouth carves a V-shaped valley and carries weathered phosphorus and minerals to its delta.'},
- {f:'delta',h:'Life zone: delta wetlands',x:'Deposition builds rich mudflats, one of the most productive ecosystems on Veyra.'},
- {f:'seam',h:'Divergent: mid-ocean ridge',x:'Plates pull apart, magma rises and new seafloor forms. Turn on Plate motion to see the arrows.',on:['arrows','plates']},
- {f:'vents',h:'Life without sunlight',x:'Hydrothermal vents feed chemosynthetic microbes, a second energy source for life.'},
- {f:'shear',h:'Transform boundary',x:'The Shearline Fault slides sideways and offsets the ridge, releasing stress as earthquakes.'},
- {f:'trench',h:'Convergent: ocean–continent',x:'The dense Sundra plate dives beneath Mervath at the 9.4 km Ember Trench, recycling carbon into the mantle.'},
- {f:'kaelor',h:'Volcanoes return carbon',x:'Melted slab material rises to feed Mount Kaelor. The red loop shows the full carbon cycle.'},
- {f:'ash',h:'Life zone: volcanic soils',x:'Weathered ash makes the brick-red, super-fertile Kaelor Ashlands.'},
- {f:'hollow',h:'Divergent: continental rift',x:'Mervath is splitting apart, and its rift lakes are the start of a future ocean.'},
- {f:'lantern',h:'Hotspot island chain',x:'A fixed mantle plume under a moving plate. The islands get older and more eroded toward the northwest.'},
- {f:'cinder',h:'Convergent: ocean–ocean',x:'One oceanic plate subducts under another and builds a volcanic island arc.'},
- {f:'teeth',h:'Wave erosion',x:'Two moons mean bigger tides and stronger waves, which carve cliffs and sea stacks.'},
- {f:'frost',h:'Glacial erosion',x:'Glaciers carve U-shaped valleys, and frost wedging shatters the peaks.'},
- {f:null,dir:[10,-10],d:4.2,h:'One connected system',x:'Tectonics recycles carbon and nutrients, water moves them around, the atmosphere regulates temperature, and life depends on all three. That is why Veyra can sustain life.'},
-];
-let tI=0;const tb=document.getElementById('tourbar');
-function tourGo(i){tI=Math.max(0,Math.min(TOUR.length-1,i));const s=TOUR[tI];
- if(s.on)for(const k of s.on){if(!layerState[k]){layerState[k]=true;[...layersEl.children][LAYERS.findIndex(l=>l[0]===k)].classList.add('on');}}applyLayers();
- if(s.f)focusFeature(s.f);else{infoEl.classList.remove('show');flyTo(ll2v(...s.dir),s.d);}
- document.getElementById('tourStep').textContent=`Stop ${tI+1} of ${TOUR.length} · ${s.h}`;document.getElementById('tourText').textContent=s.x;}
-document.getElementById('tourBtn').onclick=()=>{touring=true;tb.classList.add('show');tourGo(0);};
-document.getElementById('tNext').onclick=()=>tourGo(tI+1);document.getElementById('tPrev').onclick=()=>tourGo(tI-1);
-document.getElementById('tEnd').onclick=()=>{touring=false;tb.classList.remove('show');applyLayers();};
-document.getElementById('printBtn').onclick=()=>{document.querySelectorAll('.card').forEach(c=>c.classList.remove('closed'));print();};
+const sIn=document.getElementById('search'),sRes=document.getElementById('results');let sList=[],sSel=0;
+sIn.oninput=()=>{const q=sIn.value.trim().toLowerCase();if(!q){sRes.style.display='none';return;}
+ sList=F.filter(f=>(f.name+' '+f.k).toLowerCase().includes(q)).slice(0,8);sSel=0;
+ sRes.innerHTML=sList.length?sList.map((f,i)=>`<button data-i="${i}" class="${i?'':'sel'}">${f.name}<small>${f.k.split(' · ')[0]}</small></button>`).join(''):'<button disabled>No results</button>';
+ sRes.style.display='block';sRes.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>pick(+b.dataset.i));};
+function pick(i){const f=sList[i];if(!f)return;sIn.value='';sRes.style.display='none';sIn.blur();select(f.id);}
+sIn.onkeydown=e=>{if(/Arrow(Up|Down)/.test(e.key)&&sList.length){sSel=(sSel+(e.key==='ArrowDown'?1:-1)+sList.length)%sList.length;sRes.querySelectorAll('button').forEach((b,i)=>b.classList.toggle('sel',i===sSel));e.preventDefault();}
+ if(e.key==='Enter')pick(sSel);if(e.key==='Escape'){sRes.style.display='none';sIn.blur();}};
+addEventListener('click',e=>{if(!e.target.closest('#searchWrap'))sRes.style.display='none';});
 
-/* ---------- mobile tabs ---------- */
-const mt=document.getElementById('mtabs');const TABS=[['globe','🌍 Globe'],['planet','Veyra'],['s1','1 · Geology'],['s2','2 · Water & Air'],['s3','3 · Ingredients'],['sys','Systems'],['xsec','Diagrams'],['rubric','Rubric']];
-function closeSheet(){document.querySelectorAll('.rail').forEach(r=>r.classList.remove('mshow'));document.body.classList.remove('sheet');mt.querySelectorAll('button').forEach((b,i)=>b.classList.toggle('on',i===0));}
-for(const [k,n] of TABS){const b=document.createElement('button');b.textContent=n;b.onclick=()=>{mt.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
- if(k==='globe')return closeSheet();document.querySelectorAll('.card').forEach(c=>c.classList.toggle('mcur',c.dataset.m===k));document.querySelectorAll('.rail').forEach(r=>r.classList.toggle('mshow',!!r.querySelector(`.card[data-m="${k}"]`)));document.body.classList.add('sheet');
- const c=document.querySelector(`.card[data-m="${k}"]`);c.classList.remove('closed');c.parentElement.scrollTop=0;};mt.appendChild(b);}
-mt.firstChild.classList.add('on');
+const TOUR=[['crown','plates'],['trench','plates'],['seam','plates'],['shear','plates'],['hollow','plates'],['lantern','plates'],['verdant','water'],['dunes','water'],['river','erosion'],['delta','life'],['canyon','erosion'],['teeth','erosion'],['vents','life'],['ash','life'],['kaelor','systems']];
+let ti=0;
+function tourGo(i){touring=true;ti=(i+TOUR.length)%TOUR.length;const [id,l]=TOUR[ti];setLayer(l);select(id,true);info.classList.add('tour');document.getElementById('tCount').textContent=`${ti+1} / ${TOUR.length}`;}
+document.getElementById('tourBtn').onclick=()=>tourGo(0);
+document.getElementById('tNext').onclick=()=>tourGo(ti+1);document.getElementById('tPrev').onclick=()=>tourGo(ti-1);
 
-/* ---------- hover readout ---------- */
-const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();const ro=document.getElementById('readout');let lastHover=0;
-canvas.addEventListener('pointermove',e=>{const now=performance.now();if(now-lastHover<50||!globe)return;lastHover=now;mouse.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1);ray.setFromCamera(mouse,camera);
- const hit=ray.ray.intersectSphere(new THREE.Sphere(new THREE.Vector3(),1.0),new THREE.Vector3());if(!hit){ro.textContent='Deep space · Ostra system';return;}
- const [lat,lon]=v2ll(hit);const [h,m]=hAt(lat,lon);let biome;
- if(h<0)biome=Math.abs(lat)>74?'Polar sea ice':-h>.45?'Deep ocean / abyssal plain':-h>.15?'Open ocean':'Shallow shelf sea';
- else if(h>.92||Math.abs(lat)/90*1.15+h*.9>1.02)biome='Ice & snow';else if(h>.5)biome='Bare mountain rock';else if(gauss(lat,lon,-16,43,6.5)>.4)biome='Volcanic ashland soil';else if(m>.62)biome='Plum rainforest';else if(m>.42)biome='Plum woodland & rustgrass';else if(m>.28)biome='Dry scrub';else biome='Desert dunes';
- ro.textContent=`${fmtLL(lat,lon)}  ·  ${h>=0?'elev '+Math.round(h*4500).toLocaleString()+' m':'depth '+Math.round(-h*6800).toLocaleString()+' m'}  ·  ${biome}`;});
-canvas.addEventListener('pointerdown',()=>{if(flying)flying=null;});
-controls.addEventListener('start',()=>{controls.autoRotate=false;});
-controls.addEventListener('end',()=>{setTimeout(()=>{if(!flying&&!touring)controls.autoRotate=layerState.rotate},4000);});
+const ro=document.getElementById('readout');const rc=new THREE.Raycaster(),mv=new THREE.Vector2();let lastH=0;const sph=new THREE.Sphere(new THREE.Vector3(),1);
+canvas.addEventListener('pointermove',e=>{const n=performance.now();if(n-lastH<80)return;lastH=n;mv.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1);rc.setFromCamera(mv,camera);
+ const p=rc.ray.intersectSphere(sph,new THREE.Vector3());if(!p){ro.textContent='';return;}const [a,b]=v2ll(p);ro.textContent=fmt(a,b)+'  ·  '+elev(hAt(a,b));});
 
-/* ---------- loop ---------- */
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
 const clock=new THREE.Clock();
-function loop(now){requestAnimationFrame(loop);const dt=clock.getDelta(),t=clock.elapsedTime;
- stepFly(now);controls.update();
- if(clouds)clouds.rotation.y+=dt*.006;
- for(const m of moons){const a=m.phase+t*m.speed;m.mesh.position.set(Math.cos(a)*m.dist,Math.sin(a)*m.dist*m.incl,-Math.sin(a)*m.dist);m.mesh.rotation.y=a;}
- if(overlays.procData&&overlays.procs.visible)for(const pd of overlays.procData){const arr=pd.geo.attributes.position.array;for(let i=0;i<pd.n;i++){const u=((t*pd.speed+i/pd.n)%1);const p=pd.curve.getPoint(u);arr[i*3]=p.x;arr[i*3+1]=p.y;arr[i*3+2]=p.z;}pd.geo.attributes.position.needsUpdate=true;}
+sun.position.copy(sunDir).multiplyScalar(10);star.position.copy(sunDir).multiplyScalar(110);
+function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,clock.getDelta()),t=clock.elapsedTime;
+ stepFly(now);if(!flying)controls.update();
+ if(clouds)clouds.rotation.y+=dt*.004;
+ for(const m of moons){const a=m.ph+t*m.speed;m.m.position.set(Math.cos(a)*m.dist,Math.sin(a)*m.dist*m.incl,-Math.sin(a)*m.dist);}
+ for(const f of flows){if(!layerObjs[f.key].visible)continue;const arr=f.geo.attributes.position.array;for(let i=0;i<f.n;i++){const p=f.curve.getPoint((t*.035+i/f.n)%1);arr[i*3]=p.x;arr[i*3+1]=p.y;arr[i*3+2]=p.z;}f.geo.attributes.position.needsUpdate=true;}
  renderer.render(scene,camera);updateMarkers();}
+controls.addEventListener('start',()=>{controls.autoRotate=false;});
 
-const msg=document.getElementById('loadmsg');
-setTimeout(()=>{msg.textContent='Raising mountains & filling oceans…';setTimeout(()=>{generate();msg.textContent='Painting biomes & clouds…';setTimeout(()=>{build();applyLayers();requestAnimationFrame(loop);document.getElementById('loader').classList.add('hide');},30);},30);},60);
+setTimeout(()=>{generate();setTimeout(()=>{build();setLayer('none');requestAnimationFrame(loop);document.getElementById('loader').classList.add('hide');},20);},50);
 </script>
 </body>
 </html>
