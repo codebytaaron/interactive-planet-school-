@@ -534,7 +534,7 @@ function colorize(){
      if(cold>1.02||h>.92)col=mix(col,C.snow,Math.min(1,Math.max((cold-1.02)/.08,(h-.92)/.12)));}
    d[o]=col[0]*(1+n);d[o+1]=col[1]*(1+n);d[o+2]=col[2]*(1+n);d[o+3]=255;
    const hv=Math.max(0,Math.min(1,h))*255;dd[o]=dd[o+1]=dd[o+2]=hv;dd[o+3]=255;
-   const rv=h<0?(Math.abs(lat)>74?200:70):235;rd[o]=rd[o+1]=rd[o+2]=rv;rd[o+3]=255;}}
+   const rv=h<0?(Math.abs(lat)>74?200:150):235;rd[o]=rd[o+1]=rd[o+2]=rv;rd[o+3]=255;}}
  g.putImageData(img,0,0);dg.putImageData(dimg,0,0);rgx.putImageData(rimg,0,0);
  // rivers & canyon
  const px=(la,lo)=>[(lo+180)/360*W,(90-la)/180*H];
@@ -592,7 +592,7 @@ renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth
 renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
 const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.01,500);
-camera.position.copy(ll2v(18,-30,3.4));
+camera.position.copy(ll2v(18,-30,innerWidth<900?5.2:4.1));
 const controls=new OrbitControls(camera,canvas);
 controls.enableDamping=true;controls.dampingFactor=.07;controls.minDistance=1.25;controls.maxDistance=8;controls.rotateSpeed=.55;controls.zoomSpeed=.8;controls.enablePan=false;
 controls.autoRotate=true;controls.autoRotateSpeed=.35;
@@ -635,14 +635,14 @@ function build(){
  planet.add(globe);
  const ct=new THREE.CanvasTexture(cloudsTex());ct.colorSpace=THREE.SRGBColorSpace;
  clouds=new THREE.Mesh(new THREE.SphereGeometry(1.032,128,64),new THREE.MeshStandardMaterial({map:ct,transparent:true,depthWrite:false,opacity:.62}));planet.add(clouds);
- atmo=new THREE.Mesh(new THREE.SphereGeometry(1.16,96,48),new THREE.ShaderMaterial({side:THREE.BackSide,blending:THREE.AdditiveBlending,transparent:true,depthWrite:false,
+ atmo=new THREE.Mesh(new THREE.SphereGeometry(1.12,96,48),new THREE.ShaderMaterial({side:THREE.BackSide,blending:THREE.AdditiveBlending,transparent:true,depthWrite:false,
   vertexShader:`varying vec3 vN;void main(){vN=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
-  fragmentShader:`varying vec3 vN;void main(){float i=pow(.72-dot(vN,vec3(0,0,1.)),3.);gl_FragColor=vec4(.45,.68,1.,1.)*i*1.5;}`}));
+  fragmentShader:`varying vec3 vN;void main(){float i=pow(max(.68-dot(vN,vec3(0,0,1.)),0.),4.);gl_FragColor=vec4(.45,.68,1.,1.)*i*1.1;}`}));
  planet.add(atmo);
  // thin inner haze rim
  const rim=new THREE.Mesh(new THREE.SphereGeometry(1.05,96,48),new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
   vertexShader:`varying vec3 vN;varying vec3 vV;void main(){vN=normalize(normalMatrix*normal);vec4 mv=modelViewMatrix*vec4(position,1.);vV=normalize(-mv.xyz);gl_Position=projectionMatrix*mv;}`,
-  fragmentShader:`varying vec3 vN;varying vec3 vV;void main(){float f=pow(1.-max(dot(vN,vV),0.),4.);gl_FragColor=vec4(.5,.72,1.,f*.75);}`}));
+  fragmentShader:`varying vec3 vN;varying vec3 vV;void main(){float f=pow(1.-max(dot(vN,vV),0.),4.);gl_FragColor=vec4(.5,.72,1.,f*.28);}`}));
  planet.add(rim);overlays.rim=rim;
 
  // plate boundaries
@@ -756,7 +756,7 @@ addEventListener('click',e=>{if(!document.getElementById('searchWrap').contains(
 
 /* ---------- tour ---------- */
 const TOUR=[
- {f:null,dir:[18,-30],d:3.4,h:'Welcome to Veyra',x:'A life-sustaining world orbiting the orange star Ostra. Its geosphere, hydrosphere, atmosphere and biosphere are all linked. Follow the tour to see how.'},
+ {f:null,dir:[18,-30],d:4,h:'Welcome to Veyra',x:'A life-sustaining world orbiting the orange star Ostra. Its geosphere, hydrosphere, atmosphere and biosphere are all linked. Follow the tour to see how.'},
  {f:'crown',h:'Convergent: continent–continent',x:'The Crown Range formed when two continents collided. The rock crumpled upward into 8.4 km fold mountains that also steer the weather.'},
  {f:'verdant',h:'Water cycle in action',x:'Moist ocean air rises over the range, cools, condenses and pours rain onto the plum rainforest. Watch the blue particles loop: evaporation → condensation → precipitation → runoff.',on:['procs']},
  {f:'dunes',h:'Rain shadow',x:'Dry air sinking down the far side of the mountains creates the Ashen Dunes desert. Mountains (geosphere) shape the climate (atmosphere).'},
@@ -773,7 +773,7 @@ const TOUR=[
  {f:'cinder',h:'Convergent: ocean–ocean',x:'One oceanic plate subducts under another and builds a volcanic island arc.'},
  {f:'teeth',h:'Wave erosion',x:'Two moons mean bigger tides and stronger waves, which carve cliffs and sea stacks.'},
  {f:'frost',h:'Glacial erosion',x:'Glaciers carve U-shaped valleys, and frost wedging shatters the peaks.'},
- {f:null,dir:[10,-10],d:3.6,h:'One connected system',x:'Tectonics recycles carbon and nutrients, water moves them around, the atmosphere regulates temperature, and life depends on all three. That is why Veyra can sustain life.'},
+ {f:null,dir:[10,-10],d:4.2,h:'One connected system',x:'Tectonics recycles carbon and nutrients, water moves them around, the atmosphere regulates temperature, and life depends on all three. That is why Veyra can sustain life.'},
 ];
 let tI=0;const tb=document.getElementById('tourbar');
 function tourGo(i){tI=Math.max(0,Math.min(TOUR.length-1,i));const s=TOUR[tI];
