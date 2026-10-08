@@ -1,6 +1,6 @@
 # Veyra · A Life-Sustaining Planet
 
-**Live planet:** https://codebytaaron.github.io/worldproject/
+**Live planet:** https://codebytaaron.github.io/interactive-planet-school-/
 
 Designing a Life-Sustaining Planet Project, by Teddy & George.
 
