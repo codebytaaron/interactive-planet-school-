@@ -554,11 +554,12 @@ function textures(){
  g.strokeStyle='rgba(120,56,34,.9)';g.lineWidth=6;g.beginPath();densify([[19,-35],[16.5,-31.5],[15,-29.5],[12,-26.5]],.3).forEach(([a,b],k)=>{const [X,Y]=px(a,b);k?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke();
  const rc=document.createElement('canvas');rc.width=W;rc.height=H;const rg=rc.getContext('2d');const ri=rg.createImageData(W,H);
  for(let i=0;i<W*H;i++){const r=HG[i]<0?175:250;ri.data[i*4]=ri.data[i*4+1]=ri.data[i*4+2]=r;ri.data[i*4+3]=255;}rg.putImageData(ri,0,0);
- const cc=document.createElement('canvas');cc.width=W;cc.height=H;const cg=cc.getContext('2d');const ci=cg.createImageData(W,H);
- for(let y=0;y<H;y++){const lat=90-(y+.5)/H*180;for(let x=0;x<W;x++){const lon=(x+.5)/W*360-180;const p=ll2v(lat,lon);
+ const CLW=2048,CLH=1024;const cc=document.createElement('canvas');cc.width=CLW;cc.height=CLH;const cg=cc.getContext('2d');const ci=cg.createImageData(CLW,CLH);
+ for(let y=0;y<CLH;y++){const lat=90-(y+.5)/CLH*180;for(let x=0;x<CLW;x++){const lon=(x+.5)/CLW*360-180;const p=ll2v(lat,lon);
   const wq=fbm(p.x*2.2+5,p.y*2.2,p.z*2.2,3)*.35;let v=fbm(p.x*3.4+wq,p.y*6+wq,p.z*3.4-wq,6)+.12*Math.exp(-Math.pow(lat/8,2))+.12*Math.exp(-Math.pow((Math.abs(lat)-55)/10,2))-.15*Math.exp(-Math.pow((Math.abs(lat)-25)/8,2));
-  const i=y*W+x;v+=.3*(MO[i]-.5);if(HG[i]<0)v+=.02;
-  const a=Math.max(0,Math.min(1,(v-.08)/.32));const o=i*4;ci.data[o]=ci.data[o+1]=ci.data[o+2]=255;ci.data[o+3]=Math.pow(a,1.4)*220;}}
+  const cu=(x+.5)/CLW,cv=(y+.5)/CLH;v+=.3*(sample(MO,cu,cv)-.5);if(sample(HG,cu,cv)<0)v+=.02;
+  v+=(vnoise(x*.05,y*.05,3.3)-.5)*.09+(vnoise(x*.16,y*.16,6.1)-.5)*.04;
+  const a=Math.max(0,Math.min(1,(v-.08)/.3));const o=(y*CLW+x)*4;const sh=238+17*a;ci.data[o]=sh;ci.data[o+1]=sh;ci.data[o+2]=Math.min(255,sh+4);ci.data[o+3]=Math.pow(a,1.35)*228;}}
  cg.putImageData(ci,0,0);
  ng.putImageData(nimg,0,0);return {c,bc,rc,cc,nc};
 }
@@ -651,14 +652,15 @@ function build(){
  const nmap=new THREE.CanvasTexture(T.nc);nmap.anisotropy=map.anisotropy;
  const gmat=new THREE.MeshStandardMaterial({map,normalMap:nmap,normalScale:new THREE.Vector2(1.4,1.4),roughnessMap:rough,roughness:1,metalness:0});
  gmat.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
-  {vec2 q=vMapUv*vec2(9000.,4500.);vec2 i=floor(q),f=fract(q);f=f*f*(3.-2.*f);
+  float land=0.;{vec2 q=vMapUv*vec2(9000.,4500.);vec2 i=floor(q),f=fract(q);f=f*f*(3.-2.*f);
    #define HS(p) fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453)
    float n1=mix(mix(HS(i),HS(i+vec2(1,0)),f.x),mix(HS(i+vec2(0,1)),HS(i+vec2(1,1)),f.x),f.y);
    vec2 q2=q*2.7;vec2 j=floor(q2),g=fract(q2);g=g*g*(3.-2.*g);
    float n2=mix(mix(HS(j),HS(j+vec2(1,0)),g.x),mix(HS(j+vec2(0,1)),HS(j+vec2(1,1)),g.x),g.y);
    float fw=clamp(1.-length(fwidth(q2))*.6,0.,1.);
-   float land=step(diffuseColor.b,diffuseColor.r+.03);
-   diffuseColor.rgb*=1.+(n1*.6+n2*.4-.5)*.22*fw*land;}`);};
+   land=step(diffuseColor.b,diffuseColor.r+.03);
+   diffuseColor.rgb*=1.+(n1*.6+n2*.4-.5)*.22*fw*land;}`).replace('#include <dithering_fragment>',`#include <dithering_fragment>
+  {float fr=pow(1.-clamp(dot(normalize(vNormal),normalize(vViewPosition)),0.,1.),4.);gl_FragColor.rgb+=vec3(.3,.5,.8)*fr*.28*(1.-land);}`);};
  globe=new THREE.Mesh(new THREE.SphereGeometry(1,256,128),gmat);world.add(globe);
  const ct=new THREE.CanvasTexture(T.cc);clouds=new THREE.Mesh(new THREE.SphereGeometry(1.012,160,80),new THREE.MeshStandardMaterial({map:ct,transparent:true,depthWrite:false,opacity:.85}));world.add(clouds);
  const cs=new THREE.Mesh(new THREE.SphereGeometry(1.003,160,80),new THREE.MeshBasicMaterial({alphaMap:ct,color:0x000000,transparent:true,opacity:.28,depthWrite:false}));cs.rotation.y=-.012;cs.rotation.x=.006;world.add(cs);clouds.userData.shadow=cs;
