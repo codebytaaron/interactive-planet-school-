@@ -768,7 +768,7 @@ function hAt(lat,lon){return sample(HG,(lon+180)/360,(90-lat)/180);}
 function elev(h){return h>=0?`Elevation ${Math.round(h*4500).toLocaleString()} m`:`Depth ${Math.round(-h*6800).toLocaleString()} m`;}
 function select(id,keepLayer){const f=F.find(x=>x.id===id);if(!f)return;selected=id;
  if(!keepLayer&&!f.L.includes(layer))setLayer(f.L[0]);
- if(!(cityMode&&f.L.includes('city')))flyTo(ll2v(f.lat,f.lon),['auren','mervath','ocean','basin'].includes(id)?3.2:2.7)*(mobile()?1.35:1);
+ if(cityMode&&f.L.includes('city'))cityFly(f.cx,f.cy,f.cd);else flyTo(ll2v(f.lat,f.lon),['auren','mervath','ocean','basin'].includes(id)?3.2:2.7)*(mobile()?1.35:1);
  const lc=LCOL[f.L.includes(layer)?layer:f.L[0]];
  document.getElementById('infoK').textContent=f.k;document.getElementById('infoK').style.color=lc;
  document.getElementById('infoT').textContent=f.name;document.getElementById('infoP').textContent=f.t;
@@ -1080,19 +1080,30 @@ function cityTick(now){if(!CITY)return;const t=now/1000;
  const cd=camera.position.length();CITY.glowFar.material.opacity=Math.min(.8,Math.max(0,(cd-1.15)*1.5));
  if(cityPhase===1&&!flying){cityPhase=2;cityTw={t0:now,p0:camera.position.clone(),q0:new THREE.Vector3(),p1:L2W(.006,-.034,.019),q1:L2W(-.002,.004,0)};}
  if(cityTw){const k=Math.min(1,(now-cityTw.t0)/2200);const e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;camera.position.lerpVectors(cityTw.p0,cityTw.p1,e);const tg=cityTw.q0.clone().lerp(cityTw.q1,e);camera.up.copy(new THREE.Vector3(0,1,0).lerp(CN,e).normalize());camera.lookAt(tg);
-  if(k>=1){cityTw=null;cityPhase=3;cityCtl=new OrbitControls(camera,canvas);cityCtl.target.copy(L2W(-.002,.004,0));cityCtl.enableDamping=true;cityCtl.dampingFactor=.08;cityCtl.minDistance=.002;cityCtl.maxDistance=.07;cityCtl.maxPolarAngle=1.48;cityCtl.zoomSpeed=.8;cityCtl.rotateSpeed=.6;cityCtl.panSpeed=.8;cityCtl.autoRotate=true;cityCtl.autoRotateSpeed=.4;cityCtl.addEventListener('start',()=>cityCtl.autoRotate=false);}}
- if(cityCtl)cityCtl.update();}
-function enterCity(){if(cityMode||!CITY)return;cityMode=true;cityPhase=1;controls.autoRotate=false;
+  if(k>=1){cityTw=null;cityPhase=3;cityCtl=new OrbitControls(camera,canvas);cityCtl.target.copy(L2W(-.002,.004,0));cityCtl.enableDamping=true;cityCtl.dampingFactor=.08;cityCtl.minDistance=.002;cityCtl.maxDistance=.07;cityCtl.maxPolarAngle=1.48;cityCtl.zoomSpeed=.8;cityCtl.rotateSpeed=.6;cityCtl.panSpeed=.8;cityCtl.autoRotate=true;cityCtl.autoRotateSpeed=.4;cityCtl.addEventListener('start',()=>{cityCtl.autoRotate=false;cityTw2=null;});cityCtl.listenToKeyEvents(window);cityCtl.keyPanSpeed=12;cityCtl.screenSpacePanning=false;
+   banner('🏙 Welcome to St. Sulterburg','Drag to look around · scroll to zoom · right-drag or arrow keys to move · press ▶ Tour for a city tour.',true);setTimeout(()=>{if(cityMode)dzBan.classList.remove('show');},7000);}}
+ if(cityTw2&&cityCtl){const k=Math.min(1,(now-cityTw2.t0)/1600);const e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;camera.position.lerpVectors(cityTw2.p0,cityTw2.p1,e);cityCtl.target.lerpVectors(cityTw2.q0,cityTw2.q1,e);camera.lookAt(cityCtl.target);if(k>=1)cityTw2=null;}
+ else if(cityCtl)cityCtl.update();}
+let cityTw2=null,cTour=false,ctI=0;
+function cityFly(x,y,d=.012){if(!cityCtl||x==null)return;const q1=L2W(x,y,0);const p1=q1.clone().addScaledVector(CN,d*.6).addScaledVector(CNo,-d*.75).addScaledVector(CE,d*.3);cityCtl.autoRotate=false;cityTw2={t0:performance.now(),p0:camera.position.clone(),q0:cityCtl.target.clone(),p1,q1};}
+const CTOUR=['city','cdown','cspire','cheights','cmarina','cpark','cstad','cport','clow','csub'];
+function cityTourGo(i){if(!cityCtl)return;cTour=true;ctI=(i+CTOUR.length)%CTOUR.length;select(CTOUR[ctI],true);info.classList.add('tour');document.getElementById('tCount').textContent=`${ctI+1} of ${CTOUR.length}`;document.getElementById('tProg').style.width=((ctI+1)/CTOUR.length*100)+'%';}
+function enterCity(){if(cityMode||!CITY)return;cityMode=true;cityPhase=1;controls.autoRotate=false;controls.enabled=false;
  world.children.forEach(c=>{if(c.isMesh&&c!==globe&&c.geometry&&c.geometry.parameters&&c.geometry.parameters.radius>1.0005&&c.visible){c.visible=false;cityHidden.push(c);}});
  if(clouds&&clouds.userData.shadow&&clouds.userData.shadow.visible){clouds.userData.shadow.visible=false;cityHidden.push(clouds.userData.shadow);}
  camera.near=.0002;layout();sun.intensity=1.1;amb.intensity=.14;scene.background=new THREE.Color(0x0b1428);scene.fog=new THREE.FogExp2(0x0b1428,20);
  flyTo(CN.clone(),1.5,1300);}
-function exitCity(){if(!cityMode)return;cityMode=false;cityPhase=0;cityTw=null;if(cityCtl){cityCtl.dispose();cityCtl=null;}
+function exitCity(){if(!cityMode)return;cityMode=false;cityPhase=0;cityTw=null;cityTw2=null;cTour=false;controls.enabled=true;if(cityCtl){cityCtl.dispose();cityCtl=null;}
  camera.up.set(0,1,0);camera.near=.01;layout();cityHidden.forEach(c=>c.visible=true);cityHidden.length=0;scene.background=null;scene.fog=null;sun.intensity=3;
  camera.position.copy(CN).multiplyScalar(1.6);camera.lookAt(0,0,0);controls.target.set(0,0,0);controls.update();flyTo(CN.clone(),fitDist(),1200);applyOpts();}
 {const _sl=setLayer;setLayer=function(id){_sl(id);if(id==='city')enterCity();else if(cityMode)exitCity();};}
 
-function addCityMarkers(){CITYF.forEach(c=>{const v=L2W(c.x*CR,c.y*CR,.0016);const [la,lo]=v2ll(v);const f={id:c.id,L:['city'],name:c.name,lat:la,lon:lo,k:c.k,t:c.t,l:c.l};F.push(f);addMarker({...f,pos:v,pri:c.id==='city'?1:2});});}
+function addCityMarkers(){CITYF.forEach(c=>{const v=L2W(c.x*CR,c.y*CR,.0016);const [la,lo]=v2ll(v);const f={id:c.id,L:['city'],name:c.name,lat:la,lon:lo,k:c.k,t:c.t,l:c.l,cx:c.x*CR,cy:c.y*CR,cd:c.id==='city'?.034:c.id==='cspire'?.009:.013};F.push(f);addMarker({...f,pos:v,pri:c.id==='city'?1:2});});}
+{const tb=document.getElementById('tourBtn'),tn=document.getElementById('tNext'),tp=document.getElementById('tPrev');
+ const o1=tb.onclick,o2=tn.onclick,o3=tp.onclick;
+ tb.onclick=()=>{if(cityMode){if(cityCtl)cityTourGo(0);}else o1();};
+ tn.onclick=()=>{cTour?cityTourGo(ctI+1):o2();};tp.onclick=()=>{cTour?cityTourGo(ctI-1):o3();};
+ document.getElementById('infoX').addEventListener('click',()=>{cTour=false;});}
 const T0=performance.now();const fill=document.getElementById('ldfill');fill.style.width='30%';
 setTimeout(()=>{generate();fill.style.width='65%';document.getElementById('loadmsg').textContent='Rendering high-resolution surface…';setTimeout(()=>{build();CITY=buildCity();addCityMarkers();fill.style.width='100%';setLayer('none');requestAnimationFrame(loop);setTimeout(()=>{document.getElementById('loader').classList.add('hide');flyTo(ll2v(20,-40),fitDist(),2600);setTimeout(()=>obShow(0),2700);},Math.max(300,2600-(performance.now()-T0)));},20);},400);
 </script>
