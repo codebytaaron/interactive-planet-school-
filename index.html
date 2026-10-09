@@ -1159,7 +1159,7 @@ function cityTick(now){if(!CITY)return;const t=now/1000;
  const cd=camera.position.length();CITY.glowFar.material.opacity=Math.min(.8,Math.max(0,(cd-1.15)*1.5));
  if(cityPhase===1&&!flying){cityPhase=2;cityTw={t0:now,p0:camera.position.clone(),q0:new THREE.Vector3(),p1:L2W(.006,-.034,.019),q1:L2W(-.002,.004,0)};}
  if(cityTw){const k=Math.min(1,(now-cityTw.t0)/2200);const e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;camera.position.lerpVectors(cityTw.p0,cityTw.p1,e);const tg=cityTw.q0.clone().lerp(cityTw.q1,e);camera.up.copy(new THREE.Vector3(0,1,0).lerp(CN,e).normalize());camera.lookAt(tg);
-  if(k>=1){cityTw=null;cityPhase=3;document.body.classList.add('cityOn');cityCtl=new OrbitControls(camera,canvas);cityCtl.target.copy(L2W(-.002,.004,0));cityCtl.enableDamping=true;cityCtl.dampingFactor=.08;cityCtl.minDistance=.002;cityCtl.maxDistance=.07;cityCtl.maxPolarAngle=1.48;cityCtl.zoomSpeed=.8;cityCtl.rotateSpeed=.6;cityCtl.panSpeed=.8;cityCtl.autoRotate=true;cityCtl.autoRotateSpeed=.4;cityCtl.addEventListener('start',()=>{cityCtl.autoRotate=false;cityTw2=null;});cityCtl.listenToKeyEvents(window);cityCtl.keyPanSpeed=12;cityCtl.screenSpacePanning=false;}}
+  if(k>=1){cityTw=null;cityPhase=3;document.body.classList.add('cityOn');setCityTime(cityDay);cityCtl=new OrbitControls(camera,canvas);cityCtl.target.copy(L2W(-.002,.004,0));cityCtl.enableDamping=true;cityCtl.dampingFactor=.08;cityCtl.minDistance=.002;cityCtl.maxDistance=.07;cityCtl.maxPolarAngle=1.48;cityCtl.zoomSpeed=.8;cityCtl.rotateSpeed=.6;cityCtl.panSpeed=.8;cityCtl.autoRotate=true;cityCtl.autoRotateSpeed=.4;cityCtl.addEventListener('start',()=>{cityCtl.autoRotate=false;cityTw2=null;});cityCtl.listenToKeyEvents(window);cityCtl.keyPanSpeed=12;cityCtl.screenSpacePanning=false;}}
  if(cityTw2&&cityCtl){const k=Math.min(1,(now-cityTw2.t0)/1600);const e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;camera.position.lerpVectors(cityTw2.p0,cityTw2.p1,e);cityCtl.target.lerpVectors(cityTw2.q0,cityTw2.q1,e);camera.lookAt(cityCtl.target);if(k>=1)cityTw2=null;}
  else if(cityCtl)cityCtl.update();}
 let cityTw2=null,cTour=false,ctI=0;
@@ -1196,7 +1196,7 @@ function setCityTime(day,keep){if(!keep)cityDay=day;if(!CITY)return;
   else if(o.isMesh&&o.material&&o.material.emissive){const m=o.material;if(m.userData.ei===undefined)m.userData.ei=m.emissiveIntensity;m.emissiveIntensity=day?m.userData.ei*.04:m.userData.ei;}
   else if(o.isInstancedMesh&&o.material.type==='MeshBasicMaterial')o.visible=!day;});
  if(!cityMode){sun.castShadow=false;return;}
- const bg=day?0xa9bfd6:0x0b1428;scene.background=new THREE.Color(bg);scene.fog=new THREE.FogExp2(bg,day?11:20);sun.intensity=day?3.6:1.1;amb.intensity=day?.6:.14;
+ const bg=day?0xa9bfd6:0x0b1428;const landed=cityPhase===3;scene.background=landed?new THREE.Color(bg):null;scene.fog=landed?new THREE.FogExp2(bg,day?11:20):null;sun.intensity=day?3.6:1.1;amb.intensity=day?.6:.14;
  sunDir.copy(CN).multiplyScalar(.8).addScaledVector(CE,.5).addScaledVector(CNo,-.35).normalize();sun.position.copy(C0).addScaledVector(sunDir,.06);sun.target.position.copy(C0);if(!sun.target.parent)scene.add(sun.target);sun.target.updateMatrixWorld();
  sun.castShadow=day;const sc=sun.shadow.camera;sc.left=sc.bottom=-.026;sc.right=sc.top=.026;sc.near=.001;sc.far=.14;sc.updateProjectionMatrix();sun.shadow.mapSize.set(4096,4096);sun.shadow.bias=-.00003;sun.shadow.normalBias=.00001;
  const tb=document.getElementById('dnBtn');if(tb)tb.textContent=day?'🌙 Night':'☀ Day';}
