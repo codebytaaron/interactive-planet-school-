@@ -1171,7 +1171,7 @@ function setCityTime(day,keep){if(!keep)cityDay=day;if(!CITY)return;
  sun.castShadow=day;const sc=sun.shadow.camera;sc.left=sc.bottom=-.026;sc.right=sc.top=.026;sc.near=.001;sc.far=.14;sc.updateProjectionMatrix();sun.shadow.mapSize.set(4096,4096);sun.shadow.bias=-.00003;sun.shadow.normalBias=.00001;
  const tb=document.getElementById('dnBtn');if(tb)tb.textContent=day?'🌙 Night':'☀ Day';}
 const T0=performance.now();const fill=document.getElementById('ldfill');fill.style.width='30%';
-setTimeout(()=>{generate();fill.style.width='65%';document.getElementById('loadmsg').textContent='Rendering high-resolution surface…';setTimeout(()=>{build();CITY=buildCity();addCityMarkers();fill.style.width='100%';setLayer('none');requestAnimationFrame(loop);setTimeout(()=>{document.getElementById('loader').classList.add('hide');flyTo(ll2v(20,-40),fitDist(),2600);setTimeout(()=>obShow(0),2700);},Math.max(300,2600-(performance.now()-T0)));},20);},400);
+setTimeout(()=>{generate();fill.style.width='65%';document.getElementById('loadmsg').textContent='Rendering high-resolution surface…';setTimeout(()=>{build();CITY=buildCity();addCityMarkers();fill.style.width='100%';setLayer('none');requestAnimationFrame(loop);setTimeout(()=>{document.getElementById('loader').classList.add('hide');flyTo(ll2v(20,-40),fitDist(),2600);setTimeout(()=>{if(!cityMode&&!touring&&!selected&&!dz)obShow(0);},2700);},Math.max(300,2600-(performance.now()-T0)));},20);},400);
 </script>
 </body>
 </html>
