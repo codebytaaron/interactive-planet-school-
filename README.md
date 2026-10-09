@@ -4,7 +4,6 @@
 
 Designing a Life-Sustaining Planet Project, by Teddy & George.
 
-
 An interactive 3D globe of our fictional planet **Veyra**, with the full written description in cards on both sides:
 
 - **Section 1:** Planet Overview & Geological Features (plate tectonics, all boundary types, landforms)
