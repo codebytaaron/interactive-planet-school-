@@ -122,7 +122,7 @@ svg.dg{width:100%;height:auto;display:block;margin:8px 0 12px}
 #info h3{font-size:17px;margin:3px 0 6px}
 #info p{font-size:13px;line-height:1.55;margin:0 0 8px;color:#c9cfdb}
 #info .life{color:#a8dab5}
-#info .c{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+#info .c{display:none;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
 #info .x{position:absolute;top:8px;right:10px;background:none;border:0;font-size:18px;color:var(--muted)}
 #info .nav{display:none;gap:8px;margin-top:12px;align-items:center}
 #info .prog{display:none;height:3px;background:#1f2633;border-radius:3px;margin:0 0 10px;overflow:hidden}
@@ -175,7 +175,7 @@ svg.dg{width:100%;height:auto;display:block;margin:8px 0 12px}
 #content{padding:28px 36px 80px;scrollbar-color:#cfcabf transparent}
 .pane{max-width:520px}
 .pane .kicker{color:#1a73e8;font-size:11px}
-.pane h2{font-family:Georgia,"Times New Roman",serif;font-size:28px;font-weight:700;color:#111;margin:6px 0 18px;padding-bottom:14px;border-bottom:1px solid #e3e0d8}
+.pane h2{font-size:28px;font-weight:700;color:#111;margin:6px 0 18px;padding-bottom:14px;border-bottom:1px solid #e3e0d8}
 .pane h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#6b6f76;margin:28px 0 8px;font-weight:600}
 .pane p,.pane li{font-size:15px;line-height:1.7;color:#2b2f36}
 .pane b{color:#111}
@@ -183,7 +183,7 @@ svg.dg{width:100%;height:auto;display:block;margin:8px 0 12px}
 .lnk:hover{color:#0b57d0;border-bottom-color:#0b57d0}
 .stats{display:flex;flex-wrap:wrap;gap:18px 28px;background:none;border:0;border-radius:0;margin:4px 0 6px}
 .stats div{background:none;padding:0}
-.stats b{font-family:Georgia,serif;font-size:22px;color:#111;font-weight:700}
+.stats b{font-size:22px;color:#111;font-weight:700}
 .stats span{color:#6b6f76;font-size:12px}
 .bnd{border:0;padding:0;margin:0 0 12px}
 .bnd .t{display:inline-block;font-size:11px;letter-spacing:.06em;margin-bottom:2px;color:var(--c);filter:brightness(.75) saturate(1.4)}
@@ -193,7 +193,7 @@ th{color:#6b6f76;border-bottom:1px solid #d9d5cc}
 td{border-bottom:1px solid #ece9e2;color:#2b2f36;padding:9px 12px 9px 0}
 td:first-child{color:#111;font-weight:600}
 .ing{border:0;border-bottom:1px solid #ece9e2;border-radius:0;padding:14px 0;margin:0}
-.ing h4{font-family:Georgia,serif;font-size:17px!important;color:#111!important;margin:0 0 6px!important}
+.ing h4{font-size:17px!important;color:#111!important;margin:0 0 6px!important}
 .ing dl{grid-template-columns:84px 1fr;font-size:14.5px;gap:4px 12px}
 .ing dt{color:#6b6f76;font-size:12px;text-transform:uppercase;letter-spacing:.05em;padding-top:3px}
 .ing dd{color:#2b2f36}
@@ -210,7 +210,7 @@ svg.dg{background:#141a24;border-radius:10px;padding:8px}
 #ob.show{display:flex}
 .obc{width:min(440px,100%);background:#fbfaf7;color:#1f2328;border-radius:16px;padding:26px 26px 20px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
 .obc .step{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#1a73e8}
-.obc h2{font-family:Georgia,serif;font-size:24px;margin:6px 0 10px;color:#111}
+.obc h2{font-size:24px;margin:6px 0 10px;color:#111}
 .obc p{font-size:15px;line-height:1.6;margin:0 0 6px;color:#2b2f36}
 .obc .ico{font-size:30px;margin-bottom:6px}
 .obdots{display:flex;gap:6px;margin:18px 0 16px}
@@ -321,8 +321,6 @@ body.cityOn #dzBtn{display:none}
 <li>Two moons make bigger tides and stronger waves.</li>
 <li>Plants are dark red to absorb Ostra's red-orange light.</li>
 </ul>
-<p style="color:var(--muted);font-size:13px">Pick a map layer on the left. Click any dot or <span class="lnk" data-f="crown">blue link</span> to fly there.</p>
-<button class="pbtn noprint" id="printBtn">Print written description</button>
 </section>
 
 <section class="pane" data-tab="1 · Geology">
@@ -794,7 +792,7 @@ const tabsEl=document.getElementById('tabs'),panes=[...document.querySelectorAll
 panes.forEach((p,i)=>{const b=document.createElement('button');b.textContent=p.dataset.tab;if(!i)b.className='on';
  b.onclick=()=>{document.body.classList.remove('min');tabsEl.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));panes.forEach(x=>x.classList.toggle('on',x===p));document.getElementById('content').scrollTop=0;};tabsEl.appendChild(b);});
 if(mobile()){const b=document.createElement('button');b.textContent='▾ Hide';b.onclick=()=>{document.body.classList.toggle('min');b.textContent=document.body.classList.contains('min')?'▴ Read':'▾ Hide';};tabsEl.prepend(b);}
-document.getElementById('printBtn').onclick=()=>print();
+
 
 const sIn=document.getElementById('search'),sRes=document.getElementById('results');let sList=[],sSel=0;
 sIn.oninput=()=>{const q=sIn.value.trim().toLowerCase();if(!q){sRes.style.display='none';return;}
@@ -806,9 +804,26 @@ sIn.onkeydown=e=>{if(/Arrow(Up|Down)/.test(e.key)&&sList.length){sSel=(sSel+(e.k
  if(e.key==='Enter')pick(sSel);if(e.key==='Escape'){sRes.style.display='none';sIn.blur();}};
 addEventListener('click',e=>{if(!e.target.closest('#searchWrap'))sRes.style.display='none';});
 
-const TOUR=[['crown','plates'],['trench','plates'],['seam','plates'],['shear','plates'],['hollow','plates'],['lantern','plates'],['verdant','water'],['dunes','water'],['river','erosion'],['delta','life'],['canyon','erosion'],['teeth','erosion'],['vents','life'],['ash','life'],['kaelor','systems']];
+const TOUR=[
+ {f:'crown',l:'plates',r:'Plate boundary · Convergent',title:'Manning Range'},
+ {f:'trench',l:'plates',r:'Plate boundary · Convergent'},
+ {f:'seam',l:'plates',r:'Plate boundary · Divergent'},
+ {f:'shear',l:'plates',r:'Plate boundary · Transform'},
+ {f:'kaelor',l:'land',r:'Landform · Volcano'},
+ {f:'basin',l:'land',r:'Landform · Ocean basin'},
+ {f:'river',l:'erosion',r:'Weathering & erosion · River valley'},
+ {f:'teeth',l:'erosion',r:'Weathering & erosion · Cliffs'},
+ {f:'ocean',l:'life',r:'Life zone · Ocean'},
+ {f:'delta',l:'life',r:'Life zone · Fertile land'},
+ {f:'ash',l:'life',r:'Life zone · Volcanic region'},
+ {f:'verdant',l:'water',r:'Water cycle',title:'How the water cycle works',t:'Ostra heats the ocean and water evaporates. The air rises over the Manning Range and forms clouds. Rain falls on George Forest and flows down the Matthew River back to the ocean.',life:'Supports life: Brings fresh water to land.'},
+ {f:'ocean',l:'water',r:'Energy source',title:'Ostra, our star',t:'Ostra\'s light warms the ocean, drives the water cycle and powers photosynthesis. Heat from inside Veyra also powers deep-sea vents.',life:'Supports life: Gives energy to every living thing.'},
+ {f:'kaelor',l:'systems',r:'Integration of systems',title:'The carbon cycle',t:'The volcano releases CO₂. Rain carries it into the ocean. Shells turn it into limestone. Subduction melts it, and the volcano releases it again.',life:'Supports life: Keeps the climate stable.'},
+];
 let ti=0;
-function tourGo(i){touring=true;ti=(i+TOUR.length)%TOUR.length;const [id,l]=TOUR[ti];setLayer(l);select(id,true);info.classList.add('tour');document.getElementById('tCount').textContent=`${ti+1} of ${TOUR.length}`;document.getElementById('tProg').style.width=((ti+1)/TOUR.length*100)+'%';}
+function tourGo(i){touring=true;ti=(i+TOUR.length)%TOUR.length;const st=TOUR[ti];setLayer(st.l);select(st.f,true);
+ document.getElementById('infoK').textContent=st.r;if(st.title)document.getElementById('infoT').textContent=st.title;if(st.t)document.getElementById('infoP').textContent=st.t;if(st.life)document.getElementById('infoL').textContent=st.life;
+ info.classList.add('tour');document.getElementById('tCount').textContent=`${ti+1} of ${TOUR.length}`;document.getElementById('tProg').style.width=((ti+1)/TOUR.length*100)+'%';}
 document.getElementById('tourBtn').onclick=()=>tourGo(0);
 document.getElementById('tNext').onclick=()=>tourGo(ti+1);document.getElementById('tPrev').onclick=()=>tourGo(ti-1);
 
@@ -825,7 +840,7 @@ function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,clock.getDe
  if(clouds){clouds.rotation.y+=dt*.004;clouds.userData.shadow.rotation.y=clouds.rotation.y-.012;}
  for(const m of moons){const a=m.ph+t*m.speed;m.m.position.set(Math.cos(a)*m.dist,Math.sin(a)*m.dist*m.incl,-Math.sin(a)*m.dist);}
  for(const f of flows){if(!layerObjs[f.key].visible)continue;const arr=f.geo.attributes.position.array;for(let i=0;i<f.n;i++){const p=f.curve.getPoint((t*.035+i/f.n)%1);arr[i*3]=p.x;arr[i*3+1]=p.y;arr[i*3+2]=p.z;}f.geo.attributes.position.needsUpdate=true;}
- dzStep(now);const shk=dzShake(now);camera.position.add(shk);renderer.render(scene,camera);camera.position.sub(shk);updateMarkers();}
+ auroraU.value=now/1000;dzStep(now);const shk=dzShake(now);camera.position.add(shk);renderer.render(scene,camera);camera.position.sub(shk);updateMarkers();}
 controls.addEventListener('start',()=>{controls.autoRotate=false;});
 const zoomBy=f=>{if(cityCtl){const o=camera.position.clone().sub(cityCtl.target).multiplyScalar(f);o.clampLength(cityCtl.minDistance,cityCtl.maxDistance);camera.position.copy(cityCtl.target).add(o);return;}const d=Math.min(controls.maxDistance,Math.max(controls.minDistance,camera.position.length()*f));flyTo(camera.position.clone(),d,450);};
 document.getElementById('zIn').onclick=()=>zoomBy(.75);document.getElementById('zOut').onclick=()=>zoomBy(1.33);
@@ -993,7 +1008,7 @@ function buildCity(){
  for(let j=0;j<8;j++)for(let i=0;i<6;i++){const x=3+i*10,y=3+j*8;wg.fillStyle='#2a3240';wg.fillRect(x,y,6,5);if(rnd()<.38){lg.fillStyle=rnd()<.7?'#ffd9a0':'#cfe4ff';lg.fillRect(x,y,6,5);}}
  const wt=new THREE.CanvasTexture(wc),lt=new THREE.CanvasTexture(lc);[wt,lt].forEach(t=>{t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;});
  const scaleUV=m=>{m.onBeforeCompile=sh=>{sh.vertexShader=sh.vertexShader.replace('#include <uv_vertex>',`#include <uv_vertex>
-  vec3 isc=vec3(length(instanceMatrix[0].xyz),length(instanceMatrix[1].xyz),length(instanceMatrix[2].xyz));vec2 k=vec2(max(isc.x,isc.z),isc.y)*1050.;
+  vec3 isc=vec3(length(instanceMatrix[0].xyz),length(instanceMatrix[1].xyz),length(instanceMatrix[2].xyz));vec2 k=vec2(max(isc.x,isc.z),isc.y)*1050.;if(abs(normal.y)>.5)k=vec2(0.);
   #ifdef USE_MAP
   vMapUv*=k;
   #endif
@@ -1130,6 +1145,11 @@ function addCityMarkers(){CITYF.forEach(c=>{const v=L2W(c.x*CR,c.y*CR,.0016);con
  document.getElementById('infoX').addEventListener('click',()=>{cTour=false;});}
 {const cnb=document.getElementById('cnb');const bk=document.createElement('button');bk.className='back';bk.textContent='← Back to planet';bk.onclick=()=>{selected=null;info.classList.remove('show','tour');setLayer('none');};cnb.appendChild(bk);
  ['city','cdown','cspire','cheights','cmarina','cpark','cstad','cport','clow','csub'].forEach(id=>{const c=CITYF.find(q=>q.id===id);const b=document.createElement('button');b.textContent=c.name;b.onclick=()=>select(id,true);cnb.appendChild(b);});}
+const auroraU={value:0};{const am=new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,uniforms:{t:auroraU},
+ vertexShader:'varying vec2 vu;void main(){vu=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+ fragmentShader:'uniform float t;varying vec2 vu;void main(){float w=(sin(vu.x*90.+t*1.1)*.5+.5)*(sin(vu.x*31.-t*.6)*.5+.5)*(sin(vu.x*7.+t*.3)*.4+.6);float a=smoothstep(0.,.3,vu.y)*pow(1.-vu.y,1.5);vec3 c=mix(vec3(.15,1.,.45),vec3(.55,.3,1.),smoothstep(.4,1.,vu.y));gl_FragColor=vec4(c*a*w*.7,1.);}'});
+ const n1=new THREE.Mesh(new THREE.CylinderGeometry(.37,.345,.06,160,1,true),am);n1.position.y=.95;world.add(n1);
+ const s1=new THREE.Mesh(new THREE.CylinderGeometry(.37,.345,.06,160,1,true),am);s1.position.y=-.95;s1.rotation.x=Math.PI;world.add(s1);}
 const T0=performance.now();const fill=document.getElementById('ldfill');fill.style.width='30%';
 setTimeout(()=>{generate();fill.style.width='65%';document.getElementById('loadmsg').textContent='Rendering high-resolution surface…';setTimeout(()=>{build();CITY=buildCity();addCityMarkers();fill.style.width='100%';setLayer('none');requestAnimationFrame(loop);setTimeout(()=>{document.getElementById('loader').classList.add('hide');flyTo(ll2v(20,-40),fitDist(),2600);setTimeout(()=>obShow(0),2700);},Math.max(300,2600-(performance.now()-T0)));},20);},400);
 </script>
