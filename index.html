@@ -564,6 +564,12 @@ function textures(){
  g.putImageData(img,0,0);bg.putImageData(bimg,0,0);
  const px=(a,b)=>[(b+180)/360*CW,(90-a)/180*CH];
  g.lineCap=g.lineJoin='round';
+ {const fl=[];for(let k=0;k<420;k++){let x=Math.floor(hash(k,1,9)*W),y=Math.floor(hash(k,2,9)*H);const i0=y*W+x;if(HG[i0]<.22||HG[i0]>1.2||MO[i0]<.4)continue;
+   const path=[[x,y]];let ok=false;for(let st=0;st<900;st++){let bx=x,by=y,bh=HG[y*W+x];for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dy)continue;const nx=(x+dx+W)%W,ny=Math.min(H-1,Math.max(0,y+dy));const hh=HG[ny*W+nx];if(hh<bh){bh=hh;bx=nx;by=ny;}}
+    if(bx===x&&by===y)break;x=bx;y=by;path.push([x,y]);if(HG[y*W+x]<0){ok=true;break;}}
+   if(ok&&path.length>14)fl.push(path);}
+  g.lineCap=g.lineJoin='round';fl.forEach(pa=>{const L=pa.length;for(let j=1;j<L;j++){const [x1,y1]=pa[j-1],[x2,y2]=pa[j];if(Math.abs(x2-x1)>W/2)continue;
+   g.strokeStyle='rgba(30,72,100,.85)';g.lineWidth=.8+2.2*(j/L)*Math.min(1,L/120);g.beginPath();g.moveTo((x1+.5)/W*CW,(y1+.5)/H*CH);g.lineTo((x2+.5)/W*CW,(y2+.5)/H*CH);g.stroke();}});}
  RIVERS.forEach((r,i)=>{g.strokeStyle='rgba(28,66,92,.9)';g.lineWidth=i===0?3.6:i<4?2.2:2.6;g.beginPath();densify(r,.3).forEach(([a,b],k)=>{const [X,Y]=px(a,b);k?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke();});
  g.strokeStyle='rgba(120,56,34,.9)';g.lineWidth=6;g.beginPath();densify([[19,-35],[16.5,-31.5],[15,-29.5],[12,-26.5]],.3).forEach(([a,b],k)=>{const [X,Y]=px(a,b);k?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke();
  const rc=document.createElement('canvas');rc.width=W;rc.height=H;const rg=rc.getContext('2d');const ri=rg.createImageData(W,H);
@@ -1031,7 +1037,27 @@ function buildCity(){
  const smk=[];for(let i=0;i<26;i++){const s=new THREE.Sprite(new THREE.SpriteMaterial({map:dotTex,color:0x555048,transparent:true,depthWrite:false,opacity:.4}));G.add(s);smk.push({s,x:(.15+rnd()*.5)*CR,y:(-.2-rnd()*.5)*CR,o:rnd()});}
  // night glow visible from orbit
  const glowFar=new THREE.Sprite(new THREE.SpriteMaterial({map:dotTex,color:0xffc070,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true,opacity:.75}));glowFar.position.copy(C0.clone().multiplyScalar(1.004));glowFar.scale.setScalar(.035);G.add(glowFar);
- return {G,cars,cg,smk,tip,glowFar};}
+ 
+ // aviation lights + glowing crowns on tall towers
+ const al=[],crowns=[];B.lux.forEach(b=>{if(b.h>.0019){const v=L2W(b.x,b.y,b.h+.00005);al.push(v.x,v.y,v.z);crowns.push(b);}});
+ const alg=new THREE.BufferGeometry();alg.setAttribute('position',new THREE.Float32BufferAttribute(al,3));
+ const avl=new THREE.Points(alg,new THREE.PointsMaterial({color:0xff2a2a,size:.0003,map:dotTex,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));G.add(avl);
+ const cm=new THREE.InstancedMesh(box,new THREE.MeshBasicMaterial({color:0xffffff,toneMapped:false}),crowns.length);const ccol=new THREE.Color();
+ crowns.forEach((b,i)=>{dummy.position.copy(L2W(b.x,b.y,b.h-.00012));dummy.quaternion.copy(cityQ);dummy.scale.set(b.w*1.04,.00012,b.d*1.04);dummy.updateMatrix();cm.setMatrixAt(i,dummy.matrix);cm.setColorAt(i,ccol.setHex(pick([0x9fd8ff,0xffe2a8,0xc8f0ff,0xffffff,0xb8a8ff])).multiplyScalar(.85));});G.add(cm);
+ // elevated ring highway with traffic
+ const HC=[-.3*CR,.2*CR],HRx=.38*CR,HRy=.3*CR,HH=.00022;const hp=[];for(let i=0;i<=160;i++){const a=i/160*Math.PI*2;hp.push(L2W(HC[0]+Math.cos(a)*HRx,HC[1]+Math.sin(a)*HRy,HH));}
+ G.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(hp,true),320,.00007,6,true),new THREE.MeshStandardMaterial({color:0x8a8f96,emissive:0xffa050,emissiveIntensity:.25,roughness:.8})));
+ const pil=new THREE.InstancedMesh(box,new THREE.MeshStandardMaterial({color:0x6a6e74}),48);for(let i=0;i<48;i++){const a=i/48*Math.PI*2;dummy.position.copy(L2W(HC[0]+Math.cos(a)*HRx,HC[1]+Math.sin(a)*HRy,0));dummy.quaternion.copy(cityQ);dummy.scale.set(.00006,HH,.00006);dummy.updateMatrix();pil.setMatrixAt(i,dummy.matrix);}G.add(pil);
+ const hn=520,hg=new THREE.BufferGeometry();hg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(hn*3),3));const hcol=new Float32Array(hn*3);const hw=[];
+ for(let i=0;i<hn;i++){const dir=i%2?1:-1;hw.push({o:rnd(),dir,sp:.012+rnd()*.008,lane:dir>0?.00004:-.00004});hcol.set(dir>0?[1,.97,.85]:[1,.18,.12],i*3);}
+ hg.setAttribute('color',new THREE.BufferAttribute(hcol,3));G.add(new THREE.Points(hg,new THREE.PointsMaterial({size:.00016,map:dotTex,vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending})));
+ // boats in the harbor and marina
+ const bt=[];for(let i=0;i<4000&&bt.length<70;i++){const x=(rnd()*2-1)*CR,y=(rnd()*2-1)*CR;if(district(x,y)==='water'&&x>-.85*CR&&Math.hypot(x,y)<.9*CR)bt.push([x,y,rnd()]);}
+ const bm=new THREE.InstancedMesh(box,new THREE.MeshStandardMaterial({color:0xffffff,emissive:0xffffff,emissiveIntensity:.15}),bt.length);
+ bt.forEach(([x,y,r],i)=>{dummy.position.copy(L2W(x,y,0));dummy.quaternion.copy(cityQ);dummy.rotateY(r*6.28);const L=.00012+r*.0002;dummy.scale.set(L,.00005,L*.35);dummy.updateMatrix();bm.setMatrixAt(i,dummy.matrix);});G.add(bm);
+ const bl=[];bt.forEach(([x,y])=>{const v=L2W(x,y,.00008);bl.push(v.x,v.y,v.z);});const blg=new THREE.BufferGeometry();blg.setAttribute('position',new THREE.Float32BufferAttribute(bl,3));
+ G.add(new THREE.Points(blg,new THREE.PointsMaterial({color:0x9fe0ff,size:.00014,map:dotTex,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending})));
+ return {G,cars,cg,smk,tip,glowFar,avl,hw,hg,HC,HRx,HRy,HH};}
 let CITY=null;
 const CITYF=[
  {id:'city',name:'St. Sulterburg',x:-.1,y:.05,k:'Capital city',t:'The largest city on Veyra, a rich coastal capital of about 9 million people, built where the Matthew River meets the Cardinal Ocean.',l:'Built on the fertile delta, with fresh water from the Matthew River and a natural harbor.'},
@@ -1049,6 +1075,7 @@ function cityTick(now){if(!CITY)return;const t=now/1000;
  const arr=CITY.cg.attributes.position.array;CITY.cars.forEach((c,i)=>{const u=((c.off+t*c.sp)%1+1)%1*2-1;const x=c.horiz?u*CR*.9:c.lane,y=c.horiz?c.lane:u*CR*.9;const d=district(x,y);let v;if(d==='water'||d==='river'||d==='out'||d==='park')v=L2W(0,0,-.01);else v=L2W(x,y,.00007);arr[i*3]=v.x;arr[i*3+1]=v.y;arr[i*3+2]=v.z;});
  CITY.cg.attributes.position.needsUpdate=true;
  CITY.smk.forEach(o=>{const u=(t*.12+o.o)%1;o.s.position.copy(L2W(o.x+u*.002,o.y,.0012+u*.003));o.s.scale.setScalar(.0006+u*.002);o.s.material.opacity=.45*(1-u);});
+ {const t2=now/1000;CITY.avl.material.opacity=Math.sin(t2*2.2)>.2?1:.25;const ha=CITY.hg.attributes.position.array;CITY.hw.forEach((c,i)=>{const a=((c.o+t2*c.sp*c.dir)%1)*Math.PI*2;const rx=CITY.HRx+c.lane,ry=CITY.HRy+c.lane;const v=L2W(CITY.HC[0]+Math.cos(a)*rx,CITY.HC[1]+Math.sin(a)*ry,CITY.HH+.00009);ha[i*3]=v.x;ha[i*3+1]=v.y;ha[i*3+2]=v.z;});CITY.hg.attributes.position.needsUpdate=true;}
  CITY.tip.material.opacity=(Math.sin(t*3)>0)?1:.15;
  const cd=camera.position.length();CITY.glowFar.material.opacity=Math.min(.8,Math.max(0,(cd-1.15)*1.5));
  if(cityPhase===1&&!flying){cityPhase=2;cityTw={t0:now,p0:camera.position.clone(),q0:new THREE.Vector3(),p1:L2W(.006,-.034,.019),q1:L2W(-.002,.004,0)};}
@@ -1058,10 +1085,10 @@ function cityTick(now){if(!CITY)return;const t=now/1000;
 function enterCity(){if(cityMode||!CITY)return;cityMode=true;cityPhase=1;controls.autoRotate=false;
  world.children.forEach(c=>{if(c.isMesh&&c!==globe&&c.geometry&&c.geometry.parameters&&c.geometry.parameters.radius>1.0005&&c.visible){c.visible=false;cityHidden.push(c);}});
  if(clouds&&clouds.userData.shadow&&clouds.userData.shadow.visible){clouds.userData.shadow.visible=false;cityHidden.push(clouds.userData.shadow);}
- camera.near=.0002;layout();sun.intensity=1.1;amb.intensity=.14;scene.background=new THREE.Color(0x070d1c);
+ camera.near=.0002;layout();sun.intensity=1.1;amb.intensity=.14;scene.background=new THREE.Color(0x0b1428);scene.fog=new THREE.FogExp2(0x0b1428,20);
  flyTo(CN.clone(),1.5,1300);}
 function exitCity(){if(!cityMode)return;cityMode=false;cityPhase=0;cityTw=null;if(cityCtl){cityCtl.dispose();cityCtl=null;}
- camera.up.set(0,1,0);camera.near=.01;layout();cityHidden.forEach(c=>c.visible=true);cityHidden.length=0;scene.background=null;sun.intensity=3;
+ camera.up.set(0,1,0);camera.near=.01;layout();cityHidden.forEach(c=>c.visible=true);cityHidden.length=0;scene.background=null;scene.fog=null;sun.intensity=3;
  camera.position.copy(CN).multiplyScalar(1.6);camera.lookAt(0,0,0);controls.target.set(0,0,0);controls.update();flyTo(CN.clone(),fitDist(),1200);applyOpts();}
 {const _sl=setLayer;setLayer=function(id){_sl(id);if(id==='city')enterCity();else if(cityMode)exitCity();};}
 
