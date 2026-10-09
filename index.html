@@ -862,7 +862,7 @@ function startDisaster(){if(dz||!globe)return;dzBtn.disabled=true;selected=null;
  for(let i=0;i<dn;i++){const r=new THREE.Vector3().randomDirection();r.addScaledVector(hit,-r.dot(hit));vel.push(r.multiplyScalar(.15+Math.random()*.55).addScaledVector(hit,.25+Math.random()*.7));}
  const debris=new THREE.Points(dg,new THREE.PointsMaterial({color:0xffb070,size:.022,map:dotTex,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:0}));debris.visible=false;world.add(debris);
  dzMat.uniforms.hit.value.copy(hit);dz={t0:performance.now(),hit,start,rock,glowS,trail,tg,tn,debris,dg,vel,dn,stage:0};
- controls.autoRotate=false;flyTo(camera.position.clone(),Math.max(camera.position.length(),fitDist()),600);
+ controls.autoRotate=false;flyTo(hit.clone().addScaledVector(rt,.35).normalize(),mobile()?4.4:3.1,900);
  banner('☄ Incoming asteroid','A 12 km asteroid is about to hit Veyra.');}
 dzBtn.onclick=startDisaster;
 function dzStep(now){if(!dz)return;const t=(now-dz.t0)/1000;const T=2.4;
