@@ -567,7 +567,7 @@ function textures(){
  RIVERS.forEach((r,i)=>{g.strokeStyle='rgba(28,66,92,.9)';g.lineWidth=i===0?3.6:i<4?2.2:2.6;g.beginPath();densify(r,.3).forEach(([a,b],k)=>{const [X,Y]=px(a,b);k?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke();});
  g.strokeStyle='rgba(120,56,34,.9)';g.lineWidth=6;g.beginPath();densify([[19,-35],[16.5,-31.5],[15,-29.5],[12,-26.5]],.3).forEach(([a,b],k)=>{const [X,Y]=px(a,b);k?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke();
  const rc=document.createElement('canvas');rc.width=W;rc.height=H;const rg=rc.getContext('2d');const ri=rg.createImageData(W,H);
- for(let i=0;i<W*H;i++){const r=HG[i]<0?175:250;ri.data[i*4]=ri.data[i*4+1]=ri.data[i*4+2]=r;ri.data[i*4+3]=255;}rg.putImageData(ri,0,0);
+ for(let i=0;i<W*H;i++){const r=HG[i]<0?160:250;ri.data[i*4]=ri.data[i*4+1]=ri.data[i*4+2]=r;ri.data[i*4+3]=255;}rg.putImageData(ri,0,0);
  const CLW=2048,CLH=1024;const cc=document.createElement('canvas');cc.width=CLW;cc.height=CLH;const cg=cc.getContext('2d');const ci=cg.createImageData(CLW,CLH);
  for(let y=0;y<CLH;y++){const lat=90-(y+.5)/CLH*180;for(let x=0;x<CLW;x++){const lon=(x+.5)/CLW*360-180;const p=ll2v(lat,lon);
   const wq=fbm(p.x*2.2+5,p.y*2.2,p.z*2.2,3)*.35;let v=fbm(p.x*3.4+wq,p.y*6+wq,p.z*3.4-wq,6)+.12*Math.exp(-Math.pow(lat/8,2))+.12*Math.exp(-Math.pow((Math.abs(lat)-55)/10,2))-.15*Math.exp(-Math.pow((Math.abs(lat)-25)/8,2));
@@ -664,7 +664,7 @@ function build(){
  const map=new THREE.CanvasTexture(T.c);map.colorSpace=THREE.SRGBColorSpace;map.anisotropy=renderer.capabilities.getMaxAnisotropy();
  const bump=new THREE.CanvasTexture(T.bc);const rough=new THREE.CanvasTexture(T.rc);
  const nmap=new THREE.CanvasTexture(T.nc);nmap.anisotropy=map.anisotropy;
- const gmat=new THREE.MeshStandardMaterial({map,normalMap:nmap,normalScale:new THREE.Vector2(1.4,1.4),roughnessMap:rough,roughness:1,metalness:0});
+ const gmat=new THREE.MeshStandardMaterial({map,normalMap:nmap,normalScale:new THREE.Vector2(1.9,1.9),roughnessMap:rough,roughness:1,metalness:0});
  gmat.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
   float land=0.;{vec2 q=vMapUv*vec2(9000.,4500.);vec2 i=floor(q),f=fract(q);f=f*f*(3.-2.*f);
    #define HS(p) fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453)
@@ -843,46 +843,96 @@ addEventListener('keydown',e=>{if(!ob.classList.contains('show'))return;if(e.key
 /* ---------- disaster mode ---------- */
 let dz=null;const dzBtn=document.getElementById('dzBtn'),dzBan=document.getElementById('dzBan'),dzFlash=document.getElementById('dzFlash');
 function banner(t,p,calm){document.getElementById('dzT').textContent=t;document.getElementById('dzP').textContent=p;dzBan.classList.toggle('calm',!!calm);dzBan.classList.add('show');}
-const dzMat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,uniforms:{hit:{value:new THREE.Vector3(1,0,0)},rad:{value:0},ring:{value:0},fire:{value:0}},
- vertexShader:'varying vec3 vp;void main(){vp=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
- fragmentShader:'uniform vec3 hit;uniform float rad,ring,fire;varying vec3 vp;void main(){float a=acos(clamp(dot(normalize(vp),hit),-1.,1.));float b=exp(-pow((a-rad)/.035,2.))*ring;float b2=exp(-pow((a-rad*.62)/.05,2.))*ring*.4;float f=exp(-a/.09)*fire;float e=exp(-a/.3)*fire*.35;vec3 c=vec3(1.,.55,.2)*(b+b2)+vec3(1.,.42,.12)*f+vec3(.9,.2,.05)*e;gl_FragColor=vec4(c,1.);}'});
-const dzShell=new THREE.Mesh(new THREE.SphereGeometry(1.007,160,80),dzMat);dzShell.visible=false;world.add(dzShell);
-const dust=new THREE.Mesh(new THREE.SphereGeometry(1.03,96,48),new THREE.MeshStandardMaterial({color:0x3a2a20,transparent:true,opacity:0,depthWrite:false}));dust.visible=false;world.add(dust);
+function flash(o,ms){dzFlash.style.transition='none';dzFlash.style.opacity=o;requestAnimationFrame(()=>{dzFlash.style.transition=`opacity ${ms}ms`;dzFlash.style.opacity=0;});}
+const GLN=`float h3(vec3 p){p=fract(p*.3183099+.1);p*=17.;return fract(p.x*p.y*p.z*(p.x+p.y+p.z));}
+float vn3(vec3 x){vec3 i=floor(x),f=fract(x);f=f*f*(3.-2.*f);return mix(mix(mix(h3(i),h3(i+vec3(1,0,0)),f.x),mix(h3(i+vec3(0,1,0)),h3(i+vec3(1,1,0)),f.x),f.y),mix(mix(h3(i+vec3(0,0,1)),h3(i+vec3(1,0,1)),f.x),mix(h3(i+vec3(0,1,1)),h3(i+vec3(1,1,1)),f.x),f.y),f.z);}`;
+const IMPN=9;const dzU={imp:{value:Array.from({length:IMPN},()=>new THREE.Vector4(1,0,0,-1))},t:{value:0},crackR:{value:0},lava:{value:0},char:{value:0}};
+const VS='varying vec3 vp;void main(){vp=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}';
+const fireMat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,uniforms:dzU,vertexShader:VS,fragmentShader:`uniform vec4 imp[${IMPN}];uniform float t,crackR,lava;varying vec3 vp;${GLN}
+void main(){vec3 n=normalize(vp);vec3 col=vec3(0.);
+ for(int i=0;i<${IMPN};i++){vec4 I=imp[i];if(I.w<0.)continue;float age=t-I.w;if(age<0.)continue;float s=i==0?1.:.42;
+  float a=acos(clamp(dot(n,I.xyz),-1.,1.));float rad=age*.55*s;
+  float ring=exp(-pow((a-rad)/(.04*s),2.))*max(0.,1.-age/(4.6*s))*1.8;
+  float ring2=exp(-pow((a-rad*.66)/(.06*s),2.))*max(0.,1.-age/(5.*s))*.7;
+  float core=exp(-a/(.1*s))*min(1.,age*4.)*max(0.,1.-max(0.,age-1.5)/10.)*1.8;
+  float flick=.75+.25*sin(t*13.+a*60.+float(i));
+  col+=vec3(1.,.6,.25)*ring+vec3(.55,.8,1.)*ring2+vec3(1.,.38,.08)*core*flick;}
+ float a0=acos(clamp(dot(n,imp[0].xyz),-1.,1.));
+ float v=vn3(n*7.5),v2=vn3(n*19.+3.1),v3=vn3(n*44.+7.7);
+ float cr=(1.-smoothstep(0.,.03,abs(v-.5)))+.7*(1.-smoothstep(0.,.022,abs(v2-.5)))+.4*(1.-smoothstep(0.,.02,abs(v3-.5)));
+ float mask=1.-smoothstep(crackR-.25,crackR,a0);
+ float pulse=.7+.3*sin(t*5.+v*30.);
+ col+=vec3(1.,.32,.04)*cr*mask*lava*pulse*1.6;
+ gl_FragColor=vec4(col,1.);}`});
+const charMat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:dzU,vertexShader:VS,fragmentShader:`uniform vec4 imp[${IMPN}];uniform float t,crackR,char;varying vec3 vp;${GLN}
+void main(){vec3 n=normalize(vp);float al=0.;
+ for(int i=0;i<${IMPN};i++){vec4 I=imp[i];if(I.w<0.)continue;float age=t-I.w;if(age<0.)continue;float s=i==0?1.:.45;
+  float a=acos(clamp(dot(n,I.xyz),-1.,1.));al=max(al,(1.-smoothstep(.0,.42*s*min(1.,age*.6+.3),a))*.95);}
+ float a0=acos(clamp(dot(n,imp[0].xyz),-1.,1.));float mask=1.-smoothstep(crackR-.3,crackR,a0);
+ float nz=vn3(n*12.);al=max(al,mask*(.45+.35*nz));
+ gl_FragColor=vec4(vec3(.06,.03,.02),al*char);}`});
+const charShell=new THREE.Mesh(new THREE.SphereGeometry(1.0045,192,96),charMat);charShell.visible=false;world.add(charShell);
+const fireShell=new THREE.Mesh(new THREE.SphereGeometry(1.007,192,96),fireMat);fireShell.visible=false;world.add(fireShell);
+const dust=new THREE.Mesh(new THREE.SphereGeometry(1.03,96,48),new THREE.MeshStandardMaterial({color:0x2a1a12,transparent:true,opacity:0,depthWrite:false}));dust.visible=false;world.add(dust);
 const ease=t=>t<0?0:t>1?1:t*t*(3-2*t);
+const VOLC=[[-8,36.5],[4,170],[33,128],[30,135],[-20,38],[2,35],[-14,79.5]];
 function startDisaster(){if(dz||!globe)return;dzBtn.disabled=true;selected=null;touring=false;info.classList.remove('show','tour');document.body.classList.remove('infoOpen');setLayer('none');
  const cd=camera.position.clone().normalize();const up=new THREE.Vector3(0,1,0);const rt=new THREE.Vector3().crossVectors(up,cd).normalize();
  const hit=cd.clone().addScaledVector(rt,-.18).addScaledVector(up,.12).normalize();
  const start=hit.clone().multiplyScalar(6).addScaledVector(rt,3.2).addScaledVector(up,2.2);
- const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(.05,1),new THREE.MeshStandardMaterial({color:0x4a3c34,roughness:1,emissive:0xff4a10,emissiveIntensity:.5}));
- const glowS=new THREE.Sprite(new THREE.SpriteMaterial({map:dotTex,color:0xff7a2a,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true}));glowS.scale.setScalar(.3);
- const tg=new THREE.BufferGeometry();const tn=40;tg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(tn*3),3));
- const trail=new THREE.Points(tg,new THREE.PointsMaterial({color:0xffa060,size:.05,map:dotTex,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));
+ const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(.055,1),new THREE.MeshStandardMaterial({color:0x4a3c34,roughness:1,emissive:0xff4a10,emissiveIntensity:.7}));
+ const glowS=new THREE.Sprite(new THREE.SpriteMaterial({map:dotTex,color:0xff7a2a,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true}));glowS.scale.setScalar(.35);
+ const tg=new THREE.BufferGeometry();const tn=60;tg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(tn*3),3));
+ const trail=new THREE.Points(tg,new THREE.PointsMaterial({color:0xffa060,size:.06,map:dotTex,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));
  scene.add(rock,glowS,trail);
- const dn=420,dg=new THREE.BufferGeometry();dg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(dn*3),3));const vel=[];
- for(let i=0;i<dn;i++){const r=new THREE.Vector3().randomDirection();r.addScaledVector(hit,-r.dot(hit));vel.push(r.multiplyScalar(.15+Math.random()*.55).addScaledVector(hit,.25+Math.random()*.7));}
- const debris=new THREE.Points(dg,new THREE.PointsMaterial({color:0xffb070,size:.022,map:dotTex,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:0}));debris.visible=false;world.add(debris);
- dzMat.uniforms.hit.value.copy(hit);dz={t0:performance.now(),hit,start,rock,glowS,trail,tg,tn,debris,dg,vel,dn,stage:0};
+ // secondary fragment impacts spread over the visible side
+ const sec=[];for(let i=1;i<IMPN;i++){const d=hit.clone().addScaledVector(rt,(Math.random()-.5)*1.6).addScaledVector(up,(Math.random()-.5)*1.3).addScaledVector(cd,-.1).normalize();sec.push({d,t:2.9+i*.38+Math.random()*.2});}
+ dzU.imp.value[0].set(hit.x,hit.y,hit.z,2.4);sec.forEach((q,i)=>dzU.imp.value[i+1].set(q.d.x,q.d.y,q.d.z,q.t));
+ // debris
+ const dn=900,dg=new THREE.BufferGeometry();dg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(dn*3),3));const vel=[];
+ for(let i=0;i<dn;i++){const r=new THREE.Vector3().randomDirection();r.addScaledVector(hit,-r.dot(hit));vel.push(r.multiplyScalar(.15+Math.random()*.75).addScaledVector(hit,.25+Math.random()*.9));}
+ const debris=new THREE.Points(dg,new THREE.PointsMaterial({color:0xffb070,size:.024,map:dotTex,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:0}));debris.visible=false;world.add(debris);
+ // smoke plume + volcano eruptions
+ const sm=[];for(let i=0;i<18;i++){const s=new THREE.Sprite(new THREE.SpriteMaterial({map:dotTex,color:0x3a2a22,transparent:true,depthWrite:false,opacity:0}));s.visible=false;world.add(s);sm.push({s,o:Math.random(),dx:(Math.random()-.5)*.25,dy:(Math.random()-.5)*.25});}
+ const volc=VOLC.map(([a,b])=>{const s=new THREE.Sprite(new THREE.SpriteMaterial({map:dotTex,color:0xff5a14,blending:THREE.AdditiveBlending,transparent:true,depthWrite:false,opacity:0}));s.position.copy(ll2v(a,b,1.02));s.visible=false;world.add(s);return {s,ph:Math.random()*6,d:3.2+Math.random()*2};});
+ const fl=sec.map(q=>{const s=new THREE.Sprite(new THREE.SpriteMaterial({map:dotTex,color:0xfff0d0,blending:THREE.AdditiveBlending,transparent:true,depthWrite:false,opacity:0}));s.position.copy(q.d.clone().multiplyScalar(1.02));world.add(s);return s;});
+ dz={t0:performance.now(),hit,start,rock,glowS,trail,tg,tn,debris,dg,vel,dn,stage:0,sec,sm,volc,fl,rt,up};
  controls.autoRotate=false;flyTo(hit.clone().addScaledVector(rt,.35).normalize(),mobile()?4.4:3.1,900);
  banner('☄ Incoming asteroid','A 12 km asteroid is about to hit Veyra.');}
 dzBtn.onclick=startDisaster;
-function dzStep(now){if(!dz)return;const t=(now-dz.t0)/1000;const T=2.4;
- if(t<T){const k=Math.pow(t/T,1.6);const p=dz.start.clone().lerp(dz.hit.clone().multiplyScalar(1.01),k);dz.rock.position.copy(p);dz.rock.rotation.x+=.1;dz.rock.rotation.y+=.07;dz.glowS.position.copy(p);dz.glowS.scale.setScalar(.25+k*.25);
-  const arr=dz.tg.attributes.position.array;for(let i=0;i<dz.tn;i++){const q=dz.start.clone().lerp(dz.hit.clone().multiplyScalar(1.01),Math.max(0,k-i*.006));arr[i*3]=q.x;arr[i*3+1]=q.y;arr[i*3+2]=q.z;}dz.tg.attributes.position.needsUpdate=true;}
- else if(dz.stage===0){dz.stage=1;scene.remove(dz.rock,dz.glowS,dz.trail);dzFlash.style.transition='none';dzFlash.style.opacity=1;requestAnimationFrame(()=>{dzFlash.style.transition='opacity 1.2s';dzFlash.style.opacity=0;});
-  dzShell.visible=true;dz.debris.visible=true;dust.visible=true;banner('💥 Impact!','A shockwave, firestorms and earthquakes race across the surface.');}
- const ti=t-T;
- if(ti>=0){dzMat.uniforms.rad.value=Math.min(2.2,ti*.55);dzMat.uniforms.ring.value=Math.max(0,1-ti/4.2)*1.6;
-  const fire=ti<1?ease(ti*3):Math.max(0,1-(ti-1)/7);dzMat.uniforms.fire.value=fire*1.4;
-  const arr=dz.dg.attributes.position.array;const h=dz.hit;for(let i=0;i<dz.dn;i++){const v=dz.vel[i];const tt=Math.min(ti,2.6);const p=h.clone().multiplyScalar(1.01).addScaledVector(v,tt).addScaledVector(h,-.18*tt*tt);if(p.length()<1.005)p.setLength(1.005);arr[i*3]=p.x;arr[i*3+1]=p.y;arr[i*3+2]=p.z;}
-  dz.dg.attributes.position.needsUpdate=true;dz.debris.material.opacity=Math.max(0,1-ti/2.8);
-  if(ti>2.4&&dz.stage===1){dz.stage=2;banner('🌫 Impact winter','Dust and ash block Ostra\'s light. Temperatures drop and photosynthesis slows down.');}
-  if(ti>7.2&&dz.stage===2){dz.stage=3;banner('🌱 Recovery','Over thousands of years, rain washes out the dust, volcanoes restore CO₂, and life spreads back.',true);}
-  const winter=ti<2?ease(ti/2):ti<7.2?1:Math.max(0,1-(ti-7.2)/4);
-  dust.material.opacity=.62*winter;globe.material.color.setRGB(1-.5*winter,1-.58*winter,1-.6*winter);
-  if(clouds){const c=1-.55*winter;clouds.material.color.setRGB(c,c*.92,c*.86);}
-  if(ti>11.6){dzShell.visible=false;dust.visible=false;world.remove(dz.debris);globe.material.color.setRGB(1,1,1);if(clouds)clouds.material.color.setRGB(1,1,1);dzBan.classList.remove('show');dz=null;dzBtn.disabled=false;applyOpts();}}}
+function dzCleanup(){charShell.visible=fireShell.visible=dust.visible=false;world.remove(dz.debris);dz.sm.forEach(o=>world.remove(o.s));dz.volc.forEach(o=>world.remove(o.s));dz.fl.forEach(s=>world.remove(s));
+ dzU.imp.value.forEach(v=>v.w=-1);globe.material.color.setRGB(1,1,1);globe.material.emissive.setRGB(0,0,0);if(clouds)clouds.material.color.setRGB(1,1,1);dzBan.classList.remove('show');dz=null;dzBtn.disabled=false;applyOpts();}
+function dzStep(now){if(!dz)return;const t=(now-dz.t0)/1000;const T=2.4;dzU.t.value=t;
+ if(t<T){const k=Math.pow(t/T,1.7);const p=dz.start.clone().lerp(dz.hit.clone().multiplyScalar(1.01),k);dz.rock.position.copy(p);dz.rock.rotation.x+=.12;dz.rock.rotation.y+=.08;dz.glowS.position.copy(p);dz.glowS.scale.setScalar(.3+k*.45);
+  const arr=dz.tg.attributes.position.array;for(let i=0;i<dz.tn;i++){const q=dz.start.clone().lerp(dz.hit.clone().multiplyScalar(1.01),Math.max(0,k-i*.005));arr[i*3]=q.x;arr[i*3+1]=q.y;arr[i*3+2]=q.z;}dz.tg.attributes.position.needsUpdate=true;}
+ else if(dz.stage===0){dz.stage=1;scene.remove(dz.rock,dz.glowS,dz.trail);flash(1,1600);charShell.visible=fireShell.visible=dust.visible=true;dz.debris.visible=true;dz.sm.forEach(o=>o.s.visible=true);
+  banner('💥 Impact!','A shockwave, firestorms and a tsunami race across the surface.');}
+ const ti=t-T;if(ti<0)return;
+ // secondary hits
+ dz.sec.forEach((q,i)=>{const a=t-q.t;const s=dz.fl[i];if(a>0&&a<1.2){s.material.opacity=Math.max(0,1-a/1.2);s.scale.setScalar(.08+a*.5);if(!q.done){q.done=1;flash(.35,500);}}else s.material.opacity=0;});
+ if(ti>.9&&dz.stage===1){dz.stage=2;banner('🔥 Chain reaction','Fragments rain down, the crust cracks open and volcanoes erupt across Veyra.');}
+ dzU.crackR.value=Math.min(2.4,Math.max(0,ti-.3)*.42);
+ const lava=ti<1?ease(ti):ti<8.5?1:Math.max(0,1-(ti-8.5)/3);dzU.lava.value=lava;
+ const ch=ti<1.6?ease(ti/1.6):ti<8.5?1:Math.max(0,1-(ti-8.5)/3.5);dzU.char.value=ch;
+ globe.material.emissive.setRGB(.22*lava,.05*lava,0);
+ // debris
+ const arr=dz.dg.attributes.position.array;const h=dz.hit;for(let i=0;i<dz.dn;i++){const v=dz.vel[i];const tt=Math.min(ti,3);const p=h.clone().multiplyScalar(1.01).addScaledVector(v,tt).addScaledVector(h,-.2*tt*tt);if(p.length()<1.005)p.setLength(1.005);arr[i*3]=p.x;arr[i*3+1]=p.y;arr[i*3+2]=p.z;}
+ dz.dg.attributes.position.needsUpdate=true;dz.debris.material.opacity=Math.max(0,1-ti/3.2);
+ // smoke plume rising from the crater
+ dz.sm.forEach(o=>{const u=((ti*.25+o.o)%1);const p=h.clone().multiplyScalar(1.02+u*.45).addScaledVector(dz.rt,o.dx*u).addScaledVector(dz.up,o.dy*u);o.s.position.copy(p);o.s.scale.setScalar(.08+u*.45);o.s.material.opacity=Math.min(1,ti*.8)*(1-u)*.85*Math.max(0,1-Math.max(0,ti-8)/3);});
+ // volcano eruptions
+ dz.volc.forEach(o=>{const a=ti-1.2-o.ph*.2;const on=a>0&&a<o.d+3?Math.min(1,a*2)*Math.max(0,1-Math.max(0,a-o.d)/3):0;o.s.visible=on>0;o.s.material.opacity=on*(.7+.3*Math.sin(t*9+o.ph));o.s.scale.setScalar(.06+.05*Math.sin(t*7+o.ph)+on*.05);});
+ if(ti>3.4&&dz.stage===2){dz.stage=3;banner('🌫 Impact winter','Dust and ash block Ostra\'s light. Temperatures crash and photosynthesis almost stops.');}
+ if(ti>9&&dz.stage===3){dz.stage=4;banner('🌱 Recovery','Over thousands of years, rain washes out the dust, volcanoes restore CO₂, and life spreads back.',true);}
+ const winter=ti<2.5?ease(ti/2.5):ti<9?1:Math.max(0,1-(ti-9)/4.5);
+ dust.material.opacity=.72*winter;globe.material.color.setRGB(1-.6*winter,1-.68*winter,1-.7*winter);
+ if(clouds){const c=1-.72*winter;clouds.material.color.setRGB(c,c*.88,c*.8);}
+ if(ti>14)dzCleanup();}
 const _shk=new THREE.Vector3();
-function dzShake(now){_shk.set(0,0,0);if(!dz)return _shk;const ti=(now-dz.t0)/1000-2.4;if(ti<0||ti>1.8)return _shk;const a=.05*Math.pow(1-ti/1.8,2);_shk.set((Math.random()-.5)*a,(Math.random()-.5)*a,(Math.random()-.5)*a);return _shk;}
+function dzShake(now){_shk.set(0,0,0);if(!dz)return _shk;const t=(now-dz.t0)/1000;let a=0;const ti=t-2.4;if(ti>0&&ti<2.6)a+=.09*Math.pow(1-ti/2.6,2);
+ dz.sec.forEach(q=>{const b=t-q.t;if(b>0&&b<.6)a+=.025*(1-b/.6);});
+ if(a>0)_shk.set((Math.random()-.5)*a,(Math.random()-.5)*a,(Math.random()-.5)*a);return _shk;}
+
 const T0=performance.now();const fill=document.getElementById('ldfill');fill.style.width='30%';
 setTimeout(()=>{generate();fill.style.width='65%';document.getElementById('loadmsg').textContent='Rendering high-resolution surface…';setTimeout(()=>{build();fill.style.width='100%';setLayer('none');requestAnimationFrame(loop);setTimeout(()=>{document.getElementById('loader').classList.add('hide');flyTo(ll2v(20,-40),fitDist(),2600);setTimeout(()=>obShow(0),2700);},Math.max(300,2600-(performance.now()-T0)));},20);},400);
 </script>
