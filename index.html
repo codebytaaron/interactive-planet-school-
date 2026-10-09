@@ -239,6 +239,17 @@ svg.dg{background:#141a24;border-radius:10px;padding:8px}
 #dzFlash{position:fixed;inset:0;z-index:29;background:radial-gradient(circle at 50% 50%,rgba(255,240,210,.9),rgba(255,120,40,.35) 40%,transparent 75%);opacity:0;pointer-events:none;transition:opacity .9s}
 @media (max-width:900px){#dzBtn{top:auto;right:auto;left:8px;bottom:calc(46vh + 8px)}body.min #dzBtn{bottom:54px}body.infoOpen #dzBtn{display:none}#dzBan{left:8px;right:8px;width:auto;transform:none;top:110px}#dzBan.show{transform:none}}
 
+#cityNav{position:fixed;z-index:21;bottom:16px;left:calc(332px + (100vw - 332px - var(--pw) - 16px)/2);transform:translateX(-50%);width:min(640px,calc(100vw - 332px - var(--pw) - 90px));background:rgba(13,17,23,.94);border:1px solid #5a4a28;border-radius:14px;padding:10px 12px;display:none;text-align:center}
+body.cityOn #cityNav{display:block}
+body.cityOn #info{bottom:150px}
+body.cityOn #dzBtn{display:none}
+.cnh{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#ffd27a;margin-bottom:8px}
+.cnb{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.cnb button{background:#1b2230;border:1px solid var(--line);border-radius:999px;padding:6px 11px;font-size:12.5px}
+.cnb button:hover{border-color:#ffd27a}
+.cnb .back{background:#ffd27a;color:#111;border-color:#ffd27a;font-weight:600}
+.cnt{font-size:11px;color:var(--muted);margin-top:8px}
+@media (max-width:900px){#cityNav{left:8px;right:8px;width:auto;transform:none;bottom:calc(46vh + 8px);padding:8px}.cnb{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start}.cnb button{flex:none}.cnt{display:none}body.cityOn #info{bottom:calc(46vh + 100px)}body.min #cityNav{bottom:54px}}
 @media print{
   html,body{overflow:visible;height:auto;background:#fff}
   #scene,#markers,#hud,#info,#readout,#tourBtn,#tabs,#loader,.noprint{display:none!important}
@@ -280,7 +291,7 @@ svg.dg{background:#141a24;border-radius:10px;padding:8px}
 </div>
 
 <div id="zoom"><button id="zIn" aria-label="Zoom in">+</button><button id="zOut" aria-label="Zoom out">−</button><button id="zHome" aria-label="Reset view" title="Reset view">⟲</button></div>
-<button id="dzBtn">☄ Disaster mode</button><div id="dzBan"><b id="dzT"></b><span id="dzP"></span></div><div id="dzFlash"></div>
+<button id="dzBtn">☄ Disaster mode</button><div id="dzBan"><b id="dzT"></b><span id="dzP"></span></div><div id="dzFlash"></div><div id="cityNav"><div class="cnh">St. Sulterburg, Sulteria</div><div class="cnb" id="cnb"></div><div class="cnt">Drag to look around · Scroll to zoom · Arrow keys to move</div></div>
 <button id="help" aria-label="How to use">?</button>
 <div id="ob"><div class="obc"><div class="ico" id="obIco"></div><div class="step" id="obStep"></div><h2 id="obT"></h2><p id="obP"></p>
 <div class="obdots" id="obDots"></div>
@@ -591,8 +602,8 @@ const LAYERS=[
  {id:'erosion',name:'Weathering & erosion',desc:'Rivers, valleys, cliffs',c:'var(--erosion)'},
  {id:'life',name:'Life zones',desc:'Oceans, fertile land, volcanic',c:'var(--life)'},
  {id:'water',name:'Water cycle',desc:'Ostra, evaporation, rain, runoff',c:'var(--water)'},
- {id:'city',name:'St. Sulterburg',desc:'Capital city · fly in',c:'#ffd27a'},
  {id:'systems',name:'Carbon cycle',desc:'How the 4 spheres connect',c:'var(--systems)'},
+ {id:'city',name:'Sulteria (bonus)',desc:'The only place people live',c:'#ffd27a'},
 ];
 const F=[
  {id:'crown',L:['plates','land'],name:'Manning Range',lat:34,lon:-51,k:'Convergent boundary · continent–continent',t:'Veyra\'s tallest mountains (8.4 km). Two continents collided, and since neither could sink, the crust folded and pushed upward. They are still rising and cause earthquakes.',l:'The mountains force wet ocean air upward, which creates the rain that feeds the rainforest and the Matthew River.'},
@@ -772,7 +783,7 @@ function select(id,keepLayer){const f=F.find(x=>x.id===id);if(!f)return;selected
  const lc=LCOL[f.L.includes(layer)?layer:f.L[0]];
  document.getElementById('infoK').textContent=f.k;document.getElementById('infoK').style.color=lc;
  document.getElementById('infoT').textContent=f.name;document.getElementById('infoP').textContent=f.t;
- document.getElementById('infoL').textContent='Supports life: '+f.l;
+ document.getElementById('infoL').textContent=f.L.includes('city')?(f.l||''):'Supports life: '+f.l;
  document.getElementById('infoC').textContent=fmt(f.lat,f.lon)+' · '+elev(hAt(f.lat,f.lon));
  info.classList.add('show');document.body.classList.add('infoOpen');applyOpts();
  if(mobile())document.body.classList.add('min');}
@@ -994,7 +1005,7 @@ function buildCity(){
   mid:scaleUV(new THREE.MeshStandardMaterial({map:wt,emissiveMap:lt,emissive:0xffffff,emissiveIntensity:.7,roughness:.7})),
   low:scaleUV(new THREE.MeshStandardMaterial({map:wt,emissiveMap:lt,emissive:0xffb070,emissiveIntensity:.22,roughness:.95})),
   plain:new THREE.MeshStandardMaterial({roughness:.9})};
- const B={lux:[],mid:[],low:[],plain:[]};
+ mats.round=mats.lux;const cyl=new THREE.CylinderGeometry(.5,.5,1,20);cyl.translate(0,.5,0);const B={lux:[],mid:[],low:[],plain:[],round:[]};
  const add=(k,x,y,w,d,h,col,rot=0)=>B[k].push({x,y,w,d,h,col,rot});
  const pick=a=>a[Math.floor(rnd()*a.length)];
  const glass=[0x9fb8d0,0x7f9cb8,0xb8c8d8,0x6f8fa8,0xc9d4de,0x8aa6a0],cream=[0xf1e8d8,0xe8dcc6,0xfff6e6,0xd8c9a8,0xf4efe6],brick=[0x7a5a48,0x6a5a52,0x5a4e46,0x847060,0x6e6258],roof=[0xb05a3a,0x8a8f96,0x5c6670,0xa8a294,0x7c5a46];
@@ -1002,18 +1013,20 @@ function buildCity(){
   const d=district(gx+BL/2,gy+BL/2);const n=d==='down'?3:d==='low'?3:2;const lot=BL*.88/n;
   for(let i=0;i<n;i++)for(let j=0;j<n;j++){const x=gx+BL*.06+lot*(i+.5),y=gy+BL*.06+lot*(j+.5);const dd=district(x,y);if(dd!==d)continue;
    const X=x/CR,Y=y/CR;
-   if(d==='down'){const c=Math.exp(-(Math.pow(X+.3,2)+Math.pow(Y-.2,2))/.012);if(rnd()<.25)continue;const h=(.0006+.0042*c)*(.45+rnd()*.85);add(h>.0018?'lux':'mid',x,y,lot*(.55+rnd()*.18),lot*(.55+rnd()*.18),h,pick(glass));
-    if(h>.0025&&rnd()<.5)add('lux',x,y,lot*.35,lot*.35,h*1.15,pick(glass));}
-   else if(d==='heights'){if(rnd()<.85)add('mid',x,y,lot*.6,lot*.6,.0003+rnd()*.0006,pick(cream));}
+   if(d==='down'){const c=Math.exp(-(Math.pow(X+.3,2)+Math.pow(Y-.2,2))/.012);if(rnd()<.25)continue;const h=(.0006+.0042*c)*(.45+rnd()*.85);const w=lot*(.55+rnd()*.18),w2=lot*(.55+rnd()*.18),gc2=pick(glass);
+    if(h>.0018&&rnd()<.22){add('round',x,y,w*.9,w*.9,h,gc2);add('plain',x,y,w*.2,w*.2,h*1.08,0xbbbbbb);}
+    else if(h>.0018){add('lux',x,y,w,w2,h*.55,gc2);add('lux',x,y,w*.8,w2*.8,h*.82,gc2);add('lux',x,y,w*.58,w2*.58,h,gc2);add('plain',x,y,w*.3,w2*.3,h*1.03,0x9aa0a8);}
+    else{add('mid',x,y,w,w2,h,gc2);add('plain',x+w*.15,y-w2*.1,w*.3,w2*.25,h+.00006,0x8a8f96);}}
+   else if(d==='heights'){if(rnd()<.85){const hh=.0003+rnd()*.0006;add('mid',x,y,lot*.6,lot*.6,hh,pick(cream));if(rnd()<.6)add('plain',x,y,lot*.22,lot*.18,hh+.00005,0x9a9690);}}
    else if(d==='marina'){if(rnd()<.8)add('mid',x,y,lot*.6,lot*.7,.00025+rnd()*.0003,0xffffff);}
    else if(d==='port'){if(rnd()<.7)add('plain',x,y,lot*.9,lot*.45,.0002+rnd()*.00015,0x8a8e94);else for(let s=0;s<3;s++)add('plain',x+(rnd()-.5)*lot*.6,y+(rnd()-.5)*lot*.6,lot*.25,lot*.12,.00012*(1+Math.floor(rnd()*3)),pick([0xc0392b,0x2e86c1,0xd68910,0x239b56,0x7d3c98]));
     if(rnd()<.12){add('plain',x,y,.00005,.00005,.0016,0xd4a017);add('plain',x+lot*.25,y,lot*.6,.00005,.00005,0xd4a017);}}
    else if(d==='low'){if(rnd()<.85)add('low',x,y,lot*(.78+rnd()*.15),lot*(.78+rnd()*.15),.00015+rnd()*.0004,pick(brick),rnd()*.2);
     if(rnd()<.05){add('plain',x,y,.00009,.00009,.0011+rnd()*.0006,0x4a3e38);}}
-   else if(d==='sub'){if(rnd()<.55)add('plain',x,y,lot*.42,lot*.42,.00012+rnd()*.0001,pick(roof),rnd());}}}
+   else if(d==='sub'){if(rnd()<.55)add('low',x,y,lot*.42,lot*.42,.00012+rnd()*.0001,pick(roof),rnd());}}}
  // landmark: Sulter Spire
  const SP=[-.3*CR,.2*CR];add('lux',SP[0],SP[1],.0009,.0009,.0055,0xdfe8f2);add('lux',SP[0],SP[1],.0006,.0006,.0075,0xe8eef5);add('plain',SP[0],SP[1],.00007,.00007,.0094,0xcccccc);
- const dummy=new THREE.Object3D();const mk=(k)=>{const a=B[k];if(!a.length)return;const m=new THREE.InstancedMesh(box,mats[k],a.length);const col=new THREE.Color();
+ const dummy=new THREE.Object3D();const mk=(k)=>{const a=B[k];if(!a.length)return;const m=new THREE.InstancedMesh(k==='round'?cyl:box,mats[k],a.length);const col=new THREE.Color();
   a.forEach((b,i)=>{dummy.position.copy(L2W(b.x,b.y));dummy.quaternion.copy(cityQ);if(b.rot)dummy.rotateY(b.rot);dummy.scale.set(b.w,b.h,b.d);dummy.updateMatrix();m.setMatrixAt(i,dummy.matrix);m.setColorAt(i,col.setHex(b.col));});G.add(m);};
  Object.keys(B).forEach(mk);
  const tip=new THREE.Sprite(new THREE.SpriteMaterial({map:dotTex,color:0xff3030,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true}));tip.position.copy(L2W(SP[0],SP[1],.0096));tip.scale.setScalar(.0012);G.add(tip);
@@ -1057,31 +1070,42 @@ function buildCity(){
  bt.forEach(([x,y,r],i)=>{dummy.position.copy(L2W(x,y,0));dummy.quaternion.copy(cityQ);dummy.rotateY(r*6.28);const L=.00012+r*.0002;dummy.scale.set(L,.00005,L*.35);dummy.updateMatrix();bm.setMatrixAt(i,dummy.matrix);});G.add(bm);
  const bl=[];bt.forEach(([x,y])=>{const v=L2W(x,y,.00008);bl.push(v.x,v.y,v.z);});const blg=new THREE.BufferGeometry();blg.setAttribute('position',new THREE.Float32BufferAttribute(bl,3));
  G.add(new THREE.Points(blg,new THREE.PointsMaterial({color:0x9fe0ff,size:.00014,map:dotTex,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending})));
- return {G,cars,cg,smk,tip,glowFar,avl,hw,hg,HC,HRx,HRy,HH};}
+ 
+ const pn=3200,pgm=new THREE.BufferGeometry();pgm.setAttribute('position',new THREE.BufferAttribute(new Float32Array(pn*3),3));const pcol=new Float32Array(pn*3);const peds=[];
+ for(let i=0;i<pn;i++){const park=rnd()<.15;peds.push({park,horiz:rnd()<.5,line:Math.round((rnd()*2-1)*CR/BL)*BL+(rnd()<.5?1:-1)*BL*.075,o:rnd(),sp:(.0012+rnd()*.0025)*(rnd()<.5?-1:1),px:(.03+rnd()*.16)*CR,py:(-.01+rnd()*.15)*CR,ph:rnd()*6});
+  pcol.set(pick([[1,.85,.7],[.6,.75,1],[1,.5,.45],[.8,1,.7],[1,1,1],[1,.8,.3]]),i*3);}
+ pgm.setAttribute('color',new THREE.BufferAttribute(pcol,3));G.add(new THREE.Points(pgm,new THREE.PointsMaterial({size:.00007,vertexColors:true,transparent:true,depthWrite:false})));
+ const SUL=[[36,-78.6],[36.6,-73.5],[35,-69],[31.5,-67],[27.6,-69.5],[27.2,-74.5],[28.8,-78.8],[32.5,-79.6]];
+ const bgp=new THREE.Group();const bl2=new THREE.Line(new THREE.BufferGeometry().setFromPoints(densify([...SUL,SUL[0]],.25).map(([a,b])=>ll2v(a,b,1.003))),new THREE.LineDashedMaterial({color:0xffd27a,dashSize:.005,gapSize:.003}));bl2.computeLineDistances();bgp.add(bl2);
+ const towns=[[34.5,-72.5],[29.5,-72],[33,-69.8],[28.6,-76.5],[35.2,-76.4],[30.4,-69.3]].map(([a,b])=>{const s2=new THREE.Sprite(new THREE.SpriteMaterial({map:dotTex,color:0xffc070,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true,opacity:.6}));s2.position.copy(ll2v(a,b,1.004));s2.scale.setScalar(.012);bgp.add(s2);return s2;});
+ bgp.visible=false;world.add(bgp);layerObjs.city=bgp;
+ return {G,cars,cg,smk,tip,glowFar,avl,hw,hg,HC,HRx,HRy,HH,peds,pgm};}
 let CITY=null;
 const CITYF=[
- {id:'city',name:'St. Sulterburg',x:-.1,y:.05,k:'Capital city',t:'The largest city on Veyra, a rich coastal capital of about 9 million people, built where the Matthew River meets the Cardinal Ocean.',l:'Built on the fertile delta, with fresh water from the Matthew River and a natural harbor.'},
- {id:'cspire',name:'Sulter Spire',x:-.3,y:.2,k:'Landmark · tallest tower on Veyra',t:'A glass supertall tower at the center of the Crown Financial District, with a red beacon on top.',l:'Its observation deck looks out over the delta wetlands and the Manning Range.'},
- {id:'cdown',name:'Crown Financial District',x:-.38,y:.32,k:'Downtown · luxury',t:'A dense cluster of glass skyscrapers, banks, five-star hotels and rooftop restaurants.',l:'The busiest part of the city, lit up all night.'},
- {id:'cheights',name:'Sulter Heights',x:-.2,y:.55,k:'Luxury residential',t:'Quiet hills of expensive cream-stone apartments and mansions with private gardens.',l:'Tree-lined streets and some of the most expensive homes on Veyra.'},
- {id:'cmarina',name:'Gold Coast Marina',x:-.55,y:.3,k:'Waterfront · luxury',t:'Beachfront villas, yacht docks and high-end shopping along the ocean.',l:'Calm, protected water from the delta makes a perfect harbor for boats.'},
- {id:'cpark',name:'Suter Commons',x:.11,y:.06,k:'Central park',t:'The city\'s huge central park, crossed by the Matthew River.',l:'Forest, lawns and riverbanks give wildlife a home in the middle of the city.'},
- {id:'cstad',name:'Cardinal Stadium',x:.3,y:.38,k:'Landmark · stadium',t:'A 90,000-seat stadium, home of the St. Sulterburg Cardinals.',l:'Lit up for night games and visible from across the city.'},
- {id:'cport',name:'Port of Sulterburg',x:-.5,y:-.3,k:'Harbor · industry',t:'Container docks, cranes and warehouses. Most of Veyra\'s trade passes through here.',l:'The deep harbor connects the city to the rest of the Cardinal Ocean.'},
- {id:'clow',name:'Lowtown',x:.42,y:-.45,k:'Old industrial district',t:'The older side of the city: cramped housing, closed-down factories and smokestacks, with dimmer streets and fewer services.',l:'Many of the city\'s workers live here, close to the docks and factories.'},
- {id:'csub',name:'Riverside Suburbs',x:.6,y:.15,k:'Suburbs',t:'Neighborhoods of family homes, schools and trees along the upper river.',l:'Lower density with lots of green space.'},
+ {id:'sulteria',name:'SULTERIA',x:2.4,y:3,k:'Country',t:'A small country on the coast of Clark. The only place on Veyra where people live.',l:''},
+ {id:'city',name:'St. Sulterburg',x:-.1,y:.05,k:'Capital city',t:'Coastal capital of Sulteria. About 9 million people.',l:'Built where the Matthew River meets the ocean.'},
+ {id:'cspire',name:'Sulter Spire',x:-.3,y:.2,k:'Landmark',t:'Tallest tower on Veyra.',l:''},
+ {id:'cdown',name:'Downtown',x:-.38,y:.32,k:'District',t:'Skyscrapers, offices and hotels.',l:''},
+ {id:'cheights',name:'Sulter Heights',x:-.2,y:.55,k:'District',t:'Luxury homes and gardens.',l:''},
+ {id:'cmarina',name:'Gold Coast Marina',x:-.55,y:.3,k:'District',t:'Beach villas and yachts.',l:''},
+ {id:'cpark',name:'Suter Commons',x:.11,y:.06,k:'Park',t:'Central park on the river.',l:''},
+ {id:'cstad',name:'Cardinal Stadium',x:.3,y:.38,k:'Landmark',t:'Home of the Cardinals.',l:''},
+ {id:'cport',name:'Port',x:-.5,y:-.3,k:'District',t:'Shipping docks and cranes.',l:''},
+ {id:'clow',name:'Lowtown',x:.42,y:-.45,k:'District',t:'Older, poorer industrial area.',l:''},
+ {id:'csub',name:'Suburbs',x:.6,y:.15,k:'District',t:'Family homes and schools.',l:''},
 ];
 function cityTick(now){if(!CITY)return;const t=now/1000;
  const arr=CITY.cg.attributes.position.array;CITY.cars.forEach((c,i)=>{const u=((c.off+t*c.sp)%1+1)%1*2-1;const x=c.horiz?u*CR*.9:c.lane,y=c.horiz?c.lane:u*CR*.9;const d=district(x,y);let v;if(d==='water'||d==='river'||d==='out'||d==='park')v=L2W(0,0,-.01);else v=L2W(x,y,.00007);arr[i*3]=v.x;arr[i*3+1]=v.y;arr[i*3+2]=v.z;});
  CITY.cg.attributes.position.needsUpdate=true;
  CITY.smk.forEach(o=>{const u=(t*.12+o.o)%1;o.s.position.copy(L2W(o.x+u*.002,o.y,.0012+u*.003));o.s.scale.setScalar(.0006+u*.002);o.s.material.opacity=.45*(1-u);});
  {const t2=now/1000;CITY.avl.material.opacity=Math.sin(t2*2.2)>.2?1:.25;const ha=CITY.hg.attributes.position.array;CITY.hw.forEach((c,i)=>{const a=((c.o+t2*c.sp*c.dir)%1)*Math.PI*2;const rx=CITY.HRx+c.lane,ry=CITY.HRy+c.lane;const v=L2W(CITY.HC[0]+Math.cos(a)*rx,CITY.HC[1]+Math.sin(a)*ry,CITY.HH+.00009);ha[i*3]=v.x;ha[i*3+1]=v.y;ha[i*3+2]=v.z;});CITY.hg.attributes.position.needsUpdate=true;}
+{const pa=CITY.pgm.attributes.position.array;CITY.peds.forEach((p,i)=>{let x,y;if(p.park){x=p.px+Math.sin(t*.2+p.ph)*.0005;y=p.py+Math.cos(t*.17+p.ph)*.0005;}else{const u=((p.o+t*p.sp)%1+1)%1*2-1;x=p.horiz?u*CR*.92:p.line;y=p.horiz?p.line:u*CR*.92;}
+  const d=district(x,y);const v=(d==='water'||d==='river'||d==='out'||d==='stadium'||(d==='park'&&!p.park))?L2W(0,0,-.01):L2W(x,y,.00004);pa[i*3]=v.x;pa[i*3+1]=v.y;pa[i*3+2]=v.z;});CITY.pgm.attributes.position.needsUpdate=true;}
  CITY.tip.material.opacity=(Math.sin(t*3)>0)?1:.15;
  const cd=camera.position.length();CITY.glowFar.material.opacity=Math.min(.8,Math.max(0,(cd-1.15)*1.5));
  if(cityPhase===1&&!flying){cityPhase=2;cityTw={t0:now,p0:camera.position.clone(),q0:new THREE.Vector3(),p1:L2W(.006,-.034,.019),q1:L2W(-.002,.004,0)};}
  if(cityTw){const k=Math.min(1,(now-cityTw.t0)/2200);const e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;camera.position.lerpVectors(cityTw.p0,cityTw.p1,e);const tg=cityTw.q0.clone().lerp(cityTw.q1,e);camera.up.copy(new THREE.Vector3(0,1,0).lerp(CN,e).normalize());camera.lookAt(tg);
-  if(k>=1){cityTw=null;cityPhase=3;cityCtl=new OrbitControls(camera,canvas);cityCtl.target.copy(L2W(-.002,.004,0));cityCtl.enableDamping=true;cityCtl.dampingFactor=.08;cityCtl.minDistance=.002;cityCtl.maxDistance=.07;cityCtl.maxPolarAngle=1.48;cityCtl.zoomSpeed=.8;cityCtl.rotateSpeed=.6;cityCtl.panSpeed=.8;cityCtl.autoRotate=true;cityCtl.autoRotateSpeed=.4;cityCtl.addEventListener('start',()=>{cityCtl.autoRotate=false;cityTw2=null;});cityCtl.listenToKeyEvents(window);cityCtl.keyPanSpeed=12;cityCtl.screenSpacePanning=false;
-   banner('🏙 Welcome to St. Sulterburg','Drag to look around · scroll to zoom · right-drag or arrow keys to move · press ▶ Tour for a city tour.',true);setTimeout(()=>{if(cityMode)dzBan.classList.remove('show');},7000);}}
+  if(k>=1){cityTw=null;cityPhase=3;document.body.classList.add('cityOn');cityCtl=new OrbitControls(camera,canvas);cityCtl.target.copy(L2W(-.002,.004,0));cityCtl.enableDamping=true;cityCtl.dampingFactor=.08;cityCtl.minDistance=.002;cityCtl.maxDistance=.07;cityCtl.maxPolarAngle=1.48;cityCtl.zoomSpeed=.8;cityCtl.rotateSpeed=.6;cityCtl.panSpeed=.8;cityCtl.autoRotate=true;cityCtl.autoRotateSpeed=.4;cityCtl.addEventListener('start',()=>{cityCtl.autoRotate=false;cityTw2=null;});cityCtl.listenToKeyEvents(window);cityCtl.keyPanSpeed=12;cityCtl.screenSpacePanning=false;}}
  if(cityTw2&&cityCtl){const k=Math.min(1,(now-cityTw2.t0)/1600);const e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;camera.position.lerpVectors(cityTw2.p0,cityTw2.p1,e);cityCtl.target.lerpVectors(cityTw2.q0,cityTw2.q1,e);camera.lookAt(cityCtl.target);if(k>=1)cityTw2=null;}
  else if(cityCtl)cityCtl.update();}
 let cityTw2=null,cTour=false,ctI=0;
@@ -1093,17 +1117,19 @@ function enterCity(){if(cityMode||!CITY)return;cityMode=true;cityPhase=1;control
  if(clouds&&clouds.userData.shadow&&clouds.userData.shadow.visible){clouds.userData.shadow.visible=false;cityHidden.push(clouds.userData.shadow);}
  camera.near=.0002;layout();sun.intensity=1.1;amb.intensity=.14;scene.background=new THREE.Color(0x0b1428);scene.fog=new THREE.FogExp2(0x0b1428,20);
  flyTo(CN.clone(),1.5,1300);}
-function exitCity(){if(!cityMode)return;cityMode=false;cityPhase=0;cityTw=null;cityTw2=null;cTour=false;controls.enabled=true;if(cityCtl){cityCtl.dispose();cityCtl=null;}
+function exitCity(){if(!cityMode)return;cityMode=false;cityPhase=0;document.body.classList.remove('cityOn');cityTw=null;cityTw2=null;cTour=false;controls.enabled=true;if(cityCtl){cityCtl.dispose();cityCtl=null;}
  camera.up.set(0,1,0);camera.near=.01;layout();cityHidden.forEach(c=>c.visible=true);cityHidden.length=0;scene.background=null;scene.fog=null;sun.intensity=3;
  camera.position.copy(CN).multiplyScalar(1.6);camera.lookAt(0,0,0);controls.target.set(0,0,0);controls.update();flyTo(CN.clone(),fitDist(),1200);applyOpts();}
 {const _sl=setLayer;setLayer=function(id){_sl(id);if(id==='city')enterCity();else if(cityMode)exitCity();};}
 
-function addCityMarkers(){CITYF.forEach(c=>{const v=L2W(c.x*CR,c.y*CR,.0016);const [la,lo]=v2ll(v);const f={id:c.id,L:['city'],name:c.name,lat:la,lon:lo,k:c.k,t:c.t,l:c.l,cx:c.x*CR,cy:c.y*CR,cd:c.id==='city'?.034:c.id==='cspire'?.009:.013};F.push(f);addMarker({...f,pos:v,pri:c.id==='city'?1:2});});}
+function addCityMarkers(){CITYF.forEach(c=>{const v=L2W(c.x*CR,c.y*CR,.0016);const [la,lo]=v2ll(v);const f={id:c.id,L:['city'],name:c.name,lat:la,lon:lo,k:c.k,t:c.t,l:c.l,cx:c.x*CR,cy:c.y*CR,cd:c.id==='sulteria'?.065:c.id==='city'?.034:c.id==='cspire'?.009:.013};F.push(f);addMarker({...f,pos:v,pri:c.id==='city'?1:2});});}
 {const tb=document.getElementById('tourBtn'),tn=document.getElementById('tNext'),tp=document.getElementById('tPrev');
  const o1=tb.onclick,o2=tn.onclick,o3=tp.onclick;
  tb.onclick=()=>{if(cityMode){if(cityCtl)cityTourGo(0);}else o1();};
  tn.onclick=()=>{cTour?cityTourGo(ctI+1):o2();};tp.onclick=()=>{cTour?cityTourGo(ctI-1):o3();};
  document.getElementById('infoX').addEventListener('click',()=>{cTour=false;});}
+{const cnb=document.getElementById('cnb');const bk=document.createElement('button');bk.className='back';bk.textContent='← Back to planet';bk.onclick=()=>{selected=null;info.classList.remove('show','tour');setLayer('none');};cnb.appendChild(bk);
+ ['city','cdown','cspire','cheights','cmarina','cpark','cstad','cport','clow','csub'].forEach(id=>{const c=CITYF.find(q=>q.id===id);const b=document.createElement('button');b.textContent=c.name;b.onclick=()=>select(id,true);cnb.appendChild(b);});}
 const T0=performance.now();const fill=document.getElementById('ldfill');fill.style.width='30%';
 setTimeout(()=>{generate();fill.style.width='65%';document.getElementById('loadmsg').textContent='Rendering high-resolution surface…';setTimeout(()=>{build();CITY=buildCity();addCityMarkers();fill.style.width='100%';setLayer('none');requestAnimationFrame(loop);setTimeout(()=>{document.getElementById('loader').classList.add('hide');flyTo(ll2v(20,-40),fitDist(),2600);setTimeout(()=>obShow(0),2700);},Math.max(300,2600-(performance.now()-T0)));},20);},400);
 </script>
