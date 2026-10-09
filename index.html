@@ -978,6 +978,7 @@ function district(x,y){const X=x/CR,Y=y/CR,r=Math.hypot(X,Y);
  if(X<-.6+.06*Math.sin(Y*5))return 'water';
  if(Math.abs(Y-(.04+.08*Math.sin(X*4)))<.03)return 'river';
  if(Math.hypot(X-.3,Y-.38)<.07)return 'stadium';
+ if(Math.hypot(X+.05,Y-.7)<.085)return 'estate';
  if(X>.02&&X<.2&&Y>-.02&&Y<.15)return 'park';
  if(Math.hypot(X+.3,Y-.2)<.2)return 'down';
  if(X<-.48&&Y>0)return 'marina';
@@ -990,12 +991,13 @@ function buildCity(){
  // ---- ground (streets, parks, water) ----
  const S=2048,gc=document.createElement('canvas');gc.width=gc.height=S;const gg=gc.getContext('2d');const gi=gg.createImageData(S,S);
  const ec=document.createElement('canvas');ec.width=ec.height=S;const eg=ec.getContext('2d');const ei=eg.createImageData(S,S);
- const BL=.0011;const GC={water:[44,78,98],river:[48,86,104],park:[64,100,52],stadium:[74,124,62],down:[132,130,126],marina:[156,152,144],port:[120,118,114],heights:[126,128,116],low:[116,108,98],sub:[96,112,76]};
+ const BL=.0011;const GC={water:[44,78,98],river:[48,86,104],park:[64,100,52],stadium:[74,124,62],estate:[84,122,60],down:[132,130,126],marina:[156,152,144],port:[120,118,114],heights:[126,128,116],low:[116,108,98],sub:[96,112,76]};
  for(let py=0;py<S;py++)for(let px=0;px<S;px++){const x=(px/S*2-1)*CR,y=(1-py/S*2)*CR;const d=district(x,y);const o=(py*S+px)*4;const r=Math.hypot(x,y)/CR;
   if(d==='out'){gi.data[o+3]=0;continue;}let c=GC[d].slice();let em=[0,0,0];
   if(d==='park'){const tn=vnoise(px*.06,py*.06,4.2);if(tn>.48)c=[38+tn*22,66+tn*24,34];if(Math.abs(((x/(BL*2.3))%1+1)%1-.5)>.485)c=[176,166,146];}
   if(d==='water'||d==='river'){const wv=vnoise(px*.02,py*.02,1.1);c=[c[0]+wv*10,c[1]+wv*12,c[2]+wv*14];}
-  const urban=d!=='water'&&d!=='river'&&d!=='park'&&d!=='stadium';
+  if(d==='estate'){const ex=x/CR+.05,ey=y/CR-.7,er=Math.hypot(ex,ey);if((er>.034&&er<.042&&ey<0)||(Math.abs(ex)<.006&&ey<-.034))c=[200,194,180];if(er<.01&&ey<-.02)c=[90,150,190];if(er>.08)c=[50,80,42];}
+  const urban=d!=='water'&&d!=='river'&&d!=='park'&&d!=='stadium'&&d!=='estate';
   if(urban){const fx=((x/BL)%1+1)%1,fy=((y/BL)%1+1)%1;const rx=Math.abs(fx-.5),ry=Math.abs(fy-.5);
    const ax=Math.abs(((x/(BL*4))%1+1)%1-.5),ay=Math.abs(((y/(BL*4))%1+1)%1-.5);const ave=ax>.485||ay>.485;
    const road=rx>.44||ry>.44||ave;const walk=!road&&(rx>.405||ry>.405);
@@ -1051,7 +1053,7 @@ function buildCity(){
  // landmark: Sulter Spire
  const SP=[-.3*CR,.2*CR];add('lux',SP[0],SP[1],.0009,.0009,.0055,0xdfe8f2);add('lux',SP[0],SP[1],.0006,.0006,.0075,0xe8eef5);add('plain',SP[0],SP[1],.00007,.00007,.0094,0xcccccc);
  const dummy=new THREE.Object3D();const mk=(k)=>{const a=B[k];if(!a.length)return;const m=new THREE.InstancedMesh(k==='round'?cyl:box,mats[k],a.length);const col=new THREE.Color();
-  a.forEach((b,i)=>{dummy.position.copy(L2W(b.x,b.y));dummy.quaternion.copy(cityQ);if(b.rot)dummy.rotateY(b.rot);dummy.scale.set(b.w,b.h,b.d);dummy.updateMatrix();m.setMatrixAt(i,dummy.matrix);m.setColorAt(i,col.setHex(b.col));});m.castShadow=m.receiveShadow=true;G.add(m);};
+  a.forEach((b,i)=>{dummy.position.copy(L2W(b.x,b.y,b.z||0));dummy.quaternion.copy(cityQ);if(b.rot)dummy.rotateY(b.rot);dummy.scale.set(b.w,b.h,b.d);dummy.updateMatrix();m.setMatrixAt(i,dummy.matrix);m.setColorAt(i,col.setHex(b.col));});m.castShadow=m.receiveShadow=true;G.add(m);};
  Object.keys(B).forEach(mk);
  const tip=new THREE.Sprite(new THREE.SpriteMaterial({map:dotTex,color:0xff3030,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true}));tip.position.copy(L2W(SP[0],SP[1],.0096));tip.scale.setScalar(.0012);G.add(tip);
  // stadium
@@ -1095,15 +1097,33 @@ function buildCity(){
  const bl=[];bt.forEach(([x,y])=>{const v=L2W(x,y,.00008);bl.push(v.x,v.y,v.z);});const blg=new THREE.BufferGeometry();blg.setAttribute('position',new THREE.Float32BufferAttribute(bl,3));
  G.add(new THREE.Points(blg,new THREE.PointsMaterial({color:0x9fe0ff,size:.00014,map:dotTex,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending})));
  
- const pn=3200,pgm=new THREE.BufferGeometry();pgm.setAttribute('position',new THREE.BufferAttribute(new Float32Array(pn*3),3));const pcol=new Float32Array(pn*3);const peds=[];
- for(let i=0;i<pn;i++){const park=rnd()<.15;peds.push({park,horiz:rnd()<.5,line:Math.round((rnd()*2-1)*CR/BL)*BL+(rnd()<.5?1:-1)*BL*.075,o:rnd(),sp:(.0012+rnd()*.0025)*(rnd()<.5?-1:1),px:(.03+rnd()*.16)*CR,py:(-.01+rnd()*.15)*CR,ph:rnd()*6});
-  pcol.set(pick([[1,.85,.7],[.6,.75,1],[1,.5,.45],[.8,1,.7],[1,1,1],[1,.8,.3]]),i*3);}
- pgm.setAttribute('color',new THREE.BufferAttribute(pcol,3));G.add(new THREE.Points(pgm,new THREE.PointsMaterial({size:.00007,vertexColors:true,transparent:true,depthWrite:false})));
+ const pn=2600,peds=[];for(let i=0;i<pn;i++){const park=rnd()<.15;peds.push({park,horiz:rnd()<.5,line:Math.round((rnd()*2-1)*CR/BL)*BL+(rnd()<.5?1:-1)*BL*.075,o:rnd(),sp:(.0012+rnd()*.0025)*(rnd()<.5?-1:1),px:(.03+rnd()*.16)*CR,py:(-.01+rnd()*.1)*CR,ph:rnd()*6});}
+ const PH=.00005;const bodyG=new THREE.CylinderGeometry(.16,.2,.62,6);bodyG.translate(0,.36,0);const headG=new THREE.SphereGeometry(.13,8,6);headG.translate(0,.82,0);
+ const mkP=(g,n)=>{const m=new THREE.InstancedMesh(g,new THREE.MeshStandardMaterial({roughness:.8}),n);m.castShadow=true;m.frustumCulled=false;G.add(m);return m;};
+ const pb=mkP(bodyG,pn),ph=mkP(headG,pn);const SK=[0xf1c9a5,0xd9a47a,0xa8714a,0x6e4630,0xe8b896],CL=[0x2e4a8a,0xb03a3a,0x2f6b3a,0xe0c040,0x333333,0xeeeeee,0x7a4a9a,0xd77a2a];
+ const pc=new THREE.Color();for(let i=0;i<pn;i++){pb.setColorAt(i,pc.setHex(pick(CL)));ph.setColorAt(i,pc.setHex(pick(SK)));}
+ // protest rally in Suter Commons
+ const PC=[.12*CR,.13*CR],prot=[];for(let i=0;i<900&&prot.length<280;i++){const a2=rnd()*6.28,r2=Math.sqrt(rnd())*.0006;const x=PC[0]+Math.cos(a2)*r2,y=PC[1]+Math.sin(a2)*r2*.7;if(district(x,y)==='park')prot.push({x,y,ph:rnd()*6,sign:rnd()<.35});}
+ const qb=mkP(bodyG,prot.length),qh=mkP(headG,prot.length);const sg=prot.filter(p=>p.sign);const qs=new THREE.InstancedMesh(box,new THREE.MeshStandardMaterial({roughness:.7}),sg.length);qs.frustumCulled=false;G.add(qs);
+ prot.forEach((p,i)=>{qb.setColorAt(i,pc.setHex(pick(CL)));qh.setColorAt(i,pc.setHex(pick(SK)));});sg.forEach((p,i)=>qs.setColorAt(i,pc.setHex(pick([0xffffff,0xffe24a,0xff6b6b,0x8fd3ff]))));
+ const stage=new THREE.Mesh(box,new THREE.MeshStandardMaterial({color:0x333333}));stage.position.copy(L2W(PC[0]+.0008,PC[1],0));stage.quaternion.copy(cityQ);stage.scale.set(.00018,.00003,.0005);G.add(stage);
+ const banner2=new THREE.Mesh(box,new THREE.MeshStandardMaterial({color:0xc0392b,emissive:0xc0392b,emissiveIntensity:.3}));banner2.position.copy(L2W(PC[0]+.00088,PC[1],.00003));banner2.quaternion.copy(cityQ);banner2.scale.set(.00002,.00012,.0004);G.add(banner2);
+ // presidential palace + convoy
+ const L0={};Object.keys(B).forEach(k=>L0[k]=B[k].length);const ex=-0.05*CR,ey=0.7*CR;const pz=(k,x,y,w,d,h,col,z)=>B[k].push({x,y,w,d,h,col,rot:0,z});
+ add('mid',ex,ey+.00012,.0017,.0007,.0004,0xfbf8f0);add('mid',ex-.0012,ey+.00008,.0007,.0005,.0003,0xf4f0e6);add('mid',ex+.0012,ey+.00008,.0007,.0005,.0003,0xf4f0e6);
+ for(let i=0;i<8;i++)add('plain',ex-.00056+i*.00016,ey-.00034,.00004,.00004,.00036,0xffffff);
+ pz('plain',ex,ey-.00034,.0013,.00014,.00008,0xf0ece2,.00036);pz('plain',ex,ey+.00012,.0018,.0008,.00004,0x8a8f96,.0004);
+ add('plain',ex,ey+.0006,.00002,.00002,.0012,0xdddddd);pz('plain',ex+.00012,ey+.0006,.00022,.00002,.00014,0xd63031,.00104);
+ for(let i=-6;i<=6;i++)if(Math.abs(i)>0)add('plain',ex+i*.00022,ey-.0016,.00016,.00005,.00007,0x2f5a2a);
+ Object.keys(B).forEach(k=>{const full=B[k];B[k]=full.slice(L0[k]);mk(k);B[k]=full;});
+ const dome=new THREE.Mesh(new THREE.SphereGeometry(1,24,12,0,6.283,0,1.5708),new THREE.MeshStandardMaterial({color:0xe9e2cf,metalness:.3,roughness:.4}));dome.position.copy(L2W(ex,ey+.00012,.00044));dome.quaternion.copy(cityQ);dome.scale.setScalar(.00026);dome.castShadow=true;G.add(dome);
+ const cars2=[[0,-.00062,0x111111,.00034],[.00042,-.00062,0x111111,.00034],[-.00042,-.00062,0x111111,.00034],[.00084,-.00062,0x1a1a1a,.00022],[-.00084,-.00062,0x1a1a1a,.00022],[0,-.00092,0xd4af37,.00018],[.00032,-.00092,0xc0392b,.00018],[-.00032,-.00092,0xd4af37,.00018],[.00064,-.00092,0x8e44ad,.00018],[-.00064,-.00092,0xffffff,.00018]];
+ const cvm=new THREE.InstancedMesh(box,new THREE.MeshStandardMaterial({metalness:.9,roughness:.15}),cars2.length);cars2.forEach(([dx,dy,c,L],i)=>{dummy.position.copy(L2W(ex+dx,ey+dy,0));dummy.quaternion.copy(cityQ);dummy.scale.set(L,.00006,.0001);dummy.updateMatrix();cvm.setMatrixAt(i,dummy.matrix);cvm.setColorAt(i,pc.setHex(c));});cvm.castShadow=true;G.add(cvm);
  const SUL=[[36,-78.6],[36.6,-73.5],[35,-69],[31.5,-67],[27.6,-69.5],[27.2,-74.5],[28.8,-78.8],[32.5,-79.6]];
  const bgp=new THREE.Group();const bl2=new THREE.Line(new THREE.BufferGeometry().setFromPoints(densify([...SUL,SUL[0]],.25).map(([a,b])=>ll2v(a,b,1.003))),new THREE.LineDashedMaterial({color:0xffd27a,dashSize:.005,gapSize:.003}));bl2.computeLineDistances();bgp.add(bl2);
  const towns=[[34.5,-72.5],[29.5,-72],[33,-69.8],[28.6,-76.5],[35.2,-76.4],[30.4,-69.3]].map(([a,b])=>{const s2=new THREE.Sprite(new THREE.SpriteMaterial({map:dotTex,color:0xffc070,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true,opacity:.6}));s2.position.copy(ll2v(a,b,1.004));s2.scale.setScalar(.012);bgp.add(s2);return s2;});
  bgp.visible=false;world.add(bgp);layerObjs.city=bgp;
- return {G,cars,cg,smk,tip,glowFar,avl,hw,hg,HC,HRx,HRy,HH,peds,pgm};}
+ return {G,cars,cg,smk,tip,glowFar,avl,hw,hg,HC,HRx,HRy,HH,peds,pb,ph,prot,qb,qh,qs,sg,PH};}
 let CITY=null;
 const CITYF=[
  {id:'sulteria',name:'SULTERIA',x:2.4,y:3,k:'Country',t:'A small country on the coast of Clark. The only place on Veyra where people live.',l:''},
@@ -1116,15 +1136,25 @@ const CITYF=[
  {id:'cstad',name:'Cardinal Stadium',x:.3,y:.38,k:'Landmark',t:'Home of the Cardinals.',l:''},
  {id:'cport',name:'Port',x:-.5,y:-.3,k:'District',t:'Shipping docks and cranes.',l:''},
  {id:'clow',name:'Lowtown',x:.42,y:-.45,k:'District',t:'Older, poorer industrial area.',l:''},
+ {id:'cpalace',name:'Presidential Palace',x:-.05,y:.7,k:'Landmark',t:'Home of Sulteria\'s president.',l:''},
+ {id:'cprotest',name:'Protest',x:.12,y:.13,k:'Event',t:'A rally in Suter Commons.',l:''},
  {id:'csub',name:'Suburbs',x:.6,y:.15,k:'District',t:'Family homes and schools.',l:''},
 ];
+const _pd=new THREE.Object3D();
 function cityTick(now){if(!CITY)return;const t=now/1000;
  const arr=CITY.cg.attributes.position.array;CITY.cars.forEach((c,i)=>{const u=((c.off+t*c.sp)%1+1)%1*2-1;const x=c.horiz?u*CR*.9:c.lane,y=c.horiz?c.lane:u*CR*.9;const d=district(x,y);let v;if(d==='water'||d==='river'||d==='out'||d==='park')v=L2W(0,0,-.01);else v=L2W(x,y,.00007);arr[i*3]=v.x;arr[i*3+1]=v.y;arr[i*3+2]=v.z;});
  CITY.cg.attributes.position.needsUpdate=true;
  CITY.smk.forEach(o=>{const u=(t*.12+o.o)%1;o.s.position.copy(L2W(o.x+u*.002,o.y,.0012+u*.003));o.s.scale.setScalar(.0006+u*.002);o.s.material.opacity=.45*(1-u);});
  {const t2=now/1000;CITY.avl.material.opacity=Math.sin(t2*2.2)>.2?1:.25;const ha=CITY.hg.attributes.position.array;CITY.hw.forEach((c,i)=>{const a=((c.o+t2*c.sp*c.dir)%1)*Math.PI*2;const rx=CITY.HRx+c.lane,ry=CITY.HRy+c.lane;const v=L2W(CITY.HC[0]+Math.cos(a)*rx,CITY.HC[1]+Math.sin(a)*ry,CITY.HH+.00009);ha[i*3]=v.x;ha[i*3+1]=v.y;ha[i*3+2]=v.z;});CITY.hg.attributes.position.needsUpdate=true;}
-{const pa=CITY.pgm.attributes.position.array;CITY.peds.forEach((p,i)=>{let x,y;if(p.park){x=p.px+Math.sin(t*.2+p.ph)*.0005;y=p.py+Math.cos(t*.17+p.ph)*.0005;}else{const u=((p.o+t*p.sp)%1+1)%1*2-1;x=p.horiz?u*CR*.92:p.line;y=p.horiz?p.line:u*CR*.92;}
-  const d=district(x,y);const v=(d==='water'||d==='river'||d==='out'||d==='stadium'||(d==='park'&&!p.park))?L2W(0,0,-.01):L2W(x,y,.00004);pa[i*3]=v.x;pa[i*3+1]=v.y;pa[i*3+2]=v.z;});CITY.pgm.attributes.position.needsUpdate=true;}
+{const C=CITY,PH=C.PH,dm=_pd;const near=camera.position.distanceTo(C0)<.05;C.pb.visible=C.ph.visible=near;
+  if(near){C.peds.forEach((p,i)=>{let x,y,dir=0;if(p.park){x=p.px+Math.sin(t*.2+p.ph)*.0005;y=p.py+Math.cos(t*.17+p.ph)*.0005;dir=t*.2+p.ph;}else{const u=((p.o+t*p.sp)%1+1)%1*2-1;x=p.horiz?u*CR*.92:p.line;y=p.horiz?p.line:u*CR*.92;dir=p.horiz?(p.sp>0?0:Math.PI):(p.sp>0?Math.PI/2:-Math.PI/2);}
+   const d=district(x,y);const hide=d==='water'||d==='river'||d==='out'||d==='stadium'||d==='estate'||(d==='park'&&!p.park);
+   dm.position.copy(L2W(x,y,Math.abs(Math.sin(t*9+p.ph))*PH*.06));dm.quaternion.copy(cityQ);dm.rotateY(dir);dm.scale.setScalar(hide?0:PH);dm.updateMatrix();C.pb.setMatrixAt(i,dm.matrix);C.ph.setMatrixAt(i,dm.matrix);});
+   C.pb.instanceMatrix.needsUpdate=C.ph.instanceMatrix.needsUpdate=true;
+   let si=0;C.prot.forEach((p,i)=>{const j=Math.max(0,Math.sin(t*5+p.ph))*PH*.25;dm.position.copy(L2W(p.x,p.y,j));dm.quaternion.copy(cityQ);dm.rotateY(Math.PI/2);dm.scale.setScalar(PH);dm.updateMatrix();C.qb.setMatrixAt(i,dm.matrix);C.qh.setMatrixAt(i,dm.matrix);
+    if(p.sign){dm.position.copy(L2W(p.x,p.y,j+PH*1.15));dm.scale.set(PH*.08,PH*.5,PH*.7);dm.updateMatrix();C.qs.setMatrixAt(si++,dm.matrix);}});
+   C.qb.instanceMatrix.needsUpdate=C.qh.instanceMatrix.needsUpdate=C.qs.instanceMatrix.needsUpdate=true;}
+  C.G.visible=cityMode||camera.position.length()<1.3;}
  CITY.tip.material.opacity=(Math.sin(t*3)>0)?1:.15;
  const cd=camera.position.length();CITY.glowFar.material.opacity=Math.min(.8,Math.max(0,(cd-1.15)*1.5));
  if(cityPhase===1&&!flying){cityPhase=2;cityTw={t0:now,p0:camera.position.clone(),q0:new THREE.Vector3(),p1:L2W(.006,-.034,.019),q1:L2W(-.002,.004,0)};}
@@ -1134,7 +1164,7 @@ function cityTick(now){if(!CITY)return;const t=now/1000;
  else if(cityCtl)cityCtl.update();}
 let cityTw2=null,cTour=false,ctI=0;
 function cityFly(x,y,d=.012){if(!cityCtl||x==null)return;const q1=L2W(x,y,0);const p1=q1.clone().addScaledVector(CN,d*.6).addScaledVector(CNo,-d*.75).addScaledVector(CE,d*.3);cityCtl.autoRotate=false;cityTw2={t0:performance.now(),p0:camera.position.clone(),q0:cityCtl.target.clone(),p1,q1};}
-const CTOUR=['city','cdown','cspire','cheights','cmarina','cpark','cstad','cport','clow','csub'];
+const CTOUR=['city','cdown','cspire','cpalace','cheights','cmarina','cpark','cprotest','cstad','cport','clow','csub'];
 function cityTourGo(i){if(!cityCtl)return;cTour=true;ctI=(i+CTOUR.length)%CTOUR.length;select(CTOUR[ctI],true);info.classList.add('tour');document.getElementById('tCount').textContent=`${ctI+1} of ${CTOUR.length}`;document.getElementById('tProg').style.width=((ctI+1)/CTOUR.length*100)+'%';}
 function enterCity(){if(cityMode||!CITY)return;cityMode=true;cityPhase=1;controls.autoRotate=false;controls.enabled=false;
  world.children.forEach(c=>{if(c.isMesh&&c!==globe&&c.geometry&&c.geometry.parameters&&c.geometry.parameters.radius>1.0005&&c.visible){c.visible=false;cityHidden.push(c);}});
@@ -1146,14 +1176,14 @@ function exitCity(){if(!cityMode)return;cityMode=false;cityPhase=0;setCityTime(f
  camera.position.copy(CN).multiplyScalar(1.6);camera.lookAt(0,0,0);controls.target.set(0,0,0);controls.update();flyTo(CN.clone(),fitDist(),1200);applyOpts();}
 {const _sl=setLayer;setLayer=function(id){_sl(id);if(id==='city')enterCity();else if(cityMode)exitCity();};}
 
-function addCityMarkers(){CITYF.forEach(c=>{const v=L2W(c.x*CR,c.y*CR,.0016);const [la,lo]=v2ll(v);const f={id:c.id,L:['city'],name:c.name,lat:la,lon:lo,k:c.k,t:c.t,l:c.l,cx:c.x*CR,cy:c.y*CR,cd:c.id==='sulteria'?.065:c.id==='city'?.034:c.id==='cspire'?.009:.013};F.push(f);addMarker({...f,pos:v,pri:c.id==='city'?1:2});});}
+function addCityMarkers(){CITYF.forEach(c=>{const v=L2W(c.x*CR,c.y*CR,.0016);const [la,lo]=v2ll(v);const f={id:c.id,L:['city'],name:c.name,lat:la,lon:lo,k:c.k,t:c.t,l:c.l,cx:c.x*CR,cy:c.y*CR,cd:c.id==='sulteria'?.065:c.id==='city'?.034:c.id==='cspire'?.009:(c.id==='cpalace'||c.id==='cprotest')?.0055:.013};F.push(f);addMarker({...f,pos:v,pri:c.id==='city'?1:2});});}
 {const tb=document.getElementById('tourBtn'),tn=document.getElementById('tNext'),tp=document.getElementById('tPrev');
  const o1=tb.onclick,o2=tn.onclick,o3=tp.onclick;
  tb.onclick=()=>{if(cityMode){if(cityCtl)cityTourGo(0);}else o1();};
  tn.onclick=()=>{cTour?cityTourGo(ctI+1):o2();};tp.onclick=()=>{cTour?cityTourGo(ctI-1):o3();};
  document.getElementById('infoX').addEventListener('click',()=>{cTour=false;});}
 {const cnb=document.getElementById('cnb');const bk=document.createElement('button');bk.className='back';bk.textContent='← Back to planet';bk.onclick=()=>{selected=null;info.classList.remove('show','tour');setLayer('none');};cnb.appendChild(bk);const dn=document.createElement('button');dn.id='dnBtn';dn.textContent='🌙 Night';dn.onclick=()=>setCityTime(!cityDay);cnb.appendChild(dn);
- ['city','cdown','cspire','cheights','cmarina','cpark','cstad','cport','clow','csub'].forEach(id=>{const c=CITYF.find(q=>q.id===id);const b=document.createElement('button');b.textContent=c.name;b.onclick=()=>select(id,true);cnb.appendChild(b);});}
+ ['city','cdown','cspire','cpalace','cheights','cmarina','cpark','cprotest','cstad','cport','clow','csub'].forEach(id=>{const c=CITYF.find(q=>q.id===id);const b=document.createElement('button');b.textContent=c.name;b.onclick=()=>select(id,true);cnb.appendChild(b);});}
 const auroraU={value:0};{const am=new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,uniforms:{t:auroraU},
  vertexShader:'varying vec2 vu;void main(){vu=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
  fragmentShader:'uniform float t;varying vec2 vu;void main(){float w=(sin(vu.x*90.+t*1.1)*.5+.5)*(sin(vu.x*31.-t*.6)*.5+.5)*(sin(vu.x*7.+t*.3)*.4+.6);float a=smoothstep(0.,.3,vu.y)*pow(1.-vu.y,1.5);vec3 c=mix(vec3(.15,1.,.45),vec3(.55,.3,1.),smoothstep(.4,1.,vu.y));gl_FragColor=vec4(c*a*w*.7,1.);}'});
