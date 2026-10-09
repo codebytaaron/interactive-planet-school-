@@ -226,6 +226,19 @@ svg.dg{background:#141a24;border-radius:10px;padding:8px}
 #help:hover{border-color:var(--accent)}
 @media (max-width:900px){#help{top:auto;right:8px;bottom:calc(46vh + 176px)}body.min #help{bottom:222px}body.infoOpen #help{display:none}}
 
+
+/* ---- disaster mode ---- */
+#dzBtn{position:fixed;z-index:20;top:16px;right:calc(var(--pw) + 138px);height:38px;padding:0 14px;border-radius:10px;background:rgba(60,14,10,.92);border:1px solid #7a2a1e;color:#ffd2c4;font-size:13px;font-weight:600}
+#dzBtn:hover{border-color:#ff7a50;color:#fff}
+#dzBtn:disabled{opacity:.45;cursor:default}
+#dzBan{position:fixed;z-index:30;top:70px;left:calc(332px + (100vw - 332px - var(--pw) - 16px)/2);transform:translate(-50%,-10px);width:min(440px,calc(100vw - 332px - var(--pw) - 60px));background:rgba(20,8,6,.94);border:1px solid #7a2a1e;border-radius:12px;padding:12px 16px;opacity:0;transition:opacity .35s,transform .35s;pointer-events:none;text-align:center}
+#dzBan.show{opacity:1;transform:translate(-50%,0)}
+#dzBan b{display:block;font-size:16px;color:#fff;margin-bottom:3px}
+#dzBan span{font-size:13px;color:#f3c9bd;line-height:1.5}
+#dzBan.calm{border-color:#2f6b45;background:rgba(8,20,13,.94)}#dzBan.calm span{color:#bfe8cc}
+#dzFlash{position:fixed;inset:0;z-index:29;background:radial-gradient(circle at 50% 50%,rgba(255,240,210,.9),rgba(255,120,40,.35) 40%,transparent 75%);opacity:0;pointer-events:none;transition:opacity .9s}
+@media (max-width:900px){#dzBtn{top:auto;right:auto;left:8px;bottom:calc(46vh + 8px)}body.min #dzBtn{bottom:54px}body.infoOpen #dzBtn{display:none}#dzBan{left:8px;right:8px;width:auto;transform:none;top:110px}#dzBan.show{transform:none}}
+
 @media print{
   html,body{overflow:visible;height:auto;background:#fff}
   #scene,#markers,#hud,#info,#readout,#tourBtn,#tabs,#loader,.noprint{display:none!important}
@@ -267,6 +280,7 @@ svg.dg{background:#141a24;border-radius:10px;padding:8px}
 </div>
 
 <div id="zoom"><button id="zIn" aria-label="Zoom in">+</button><button id="zOut" aria-label="Zoom out">−</button><button id="zHome" aria-label="Reset view" title="Reset view">⟲</button></div>
+<button id="dzBtn">☄ Disaster mode</button><div id="dzBan"><b id="dzT"></b><span id="dzP"></span></div><div id="dzFlash"></div>
 <button id="help" aria-label="How to use">?</button>
 <div id="ob"><div class="obc"><div class="ico" id="obIco"></div><div class="step" id="obStep"></div><h2 id="obT"></h2><p id="obP"></p>
 <div class="obdots" id="obDots"></div>
@@ -793,7 +807,7 @@ function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,clock.getDe
  if(clouds){clouds.rotation.y+=dt*.004;clouds.userData.shadow.rotation.y=clouds.rotation.y-.012;}
  for(const m of moons){const a=m.ph+t*m.speed;m.m.position.set(Math.cos(a)*m.dist,Math.sin(a)*m.dist*m.incl,-Math.sin(a)*m.dist);}
  for(const f of flows){if(!layerObjs[f.key].visible)continue;const arr=f.geo.attributes.position.array;for(let i=0;i<f.n;i++){const p=f.curve.getPoint((t*.035+i/f.n)%1);arr[i*3]=p.x;arr[i*3+1]=p.y;arr[i*3+2]=p.z;}f.geo.attributes.position.needsUpdate=true;}
- renderer.render(scene,camera);updateMarkers();}
+ dzStep(now);const shk=dzShake(now);camera.position.add(shk);renderer.render(scene,camera);camera.position.sub(shk);updateMarkers();}
 controls.addEventListener('start',()=>{controls.autoRotate=false;});
 const zoomBy=f=>{const d=Math.min(controls.maxDistance,Math.max(controls.minDistance,camera.position.length()*f));flyTo(camera.position.clone(),d,450);};
 document.getElementById('zIn').onclick=()=>zoomBy(.75);document.getElementById('zOut').onclick=()=>zoomBy(1.33);
@@ -825,6 +839,50 @@ document.getElementById('obBack').onclick=()=>obShow(Math.max(0,obi-1));
 document.getElementById('obSkip').onclick=obClose;
 document.getElementById('help').onclick=()=>obShow(0);
 addEventListener('keydown',e=>{if(!ob.classList.contains('show'))return;if(e.key==='Escape')obClose();if(e.key==='ArrowRight')document.getElementById('obNext').click();if(e.key==='ArrowLeft'&&obi)obShow(obi-1);});
+
+/* ---------- disaster mode ---------- */
+let dz=null;const dzBtn=document.getElementById('dzBtn'),dzBan=document.getElementById('dzBan'),dzFlash=document.getElementById('dzFlash');
+function banner(t,p,calm){document.getElementById('dzT').textContent=t;document.getElementById('dzP').textContent=p;dzBan.classList.toggle('calm',!!calm);dzBan.classList.add('show');}
+const dzMat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,uniforms:{hit:{value:new THREE.Vector3(1,0,0)},rad:{value:0},ring:{value:0},fire:{value:0}},
+ vertexShader:'varying vec3 vp;void main(){vp=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+ fragmentShader:'uniform vec3 hit;uniform float rad,ring,fire;varying vec3 vp;void main(){float a=acos(clamp(dot(normalize(vp),hit),-1.,1.));float b=exp(-pow((a-rad)/.035,2.))*ring;float b2=exp(-pow((a-rad*.62)/.05,2.))*ring*.4;float f=exp(-a/.09)*fire;float e=exp(-a/.3)*fire*.35;vec3 c=vec3(1.,.55,.2)*(b+b2)+vec3(1.,.42,.12)*f+vec3(.9,.2,.05)*e;gl_FragColor=vec4(c,1.);}'});
+const dzShell=new THREE.Mesh(new THREE.SphereGeometry(1.007,160,80),dzMat);dzShell.visible=false;world.add(dzShell);
+const dust=new THREE.Mesh(new THREE.SphereGeometry(1.03,96,48),new THREE.MeshStandardMaterial({color:0x3a2a20,transparent:true,opacity:0,depthWrite:false}));dust.visible=false;world.add(dust);
+const ease=t=>t<0?0:t>1?1:t*t*(3-2*t);
+function startDisaster(){if(dz||!globe)return;dzBtn.disabled=true;selected=null;touring=false;info.classList.remove('show','tour');document.body.classList.remove('infoOpen');setLayer('none');
+ const cd=camera.position.clone().normalize();const up=new THREE.Vector3(0,1,0);const rt=new THREE.Vector3().crossVectors(up,cd).normalize();
+ const hit=cd.clone().addScaledVector(rt,-.18).addScaledVector(up,.12).normalize();
+ const start=hit.clone().multiplyScalar(6).addScaledVector(rt,3.2).addScaledVector(up,2.2);
+ const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(.05,1),new THREE.MeshStandardMaterial({color:0x4a3c34,roughness:1,emissive:0xff4a10,emissiveIntensity:.5}));
+ const glowS=new THREE.Sprite(new THREE.SpriteMaterial({map:dotTex,color:0xff7a2a,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true}));glowS.scale.setScalar(.3);
+ const tg=new THREE.BufferGeometry();const tn=40;tg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(tn*3),3));
+ const trail=new THREE.Points(tg,new THREE.PointsMaterial({color:0xffa060,size:.05,map:dotTex,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));
+ scene.add(rock,glowS,trail);
+ const dn=420,dg=new THREE.BufferGeometry();dg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(dn*3),3));const vel=[];
+ for(let i=0;i<dn;i++){const r=new THREE.Vector3().randomDirection();r.addScaledVector(hit,-r.dot(hit));vel.push(r.multiplyScalar(.15+Math.random()*.55).addScaledVector(hit,.25+Math.random()*.7));}
+ const debris=new THREE.Points(dg,new THREE.PointsMaterial({color:0xffb070,size:.022,map:dotTex,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:0}));debris.visible=false;world.add(debris);
+ dzMat.uniforms.hit.value.copy(hit);dz={t0:performance.now(),hit,start,rock,glowS,trail,tg,tn,debris,dg,vel,dn,stage:0};
+ controls.autoRotate=false;flyTo(camera.position.clone(),Math.max(camera.position.length(),fitDist()),600);
+ banner('☄ Incoming asteroid','A 12 km asteroid is about to hit Veyra.');}
+dzBtn.onclick=startDisaster;
+function dzStep(now){if(!dz)return;const t=(now-dz.t0)/1000;const T=2.4;
+ if(t<T){const k=Math.pow(t/T,1.6);const p=dz.start.clone().lerp(dz.hit.clone().multiplyScalar(1.01),k);dz.rock.position.copy(p);dz.rock.rotation.x+=.1;dz.rock.rotation.y+=.07;dz.glowS.position.copy(p);dz.glowS.scale.setScalar(.25+k*.25);
+  const arr=dz.tg.attributes.position.array;for(let i=0;i<dz.tn;i++){const q=dz.start.clone().lerp(dz.hit.clone().multiplyScalar(1.01),Math.max(0,k-i*.006));arr[i*3]=q.x;arr[i*3+1]=q.y;arr[i*3+2]=q.z;}dz.tg.attributes.position.needsUpdate=true;}
+ else if(dz.stage===0){dz.stage=1;scene.remove(dz.rock,dz.glowS,dz.trail);dzFlash.style.transition='none';dzFlash.style.opacity=1;requestAnimationFrame(()=>{dzFlash.style.transition='opacity 1.2s';dzFlash.style.opacity=0;});
+  dzShell.visible=true;dz.debris.visible=true;dust.visible=true;banner('💥 Impact!','A shockwave, firestorms and earthquakes race across the surface.');}
+ const ti=t-T;
+ if(ti>=0){dzMat.uniforms.rad.value=Math.min(2.2,ti*.55);dzMat.uniforms.ring.value=Math.max(0,1-ti/4.2)*1.6;
+  const fire=ti<1?ease(ti*3):Math.max(0,1-(ti-1)/7);dzMat.uniforms.fire.value=fire*1.4;
+  const arr=dz.dg.attributes.position.array;const h=dz.hit;for(let i=0;i<dz.dn;i++){const v=dz.vel[i];const tt=Math.min(ti,2.6);const p=h.clone().multiplyScalar(1.01).addScaledVector(v,tt).addScaledVector(h,-.18*tt*tt);if(p.length()<1.005)p.setLength(1.005);arr[i*3]=p.x;arr[i*3+1]=p.y;arr[i*3+2]=p.z;}
+  dz.dg.attributes.position.needsUpdate=true;dz.debris.material.opacity=Math.max(0,1-ti/2.8);
+  if(ti>2.4&&dz.stage===1){dz.stage=2;banner('🌫 Impact winter','Dust and ash block Ostra\'s light. Temperatures drop and photosynthesis slows down.');}
+  if(ti>7.2&&dz.stage===2){dz.stage=3;banner('🌱 Recovery','Over thousands of years, rain washes out the dust, volcanoes restore CO₂, and life spreads back.',true);}
+  const winter=ti<2?ease(ti/2):ti<7.2?1:Math.max(0,1-(ti-7.2)/4);
+  dust.material.opacity=.62*winter;globe.material.color.setRGB(1-.5*winter,1-.58*winter,1-.6*winter);
+  if(clouds){const c=1-.55*winter;clouds.material.color.setRGB(c,c*.92,c*.86);}
+  if(ti>11.6){dzShell.visible=false;dust.visible=false;world.remove(dz.debris);globe.material.color.setRGB(1,1,1);if(clouds)clouds.material.color.setRGB(1,1,1);dzBan.classList.remove('show');dz=null;dzBtn.disabled=false;applyOpts();}}}
+const _shk=new THREE.Vector3();
+function dzShake(now){_shk.set(0,0,0);if(!dz)return _shk;const ti=(now-dz.t0)/1000-2.4;if(ti<0||ti>1.8)return _shk;const a=.05*Math.pow(1-ti/1.8,2);_shk.set((Math.random()-.5)*a,(Math.random()-.5)*a,(Math.random()-.5)*a);return _shk;}
 const T0=performance.now();const fill=document.getElementById('ldfill');fill.style.width='30%';
 setTimeout(()=>{generate();fill.style.width='65%';document.getElementById('loadmsg').textContent='Rendering high-resolution surface…';setTimeout(()=>{build();fill.style.width='100%';setLayer('none');requestAnimationFrame(loop);setTimeout(()=>{document.getElementById('loader').classList.add('hide');flyTo(ll2v(20,-40),fitDist(),2600);setTimeout(()=>obShow(0),2700);},Math.max(300,2600-(performance.now()-T0)));},20);},400);
 </script>
