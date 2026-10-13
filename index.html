@@ -251,6 +251,11 @@ body.cityOn #dzBtn{display:none}
 .cnb .back{background:#ffd27a;color:#111;border-color:#ffd27a;font-weight:600}
 .cnt{font-size:11px;color:var(--muted);margin-top:8px}
 @media (max-width:900px){#cityNav{left:8px;right:8px;width:auto;transform:none;bottom:calc(46vh + 8px);padding:8px}.cnb{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start}.cnb button{flex:none}.cnt{display:none}body.cityOn #info{bottom:calc(46vh + 100px)}body.min #cityNav{bottom:54px}}
+
+.pane .lnk{color:inherit;border-bottom:1px dotted #9aa0a6}
+.pane .lnk:hover{color:#1a73e8;border-bottom-color:#1a73e8}
+.pane .kicker{color:#6b6f76}
+svg.dg{background:#fff!important;border:1px solid #e3e0d8;border-radius:10px;padding:8px}
 @media print{
   html,body{overflow:visible;height:auto;background:#fff}
   #scene,#markers,#hud,#info,#readout,#tourBtn,#tabs,#loader,.noprint{display:none!important}
@@ -332,16 +337,15 @@ body.cityOn #dzBtn{display:none}
 <h3>Plate tectonics</h3>
 <p>Yes, Veyra has active plate tectonics. Its hot interior drives mantle convection, which slowly moves 7 plates a few centimeters each year.</p>
 <h3>Plate boundaries</h3>
-<table>
-<tr><th>Type</th><th>Example</th><th>What happens</th></tr>
-<tr><td>Divergent</td><td><span class="lnk" data-f="seam">Sean Ridge</span></td><td>Plates pull apart and magma makes new seafloor</td></tr>
-<tr><td>Divergent</td><td><span class="lnk" data-f="hollow">Kevin Rift</span></td><td>A continent splits into a rift valley</td></tr>
-<tr><td>Convergent</td><td><span class="lnk" data-f="trench">Donovan Trench</span></td><td>Ocean plate sinks under a continent and feeds <span class="lnk" data-f="kaelor">Mount Suter</span></td></tr>
-<tr><td>Convergent</td><td><span class="lnk" data-f="cinder">Cos Cob Isles</span></td><td>Ocean meets ocean and forms volcanic islands</td></tr>
-<tr><td>Convergent</td><td><span class="lnk" data-f="crown">Manning Range</span></td><td>Two continents collide and fold into mountains</td></tr>
-<tr><td>Transform</td><td><span class="lnk" data-f="shear">Ryan Fault</span></td><td>Plates slide past each other and cause earthquakes</td></tr>
-<tr><td>Hotspot</td><td><span class="lnk" data-f="lantern">Bella Isles</span></td><td>Plate moves over a hot plume, making an island chain</td></tr>
-</table>
+<ul>
+<li><b>Divergent (<span class="lnk" data-f="seam">Sean Ridge</span>):</b> two ocean plates pull apart, and magma makes new seafloor.</li>
+<li><b>Divergent (<span class="lnk" data-f="hollow">Kevin Rift</span>):</b> a continent is splitting apart into a rift valley.</li>
+<li><b>Convergent (<span class="lnk" data-f="trench">Donovan Trench</span>):</b> an ocean plate sinks under a continent and feeds <span class="lnk" data-f="kaelor">Mount Suter</span>.</li>
+<li><b>Convergent (<span class="lnk" data-f="cinder">Cos Cob Isles</span>):</b> two ocean plates meet and form volcanic islands.</li>
+<li><b>Convergent (<span class="lnk" data-f="crown">Manning Range</span>):</b> two continents collide and fold into mountains.</li>
+<li><b>Transform (<span class="lnk" data-f="shear">Ryan Fault</span>):</b> plates slide past each other and cause earthquakes.</li>
+<li><b>Hotspot (<span class="lnk" data-f="lantern">Bella Isles</span>):</b> the plate moves over a hot plume, leaving a chain of islands.</li>
+</ul>
 <h3>How tectonics supports life</h3>
 <ul>
 <li><b>Climate:</b> subduction buries carbon and volcanoes release CO₂, which keeps temperatures balanced.</li>
@@ -447,12 +451,12 @@ body.cityOn #dzBtn{display:none}
 <path d="M278 92 V176"/><path d="M298 176 V92"/><path d="M140 208 H238"/><path d="M238 228 H140"/><path d="M136 86 L242 186"/>
 </g>
 <g font-size="13" font-weight="600" text-anchor="middle">
-<rect x="22" y="30" width="118" height="62" rx="10" fill="#2b1c1c" stroke="#f28b82"/><text x="81" y="66" fill="#fff">Geosphere</text>
-<rect x="240" y="30" width="118" height="62" rx="10" fill="#1a2233" stroke="#8ab4f8"/><text x="299" y="66" fill="#fff">Atmosphere</text>
-<rect x="22" y="178" width="118" height="62" rx="10" fill="#14243a" stroke="#78d9ec"/><text x="81" y="214" fill="#fff">Hydrosphere</text>
-<rect x="240" y="178" width="118" height="62" rx="10" fill="#17281d" stroke="#81c995"/><text x="299" y="214" fill="#fff">Biosphere</text>
+<rect x="22" y="30" width="118" height="62" rx="10" fill="#fdecea" stroke="#f28b82"/><text x="81" y="66" fill="#202124">Geosphere</text>
+<rect x="240" y="30" width="118" height="62" rx="10" fill="#e8f0fe" stroke="#8ab4f8"/><text x="299" y="66" fill="#202124">Atmosphere</text>
+<rect x="22" y="178" width="118" height="62" rx="10" fill="#e6f4f8" stroke="#78d9ec"/><text x="81" y="214" fill="#202124">Hydrosphere</text>
+<rect x="240" y="178" width="118" height="62" rx="10" fill="#e6f4ea" stroke="#81c995"/><text x="299" y="214" fill="#202124">Biosphere</text>
 </g>
-<g font-size="10" fill="#c9cfdb" text-anchor="middle">
+<g font-size="10" fill="#5f6368" text-anchor="middle">
 <text x="189" y="46">volcanic gases</text><text x="189" y="86">acid rain</text><text x="54" y="138">erodes</text><text x="132" y="138">magma</text>
 <text x="252" y="138">O₂, H₂O</text><text x="330" y="138">CO₂</text><text x="189" y="202">water for life</text><text x="189" y="244">transpiration</text><text x="208" y="128">nutrients</text>
 </g></svg>
