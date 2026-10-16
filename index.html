@@ -256,6 +256,7 @@ body.cityOn #dzBtn{display:none}
 .pane .lnk:hover{color:#1a73e8;border-bottom-color:#1a73e8}
 .pane .kicker{color:#6b6f76}
 svg.dg{background:#fff!important;border:1px solid #e3e0d8;border-radius:10px;padding:8px}
+#info p:empty{display:none}
 @media print{
   html,body{overflow:visible;height:auto;background:#fff}
   #scene,#markers,#hud,#info,#readout,#tourBtn,#tabs,#loader,.noprint{display:none!important}
@@ -1154,21 +1155,21 @@ function buildCity(){
  return {G,cars,cb,cw,smk,tip,glowFar,avl,hw,hcb,hcw,HP,HH,peds,pb,ph,prot,qb,qh,qs,sg,PH,crowd2,rb,rh};}
 let CITY=null;
 const CITYF=[
- {id:'sulteria',name:'SULTERIA',x:2.4,y:3,k:'Country',t:'A small country on the coast of Clark. The only place on Veyra where people live.',l:''},
- {id:'city',name:'St. Sulterburg',x:-.1,y:.05,k:'Capital city',t:'Coastal capital of Sulteria. About 9 million people.',l:'Built where the Matthew River meets the ocean.'},
- {id:'cspire',name:'Sulter Spire',x:-.3,y:.2,k:'Landmark',t:'Tallest tower on Veyra.',l:''},
- {id:'cdown',name:'Downtown',x:-.38,y:.32,k:'District',t:'Skyscrapers, offices and hotels.',l:''},
- {id:'cheights',name:'Sulter Heights',x:-.2,y:.55,k:'District',t:'Luxury homes and gardens.',l:''},
- {id:'cmarina',name:'Gold Coast Marina',x:-.55,y:.3,k:'District',t:'Beach villas and yachts.',l:''},
- {id:'cpark',name:'Suter Commons',x:.11,y:.06,k:'Park',t:'Central park on the river.',l:''},
- {id:'cstad',name:'Cardinal Stadium',x:.3,y:.38,k:'Landmark',t:'Home of the Cardinals.',l:''},
- {id:'cport',name:'Port',x:-.5,y:-.3,k:'District',t:'Shipping docks and cranes.',l:''},
- {id:'clow',name:'Lowtown',x:.42,y:-.45,k:'District',t:'Older, poorer industrial area.',l:''},
- {id:'cpalace',name:'Presidential Palace',x:-.05,y:.7,k:'Landmark',t:'Home of Sulteria\'s president.',l:''},
- {id:'cteddy',name:'President Teddy',x:-.052,y:.677,k:'President',t:'Giving a speech at the Presidential Palace.',l:''},
- {id:'cgeorge',name:'Vice President George',x:-.044,y:.68,k:'Vice President',t:'Standing with the President at the speech.',l:''},
- {id:'cprotest',name:'Protest',x:.12,y:.13,k:'Event',t:'A rally in Suter Commons.',l:''},
- {id:'csub',name:'Suburbs',x:.6,y:.15,k:'District',t:'Family homes and schools.',l:''},
+ {id:'sulteria',name:'SULTERIA',x:2.4,y:3,k:'Country',t:'',l:''},
+ {id:'city',name:'St. Sulterburg',x:-.1,y:.05,k:'Capital city',t:'',l:''},
+ {id:'cspire',name:'Sulter Spire',x:-.3,y:.2,k:'Landmark',t:'',l:''},
+ {id:'cdown',name:'Downtown',x:-.38,y:.32,k:'District',t:'',l:''},
+ {id:'cheights',name:'Sulter Heights',x:-.2,y:.55,k:'District',t:'',l:''},
+ {id:'cmarina',name:'Gold Coast Marina',x:-.55,y:.3,k:'District',t:'',l:''},
+ {id:'cpark',name:'Suter Commons',x:.11,y:.06,k:'Park',t:'',l:''},
+ {id:'cstad',name:'Cardinal Stadium',x:.3,y:.38,k:'Landmark',t:'',l:''},
+ {id:'cport',name:'Port',x:-.5,y:-.3,k:'District',t:'',l:''},
+ {id:'clow',name:'Lowtown',x:.42,y:-.45,k:'District',t:'',l:''},
+ {id:'cpalace',name:'Presidential Palace',x:-.05,y:.7,k:'Landmark',t:'',l:''},
+ {id:'cteddy',name:'President Teddy',x:-.052,y:.677,k:'President',t:'',l:''},
+ {id:'cgeorge',name:'Vice President George',x:-.044,y:.68,k:'Vice President',t:'',l:''},
+ {id:'cprotest',name:'Protest',x:.12,y:.13,k:'Event',t:'',l:''},
+ {id:'csub',name:'Suburbs',x:.6,y:.15,k:'District',t:'',l:''},
 ];
 const _pd=new THREE.Object3D();
 function cityTick(now){if(!CITY)return;const t=now/1000;
